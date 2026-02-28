@@ -1,4 +1,97 @@
 {
-  "title": "Seguimiento de Entrenamiento",
-  "subtitle": "Monitorea tu progreso y alcanza tus objetivos fitness"
+  "title": "Workout Tracking",
+  "subtitle": "Monitoriza tu progreso y alcanza tus objetivos",
+
+  "common": {
+    "cancel": "Cancelar",
+    "add": "Añadir",
+    "save": "Guardar",
+    "saving": "Guardando…"
+  },
+
+  "muscles": {
+    "Chest": "Pecho", "Back": "Espalda", "Biceps": "Bíceps", "Triceps": "Tríceps",
+    "Core": "Core", "Abs": "Abdominales", "Shoulders": "Hombros", "Legs": "Piernas"
+  },
+
+  "start": {
+    "cta": "Nuevo entrenamiento",
+    "title": "Iniciar entrenamiento",
+    "subtitle": "¿Qué vas a entrenar hoy?",
+    "muscleGroups": "Grupos musculares",
+    "notes": "Notas (opcional)",
+    "notesPlaceholder": "Ej. Centrarme en la técnica",
+    "begin": "Comenzar"
+  },
+
+  "active": {
+    "title": "Entrenamiento en curso",
+    "inProgress": "En directo",
+    "elapsed": "transcurrido",
+    "noExercises": "Sin ejercicios todavía — añade el primero",
+    "finish": "Finalizar entrenamiento"
+  },
+
+  "exercise": {
+    "add": "Añadir ejercicio",
+    "addTitle": "Nuevo ejercicio",
+    "name": "Nombre del ejercicio",
+    "namePlaceholder": "Ej. Press de banca",
+    "type": "Tipo",
+    "typeWeights": "Pesas",
+    "typeCardio": "Cardio"
+  },
+
+  "set": {
+    "add": "Serie",
+    "addTitle": "Añadir serie",
+    "empty": "Sin series todavía",
+    "weight": "Peso (kg)",
+    "reps": "Repeticiones",
+    "rpe": "RPE",
+    "speed": "Velocidad (km/h)",
+    "incline": "Inclinación (%)",
+    "durationMin": "Duración (min)"
+  },
+
+  "summary": {
+    "title": "¡Entrenamiento completado!",
+    "duration": "Duración",
+    "exercises": "Ejercicios",
+    "sets": "Series",
+    "notes": "Notas",
+    "notesPlaceholder": "¿Cómo ha ido?",
+    "close": "Listo"
+  },
+
+  "kpi": {
+    "total": "Entrenos",
+    "totalSub": "Total completados",
+    "perWeek": "Por semana",
+    "perWeekSub": "Media",
+    "avgTime": "Tiempo medio",
+    "avgTimeSub": "Por sesión",
+    "streak": "Racha",
+    "streakSub": "Días consecutivos"
+  },
+
+  "charts": {
+    "exercisesTitle": "Ejercicios y series por sesión",
+    "exercises": "Ejercicios",
+    "sets": "Series",
+    "durationTitle": "Duración de la sesión",
+    "duration": "Minutos"
+  },
+
+  "progress": {
+    "title": "Progresión de ejercicios",
+    "subtitle": "Selecciona un grupo muscular y ejercicio para ver tu evolución",
+    "selectHint": "Selecciona un grupo muscular arriba",
+    "empty": "Aún no hay historial de entrenos",
+    "noData": "Sin datos para este ejercicio",
+    "weight": "Peso (kg)",
+    "reps": "Repeticiones",
+    "distance": "Distancia (km)",
+    "speed": "Velocidad media (km/h)"
+  }
 }
