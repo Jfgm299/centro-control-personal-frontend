@@ -1,4 +1,108 @@
 {
   "title": "Workout Tracking",
-  "subtitle": "Monitor your progress and reach your fitness goals"
+  "subtitle": "Monitor your progress and reach your fitness goals",
+  "common": {
+    "cancel": "Cancel",
+    "add": "Add",
+    "save": "Save",
+    "saving": "Saving…",
+    "confirm": "Confirm"
+  },
+  "muscles": {
+    "Chest": "Chest",
+    "Back": "Back",
+    "Biceps": "Biceps",
+    "Triceps": "Triceps",
+    "Core": "Core",
+    "Abs": "Abs",
+    "Shoulders": "Shoulders",
+    "Legs": "Legs"
+  },
+  "start": {
+    "cta": "New Workout",
+    "title": "Start Workout",
+    "subtitle": "What are you training today?",
+    "muscleGroups": "Muscle groups",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g. Focus on form",
+    "begin": "Start"
+  },
+  "active": {
+    "title": "Workout in progress",
+    "inProgress": "Live",
+    "elapsed": "elapsed",
+    "noExercises": "No exercises yet — add your first one",
+    "finish": "Finish workout"
+  },
+  "exercise": {
+    "add": "Add exercise",
+    "addTitle": "New Exercise",
+    "name": "Exercise name",
+    "namePlaceholder": "e.g. Bench Press",
+    "type": "Type",
+    "typeWeights": "Weights",
+    "typeCardio": "Cardio"
+  },
+  "set": {
+    "add": "Set",
+    "addTitle": "Add Set",
+    "empty": "No sets yet",
+    "weight": "Weight (kg)",
+    "reps": "Reps",
+    "rpe": "RPE",
+    "speed": "Speed (km/h)",
+    "incline": "Incline (%)",
+    "durationMin": "Duration (min)"
+  },
+  "summary": {
+    "title": "Workout complete!",
+    "duration": "Duration",
+    "exercises": "Exercises",
+    "sets": "Sets",
+    "notes": "Notes",
+    "notesPlaceholder": "How did it feel?",
+    "close": "Done"
+  },
+  "kpi": {
+    "total": "Workouts",
+    "totalSub": "Total completed",
+    "perWeek": "Per week",
+    "perWeekSub": "Average",
+    "avgTime": "Avg. time",
+    "avgTimeSub": "Per session",
+    "streak": "Streak",
+    "streakSub": "Consecutive days"
+  },
+  "charts": {
+    "exercisesTitle": "Exercises & Sets per session",
+    "exercises": "Exercises",
+    "sets": "Sets",
+    "durationTitle": "Session duration",
+    "duration": "Minutes"
+  },
+  "progress": {
+    "title": "Exercise progression",
+    "subtitle": "Select a muscle group and exercise to see your evolution",
+    "selectHint": "Select a muscle group above",
+    "empty": "No workout history yet",
+    "noData": "No data for this exercise",
+    "weight": "Weight (kg)",
+    "reps": "Reps",
+    "distance": "Distance (km)",
+    "speed": "Avg. speed (km/h)"
+  },
+  "body": {
+    "title": "Body Measurements",
+    "subtitle": "Track your weight and body composition",
+    "addTitle": "New Measurement",
+    "weight": "Weight",
+    "fat": "Body fat %",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g. Morning, fasted",
+    "currentWeight": "Current weight",
+    "currentFat": "Body fat",
+    "change": "Change",
+    "empty": "No measurements yet — add your first one",
+    "needMore": "Add at least 2 measurements to see the chart"
+  }
 }
