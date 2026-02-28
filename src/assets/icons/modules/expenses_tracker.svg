@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <style>
+    /* Estilos base */
+    .icon-stroke {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Las ondas están ocultas por defecto */
+    .wave {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    /* La animación solo se activa cuando el ratón está sobre el SVG */
+    svg:hover .wave {
+      animation: nfc-signal 2s infinite ease-in-out;
+    }
+    
+    /* Retrasos escalonados */
+    svg:hover .w1 { animation-delay: 0s; }
+    svg:hover .w2 { animation-delay: 0.25s; }
+    svg:hover .w3 { animation-delay: 0.5s; }
+
+    @keyframes nfc-signal {
+      0%   { opacity: 0; transform: scale(0.95) translateY(1px); transform-origin: 32px 16px; }
+      30%  { opacity: 1; transform: scale(1) translateY(0); }
+      70%, 100% { opacity: 0; transform: scale(1.05) translateY(-1px); }
+    }
+  </style>
+
+  <path class="icon-stroke wave w1" d="M 28 16 A 4 4 0 0 1 36 16" />
+  <path class="icon-stroke wave w2" d="M 24 12 A 8 8 0 0 1 40 12" />
+  <path class="icon-stroke wave w3" d="M 20 8 A 12 12 0 0 1 44 8" />
+
+  <rect class="icon-stroke" x="4" y="22" width="56" height="34" rx="6" />
+  <line class="icon-stroke" x1="4" y1="32" x2="60" y2="32" />
+  <rect class="icon-stroke" x="12" y="42" width="10" height="6" rx="2" />
+  <line class="icon-stroke" x1="30" y1="45" x2="38" y2="45" />
+  <line class="icon-stroke" x1="42" y1="45" x2="50" y2="45" />
+</svg>
