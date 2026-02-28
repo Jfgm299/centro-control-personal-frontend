@@ -1,4 +1,60 @@
 {
   "title": "Vuelos",
-  "subtitle": "Registro y tracking de tus vuelos"
+  "subtitle": "Registro y tracking de tus vuelos",
+  "tabs": {
+    "upcoming": "Próximos",
+    "passport": "Pasaporte"
+  },
+  "upcoming": {
+    "empty": "No tienes vuelos próximos",
+    "emptyHint": "Añade tu próximo vuelo para empezar a hacer seguimiento",
+    "addFlight": "Añadir vuelo",
+    "departure": "Salida",
+    "arrival": "Llegada"
+  },
+  "passport": {
+    "title": "Mi Pasaporte",
+    "allTime": "ALL-TIME",
+    "flights": "Vuelos",
+    "domestic": "domésticos",
+    "international": "internacionales",
+    "longHaul": "larga distancia",
+    "flightsPerLabel": "VUELOS POR",
+    "year": "Año",
+    "month": "Mes",
+    "weekday": "Día",
+    "distance": "Distancia de vuelo",
+    "avgDistance": "Distancia media",
+    "aroundEarth": "Veces alrededor de la Tierra",
+    "aroundSun": "Veces alrededor del Sol",
+    "flightTime": "Tiempo de vuelo",
+    "days": "Días",
+    "weeks": "Semanas",
+    "months": "Meses",
+    "years": "Años",
+    "avgFlightTime": "Tiempo medio por vuelo",
+    "shortestFlight": "Vuelo más corto",
+    "longestFlight": "Vuelo más largo",
+    "topAirports": "Aeropuertos más visitados",
+    "totalAirports": "aeropuertos en total",
+    "topAirlines": "Aerolíneas top",
+    "totalAirlines": "aerolíneas en total",
+    "flightsByFlights": "Vuelos",
+    "flightsByDistance": "Distancia",
+    "countries": "Países y Territorios",
+    "totalCountries": "en total",
+    "showMore": "Ver más",
+    "showLess": "Ver menos",
+    "regions": {
+      "europe": "Europa",
+      "middleEast": "Oriente Medio",
+      "africa": "África",
+      "asia": "Asia",
+      "cAmerica": "C. América",
+      "caribbean": "Caribe",
+      "nAmerica": "N. América",
+      "oceania": "Oceanía",
+      "sAmerica": "S. América"
+    }
+  }
 }

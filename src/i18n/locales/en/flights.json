@@ -1,4 +1,60 @@
 {
   "title": "Flights",
-  "subtitle": "Registry and tracking of your flights"
+  "subtitle": "Registry and tracking of your flights",
+  "tabs": {
+    "upcoming": "Upcoming",
+    "passport": "Passport"
+  },
+  "upcoming": {
+    "empty": "No upcoming flights",
+    "emptyHint": "Add your next flight to start tracking",
+    "addFlight": "Add flight",
+    "departure": "Departure",
+    "arrival": "Arrival"
+  },
+  "passport": {
+    "title": "My Passport",
+    "allTime": "ALL-TIME",
+    "flights": "Flights",
+    "domestic": "domestic",
+    "international": "international",
+    "longHaul": "long haul",
+    "flightsPerLabel": "FLIGHTS PER",
+    "year": "Year",
+    "month": "Month",
+    "weekday": "Weekday",
+    "distance": "Flight Distance",
+    "avgDistance": "Average distance",
+    "aroundEarth": "Times Around Earth",
+    "aroundSun": "Times Around the Sun",
+    "flightTime": "Flight Time",
+    "days": "Days",
+    "weeks": "Weeks",
+    "months": "Months",
+    "years": "Years",
+    "avgFlightTime": "Avg. Flight Time",
+    "shortestFlight": "Shortest flight",
+    "longestFlight": "Longest flight",
+    "topAirports": "Top Visited Airports",
+    "totalAirports": "total airports",
+    "topAirlines": "Top Airlines",
+    "totalAirlines": "total airlines",
+    "flightsByFlights": "Flights",
+    "flightsByDistance": "Distance",
+    "countries": "Countries & Territories",
+    "totalCountries": "total",
+    "showMore": "Show More",
+    "showLess": "Show Less",
+    "regions": {
+      "europe": "Europe",
+      "middleEast": "Middle East",
+      "africa": "Africa",
+      "asia": "Asia",
+      "cAmerica": "C. America",
+      "caribbean": "Caribbean",
+      "nAmerica": "N. America",
+      "oceania": "Oceania",
+      "sAmerica": "S. America"
+    }
+  }
 }
