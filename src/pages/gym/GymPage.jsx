@@ -13,6 +13,7 @@ import WorkoutCalendar from './components/analytics/WorkoutCalendar'
 import WorkoutKPIs from './components/analytics/WorkoutKPIs'
 import WorkoutCharts from './components/analytics/WorkoutCharts'
 import ExerciseProgressChart from './components/analytics/ExerciseProgressChart'
+import BodyMeasuresChart from './components/body/BodyMeasuresChart'
 
 export default function GymPage() {
   const { t } = useTranslation('gym')
@@ -23,13 +24,11 @@ export default function GymPage() {
   const [showStartModal, setShowStartModal] = useState(false)
   const [finishedWorkoutId, setFinishedWorkoutId] = useState(null)
 
-  // Load finished workout detail for summary modal
   const { data: finishedWorkoutDetail } = useWorkoutDetail(finishedWorkoutId)
 
-  // Analytics
-  const workoutDays  = useMemo(() => getWorkoutDays(workouts), [workouts])
-  const kpis         = useMemo(() => computeKPIs(workouts), [workouts])
-  const sessionData  = useMemo(() => getSessionChartData(workouts), [workouts])
+  const workoutDays = useMemo(() => getWorkoutDays(workouts), [workouts])
+  const kpis        = useMemo(() => computeKPIs(workouts), [workouts])
+  const sessionData = useMemo(() => getSessionChartData(workouts), [workouts])
 
   const handleStartWorkout = async (payload) => {
     const workout = await start.mutateAsync(payload)
@@ -42,10 +41,6 @@ export default function GymPage() {
     await end.mutateAsync({ workoutId: activeWorkout.id, notes: null })
     setFinishedWorkoutId(activeWorkout.id)
     clearWorkout()
-  }
-
-  const handleCloseSummary = () => {
-    setFinishedWorkoutId(null)
   }
 
   if (isLoading) return (
@@ -72,24 +67,24 @@ export default function GymPage() {
         )}
       </div>
 
-      {/* Active workout — shown at the top when in progress */}
+      {/* Active workout */}
       {activeWorkout && (
         <ActiveWorkout onEnd={handleEndWorkout} />
       )}
 
-      {/* Analytics section */}
+      {/* Workout analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
-        {/* Left: calendar + KPIs */}
         <div className="flex flex-col gap-4">
           <WorkoutCalendar workoutDays={workoutDays} />
           <WorkoutKPIs kpis={kpis} />
         </div>
-
-        {/* Right: charts */}
         <div className="lg:col-span-2">
           <WorkoutCharts sessionData={sessionData} />
         </div>
       </div>
+
+      {/* Body measurements */}
+      <BodyMeasuresChart />
 
       {/* Exercise progression */}
       <ExerciseProgressChart />
@@ -102,11 +97,10 @@ export default function GymPage() {
           isLoading={start.isPending}
         />
       )}
-
       {finishedWorkoutDetail && (
         <WorkoutSummaryModal
           workout={finishedWorkoutDetail}
-          onClose={handleCloseSummary}
+          onClose={() => setFinishedWorkoutId(null)}
         />
       )}
     </div>

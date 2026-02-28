@@ -1,19 +1,23 @@
 {
   "title": "Workout Tracking",
   "subtitle": "Monitor your progress and reach your fitness goals",
-
   "common": {
     "cancel": "Cancel",
     "add": "Add",
     "save": "Save",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "confirm": "Confirm"
   },
-
   "muscles": {
-    "Chest": "Chest", "Back": "Back", "Biceps": "Biceps", "Triceps": "Triceps",
-    "Core": "Core", "Abs": "Abs", "Shoulders": "Shoulders", "Legs": "Legs"
+    "Chest": "Chest",
+    "Back": "Back",
+    "Biceps": "Biceps",
+    "Triceps": "Triceps",
+    "Core": "Core",
+    "Abs": "Abs",
+    "Shoulders": "Shoulders",
+    "Legs": "Legs"
   },
-
   "start": {
     "cta": "New Workout",
     "title": "Start Workout",
@@ -23,7 +27,6 @@
     "notesPlaceholder": "e.g. Focus on form",
     "begin": "Start"
   },
-
   "active": {
     "title": "Workout in progress",
     "inProgress": "Live",
@@ -31,7 +34,6 @@
     "noExercises": "No exercises yet — add your first one",
     "finish": "Finish workout"
   },
-
   "exercise": {
     "add": "Add exercise",
     "addTitle": "New Exercise",
@@ -41,7 +43,6 @@
     "typeWeights": "Weights",
     "typeCardio": "Cardio"
   },
-
   "set": {
     "add": "Set",
     "addTitle": "Add Set",
@@ -53,7 +54,6 @@
     "incline": "Incline (%)",
     "durationMin": "Duration (min)"
   },
-
   "summary": {
     "title": "Workout complete!",
     "duration": "Duration",
@@ -63,7 +63,6 @@
     "notesPlaceholder": "How did it feel?",
     "close": "Done"
   },
-
   "kpi": {
     "total": "Workouts",
     "totalSub": "Total completed",
@@ -74,7 +73,6 @@
     "streak": "Streak",
     "streakSub": "Consecutive days"
   },
-
   "charts": {
     "exercisesTitle": "Exercises & Sets per session",
     "exercises": "Exercises",
@@ -82,7 +80,6 @@
     "durationTitle": "Session duration",
     "duration": "Minutes"
   },
-
   "progress": {
     "title": "Exercise progression",
     "subtitle": "Select a muscle group and exercise to see your evolution",
@@ -93,5 +90,19 @@
     "reps": "Reps",
     "distance": "Distance (km)",
     "speed": "Avg. speed (km/h)"
+  },
+  "body": {
+    "title": "Body Measurements",
+    "subtitle": "Track your weight and body composition",
+    "addTitle": "New Measurement",
+    "weight": "Weight",
+    "fat": "Body fat %",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g. Morning, fasted",
+    "currentWeight": "Current weight",
+    "currentFat": "Body fat",
+    "change": "Change",
+    "empty": "No measurements yet — add your first one",
+    "needMore": "Add at least 2 measurements to see the chart"
   }
 }

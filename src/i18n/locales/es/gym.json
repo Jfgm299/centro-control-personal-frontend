@@ -1,19 +1,23 @@
 {
   "title": "Workout Tracking",
   "subtitle": "Monitoriza tu progreso y alcanza tus objetivos",
-
   "common": {
     "cancel": "Cancelar",
     "add": "Añadir",
     "save": "Guardar",
-    "saving": "Guardando…"
+    "saving": "Guardando…",
+    "confirm": "Confirmar"
   },
-
   "muscles": {
-    "Chest": "Pecho", "Back": "Espalda", "Biceps": "Bíceps", "Triceps": "Tríceps",
-    "Core": "Core", "Abs": "Abdominales", "Shoulders": "Hombros", "Legs": "Piernas"
+    "Chest": "Pecho",
+    "Back": "Espalda",
+    "Biceps": "Bíceps",
+    "Triceps": "Tríceps",
+    "Core": "Core",
+    "Abs": "Abdominales",
+    "Shoulders": "Hombros",
+    "Legs": "Piernas"
   },
-
   "start": {
     "cta": "Nuevo entrenamiento",
     "title": "Iniciar entrenamiento",
@@ -23,7 +27,6 @@
     "notesPlaceholder": "Ej. Centrarme en la técnica",
     "begin": "Comenzar"
   },
-
   "active": {
     "title": "Entrenamiento en curso",
     "inProgress": "En directo",
@@ -31,7 +34,6 @@
     "noExercises": "Sin ejercicios todavía — añade el primero",
     "finish": "Finalizar entrenamiento"
   },
-
   "exercise": {
     "add": "Añadir ejercicio",
     "addTitle": "Nuevo ejercicio",
@@ -41,7 +43,6 @@
     "typeWeights": "Pesas",
     "typeCardio": "Cardio"
   },
-
   "set": {
     "add": "Serie",
     "addTitle": "Añadir serie",
@@ -53,7 +54,6 @@
     "incline": "Inclinación (%)",
     "durationMin": "Duración (min)"
   },
-
   "summary": {
     "title": "¡Entrenamiento completado!",
     "duration": "Duración",
@@ -63,7 +63,6 @@
     "notesPlaceholder": "¿Cómo ha ido?",
     "close": "Listo"
   },
-
   "kpi": {
     "total": "Entrenos",
     "totalSub": "Total completados",
@@ -74,7 +73,6 @@
     "streak": "Racha",
     "streakSub": "Días consecutivos"
   },
-
   "charts": {
     "exercisesTitle": "Ejercicios y series por sesión",
     "exercises": "Ejercicios",
@@ -82,7 +80,6 @@
     "durationTitle": "Duración de la sesión",
     "duration": "Minutos"
   },
-
   "progress": {
     "title": "Progresión de ejercicios",
     "subtitle": "Selecciona un grupo muscular y ejercicio para ver tu evolución",
@@ -93,5 +90,19 @@
     "reps": "Repeticiones",
     "distance": "Distancia (km)",
     "speed": "Velocidad media (km/h)"
+  },
+  "body": {
+    "title": "Mediciones corporales",
+    "subtitle": "Controla tu peso y composición corporal",
+    "addTitle": "Nueva medición",
+    "weight": "Peso",
+    "fat": "% grasa corporal",
+    "notes": "Notas",
+    "notesPlaceholder": "Ej. Por la mañana, en ayunas",
+    "currentWeight": "Peso actual",
+    "currentFat": "Grasa corporal",
+    "change": "Variación",
+    "empty": "Sin mediciones todavía — añade la primera",
+    "needMore": "Añade al menos 2 mediciones para ver la gráfica"
   }
 }
