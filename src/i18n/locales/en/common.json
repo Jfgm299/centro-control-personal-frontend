@@ -1,0 +1,29 @@
+{
+  "nav": {
+    "home": "Home",
+    "gym": "Gym",
+    "expenses": "Expenses",
+    "flights": "Flights"
+  },
+  "actions": {
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "confirm": "Confirm"
+  },
+  "status": {
+    "loading": "Loading modules...",
+    "error": "Error loading",
+    "empty": "No data"
+  },
+  "settings": {
+    "language": "Language",
+    "logout": "Log out"
+  }
+}

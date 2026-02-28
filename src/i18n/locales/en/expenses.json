@@ -1,0 +1,49 @@
+{
+  "title": "Expense Control",
+  "subtitle": "Manage your personal finances",
+  "kpi": {
+    "totalSpend": "Total Spend",
+    "allTime": "All time",
+    "avgPerDay": "Avg / Day",
+    "avgPerDaySub": "Avg on days with expenses",
+    "transactions": "Transactions",
+    "transactionsSub": "Total recorded",
+    "topAccount": "Top Account",
+    "topAccountSub": "By total spend"
+  },
+  "filter": {
+    "backToMonth": "Back to"
+  },
+  "chart": {
+    "monthlyTitle": "Monthly Spending by Account",
+    "weeklyTitle": "Weekly Breakdown",
+    "clickToDrilldown": "Click a bar to see weekly detail",
+    "accountBreakdown": "Account Breakdown",
+    "accountBreakdownMonth": "Account Breakdown (month)",
+    "accountBreakdownSub": "Spending distribution"
+  },
+  "list": {
+    "title": "Recent Expenses",
+    "empty": "No expenses found for this period.",
+    "create": "New expense",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Confirm"
+  },
+  "modal": {
+    "titleCreate": "New expense",
+    "titleEdit": "Edit expense",
+    "name": "Description",
+    "namePlaceholder": "e.g. Groceries",
+    "quantity": "Amount",
+    "account": "Account",
+    "cancel": "Cancel",
+    "save": "Save changes",
+    "create": "Create",
+    "saving": "Saving…",
+    "errorGeneric": "Something went wrong"
+  },
+  "error": {
+    "title": "Could not load expenses"
+  }
+}

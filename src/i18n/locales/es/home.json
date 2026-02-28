@@ -1,0 +1,17 @@
+{
+  "welcome": {
+    "title": "Bienvenido",
+    "subtitle": "¿Qué quieres hacer hoy?"
+  },
+  "modules": {
+    "gym": {
+      "description": "Seguimiento de entrenamientos"
+    },
+    "expenses": {
+      "description": "Control de gastos personales"
+    },
+    "flights": {
+      "description": "Registro y tracking de vuelos"
+    }
+  }
+}

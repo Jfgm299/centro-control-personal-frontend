@@ -1,0 +1,49 @@
+{
+  "title": "Control de Gastos",
+  "subtitle": "Gestiona tus finanzas personales",
+  "kpi": {
+    "totalSpend": "Gasto Total",
+    "allTime": "Todo el tiempo",
+    "avgPerDay": "Media / Día",
+    "avgPerDaySub": "Media en días con gastos",
+    "transactions": "Transacciones",
+    "transactionsSub": "Total registradas",
+    "topAccount": "Cuenta Principal",
+    "topAccountSub": "Por gasto total"
+  },
+  "filter": {
+    "backToMonth": "Volver a"
+  },
+  "chart": {
+    "monthlyTitle": "Gasto Mensual por Cuenta",
+    "weeklyTitle": "Desglose Semanal",
+    "clickToDrilldown": "Haz clic en una barra para ver el detalle semanal",
+    "accountBreakdown": "Desglose por Cuenta",
+    "accountBreakdownMonth": "Desglose por Cuenta (mes)",
+    "accountBreakdownSub": "Distribución del gasto"
+  },
+  "list": {
+    "title": "Gastos Recientes",
+    "empty": "No hay gastos para este período.",
+    "create": "Nuevo gasto",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirmDelete": "Confirmar"
+  },
+  "modal": {
+    "titleCreate": "Nuevo gasto",
+    "titleEdit": "Editar gasto",
+    "name": "Descripción",
+    "namePlaceholder": "Ej. Supermercado",
+    "quantity": "Importe",
+    "account": "Cuenta",
+    "cancel": "Cancelar",
+    "save": "Guardar cambios",
+    "create": "Crear",
+    "saving": "Guardando…",
+    "errorGeneric": "Algo ha ido mal"
+  },
+  "error": {
+    "title": "No se pudieron cargar los gastos"
+  }
+}
