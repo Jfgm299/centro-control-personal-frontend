@@ -102,7 +102,7 @@ export default function NutrientEvolutionChart() {
               onClick={() => setDays(d)}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 days === d
-                  ? 'bg-[#f59e0b] text-black'
+                  ? 'bg-slate-900 text-white'
                   : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
               }`}
             >

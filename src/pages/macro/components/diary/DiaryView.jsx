@@ -10,10 +10,15 @@ function formatDate(dateStr) {
   })
 }
 
+// Devuelve YYYY-MM-DD en hora local (evita bug de zona horaria con toISOString)
+function toLocalISO(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function addDays(dateStr, n) {
   const d = new Date(dateStr + 'T00:00:00')
   d.setDate(d.getDate() + n)
-  return d.toISOString().split('T')[0]
+  return toLocalISO(d)
 }
 
 function DailyProgress({ totals, goals }) {
@@ -60,9 +65,9 @@ export default function DiaryView({ date, onDateChange }) {
   const { data: summary, isLoading } = useDailySummary(date)
   const { data: goals }              = useMacroGoals()
 
-  const today      = new Date().toISOString().split('T')[0]
-  const isToday    = date === today
-  const isFuture   = date > today
+  const today   = toLocalISO(new Date())   // ← hora local, no UTC
+  const isToday  = date === today
+  const isFuture = date > today
 
   const mealMap = {}
   summary?.meals?.forEach((meal) => {
@@ -83,7 +88,7 @@ export default function DiaryView({ date, onDateChange }) {
         <div className="flex-1 text-center">
           <p className="text-gray-800 text-sm font-semibold capitalize">{formatDate(date)}</p>
           {isToday && (
-            <span className="text-[#f59e0b] text-xs font-medium">{t('diary.today')}</span>
+            <span className="text-xs font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{t('diary.today')}</span>
           )}
         </div>
 
@@ -98,7 +103,7 @@ export default function DiaryView({ date, onDateChange }) {
         {!isToday && (
           <button
             onClick={() => onDateChange(today)}
-            className="text-xs text-[#f59e0b] hover:text-[#d97706] font-medium transition-colors"
+            className="text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition-colors"
           >
             {t('diary.today')}
           </button>

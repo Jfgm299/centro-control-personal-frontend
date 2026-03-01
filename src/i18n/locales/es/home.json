@@ -12,6 +12,9 @@
     },
     "flights": {
       "description": "Registro y tracking de vuelos"
+    },
+    "macro": {
+      "description": "Seguimiento de macronutrientes"
     }
   }
 }

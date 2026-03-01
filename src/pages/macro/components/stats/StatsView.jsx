@@ -47,7 +47,7 @@ export default function StatsView() {
               onClick={() => setDays(d)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 days === d
-                  ? 'bg-[#f59e0b] text-black'
+                  ? 'bg-slate-900 text-white'
                   : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
               }`}
             >
@@ -57,7 +57,7 @@ export default function StatsView() {
         </div>
         <button
           onClick={() => setGoalsOpen(true)}
-          className="text-xs text-gray-400 hover:text-[#f59e0b] transition-colors flex items-center gap-1"
+          className="text-xs font-medium text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition-colors flex items-center gap-1"
         >
           🎯 {t('stats.editGoals')}
         </button>

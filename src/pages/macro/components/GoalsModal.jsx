@@ -6,9 +6,9 @@ import { NUTRIENT_COLORS }      from '../constants'
 const FIELDS = [
   { key: 'energy_kcal',     label: 'kcal',   unit: 'kcal', color: NUTRIENT_COLORS.energy_kcal,     min: 500,  max: 5000, step: 50  },
   { key: 'proteins_g',      label: 'Prot',   unit: 'g',    color: NUTRIENT_COLORS.proteins_g,      min: 10,   max: 300,   step: 5   },
-  { key: 'carbohydrates_g', label: 'Carbs',  unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 300,  step: 5   },
-  { key: 'fat_g',           label: 'Grasas', unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 200,   step: 5   },
-  { key: 'fiber_g',         label: 'Fibra',  unit: 'g',    color: NUTRIENT_COLORS.fiber_g,         min: 0,    max: 100,   step: 1   },
+  { key: 'carbohydrates_g', label: 'Carbs',  unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 500,  step: 5   },
+  { key: 'fat_g',           label: 'Grasas', unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 500,   step: 5   },
+  { key: 'fiber_g',         label: 'Fibra',  unit: 'g',    color: NUTRIENT_COLORS.fiber_g,         min: 0,    max: 80,   step: 1   },
 ]
 
 export default function GoalsModal({ onClose }) {
@@ -98,7 +98,7 @@ export default function GoalsModal({ onClose }) {
           <button
             onClick={handleSave}
             disabled={upsert.isPending}
-            className="flex-1 py-2.5 rounded-xl bg-[#f59e0b] text-black text-sm font-semibold hover:bg-[#d97706] disabled:opacity-50 transition-colors"
+            className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 disabled:opacity-50 transition-colors"
           >
             {upsert.isPending ? t('common.saving') : t('common.save')}
           </button>

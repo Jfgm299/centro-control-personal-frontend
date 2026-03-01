@@ -179,7 +179,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             <button
               onClick={handleSearch}
               disabled={searching}
-              className="px-4 py-2 bg-[#f59e0b] text-black text-sm font-semibold rounded-lg hover:bg-[#d97706] transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50"
             >
               {searching ? '…' : t('add.search')}
             </button>
@@ -297,7 +297,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             <button
               onClick={handleConfirm}
               disabled={addEntry.isPending || !amountG || parseFloat(amountG) <= 0}
-              className="flex-1 py-2 rounded-lg bg-[#f59e0b] text-black text-sm font-semibold hover:bg-[#d97706] disabled:opacity-50 transition-colors"
+              className="flex-1 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 disabled:opacity-50 transition-colors"
             >
               {addEntry.isPending ? t('common.saving') : t('add.addToDiary')}
             </button>
