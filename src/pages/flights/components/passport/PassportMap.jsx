@@ -123,7 +123,7 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
       <div ref={containerRef} style={{ position: 'relative', height: 650, overflow: 'hidden' }}>
         <ComposableMap
           projection="geoNaturalEarth1"
-          projectionConfig={{ scale: 140, center: [70, -90] }}
+          projectionConfig={{ scale: 140, center: [50, -90] }}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         >
           <ZoomableGroup
