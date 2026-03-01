@@ -1,4 +1,75 @@
 {
   "title": "Macro Tracker",
-  "subtitle": "Registra tu nutrición y macronutrientes diarios"
+  "subtitle": "Registra tu nutrición diaria",
+
+  "tabs": {
+    "diary": "Diario",
+    "stats": "Estadísticas"
+  },
+
+  "meals": {
+    "breakfast":       "Desayuno",
+    "morning_snack":   "Media mañana",
+    "lunch":           "Almuerzo",
+    "afternoon_snack": "Merienda",
+    "dinner":          "Cena",
+    "other":           "Otro"
+  },
+
+  "nutrients": {
+    "energy_kcal":     "Calorías",
+    "proteins_g":      "Proteínas",
+    "carbohydrates_g": "Carbohidratos",
+    "fat_g":           "Grasas",
+    "fiber_g":         "Fibra"
+  },
+
+  "diary": {
+    "today": "Hoy"
+  },
+
+  "add": {
+    "title":           "Añadir producto",
+    "addProduct":      "Añadir alimento",
+    "uploadPrompt":    "Sube o arrastra una foto del código de barras",
+    "uploadHint":      "JPG, PNG · Se escanea automáticamente",
+    "decoding":        "Leyendo código de barras…",
+    "searchFallback":  "Código no encontrado. Busca por nombre:",
+    "searchPlaceholder": "Ej: arroz integral, leche semidesnatada…",
+    "search":          "Buscar",
+    "backToUpload":    "Subir otra foto",
+    "per100g":         "por 100g",
+    "amount":          "Cantidad",
+    "addToDiary":      "Añadir al diario",
+    "error": {
+      "noBarcode":      "No se detectó ningún código de barras en la imagen",
+      "imageLoad":      "No se pudo cargar la imagen",
+      "unknown":        "Error inesperado. Inténtalo de nuevo.",
+      "productNotFound": "Producto no encontrado. Busca por nombre."
+    }
+  },
+
+  "goals": {
+    "title": "Mis objetivos diarios"
+  },
+
+  "stats": {
+    "dailyAvg":    "Media diaria",
+    "evolution":   "Evolución de nutrientes",
+    "topProducts": "Productos más frecuentes",
+    "editGoals":   "Editar objetivos",
+    "daysLogged":  "Días registrados",
+    "consistency": "Consistencia",
+    "totalEntries":"Entradas totales",
+    "noData":      "Sin datos para este período"
+  },
+
+  "common": {
+    "loading": "Cargando…",
+    "save":    "Guardar",
+    "cancel":  "Cancelar",
+    "delete":  "Eliminar",
+    "confirm": "¿Confirmar?",
+    "saving":  "Guardando…"
+  }
 }
