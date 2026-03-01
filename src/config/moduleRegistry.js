@@ -31,6 +31,14 @@ const MODULE_REGISTRY = {
     color: '#38bdf8',
     descriptionKey: 'home:modules.flights.description',
   },
+  macro_tracker: {
+    id: 'macro_tracker',
+    labelKey: 'nav.macro',
+    icon: '📊',
+    path: '/macro',
+    color: '#8b5cf6',
+    descriptionKey: 'home:modules.macro.description',
+  },
 }
 
 export default MODULE_REGISTRY
