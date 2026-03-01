@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer,
+  Tooltip, ResponsiveContainer,
 } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import { useDiaryEntries }  from '../../hooks/useDiaryEntries'
@@ -48,8 +48,8 @@ const PERIOD_OPTIONS = [7, 14, 30, 90]
 export default function NutrientEvolutionChart() {
   const { t } = useTranslation('macro')
 
-  const [days, setDays]               = useState(30)
-  const [activeNutrients, setActive]  = useState(
+  const [days, setDays]              = useState(30)
+  const [activeNutrients, setActive] = useState(
     new Set(['energy_kcal', 'proteins_g', 'carbohydrates_g', 'fat_g'])
   )
 
@@ -64,7 +64,7 @@ export default function NutrientEvolutionChart() {
     setActive((prev) => {
       const next = new Set(prev)
       if (next.has(key)) {
-        if (next.size === 1) return prev   // keep at least one
+        if (next.size === 1) return prev
         next.delete(key)
       } else {
         next.add(key)
@@ -76,12 +76,12 @@ export default function NutrientEvolutionChart() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null
     return (
-      <div className="bg-[#0a0520] border border-white/10 rounded-xl p-3 shadow-xl text-xs space-y-1">
-        <p className="text-white/50 mb-2">{formatDateShort(label)}</p>
+      <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-lg text-xs space-y-1">
+        <p className="text-gray-400 mb-2">{formatDateShort(label)}</p>
         {payload.map((p) => (
           <div key={p.dataKey} className="flex justify-between gap-4">
             <span style={{ color: p.color }}>{t(`nutrients.${p.dataKey}`)}</span>
-            <span className="text-white font-semibold">
+            <span className="text-gray-700 font-semibold">
               {Math.round(p.value)} {NUTRIENT_UNITS[p.dataKey]}
             </span>
           </div>
@@ -94,7 +94,7 @@ export default function NutrientEvolutionChart() {
     <div className="space-y-4">
       {/* Header + period picker */}
       <div className="flex items-center justify-between">
-        <h3 className="text-white/80 text-sm font-semibold">{t('stats.evolution')}</h3>
+        <h3 className="text-gray-600 text-sm font-semibold">{t('stats.evolution')}</h3>
         <div className="flex gap-1">
           {PERIOD_OPTIONS.map((d) => (
             <button
@@ -103,7 +103,7 @@ export default function NutrientEvolutionChart() {
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 days === d
                   ? 'bg-[#f59e0b] text-black'
-                  : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/70'
+                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
               }`}
             >
               {d}d
@@ -123,7 +123,7 @@ export default function NutrientEvolutionChart() {
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                 active
                   ? 'border-transparent text-black'
-                  : 'border-white/10 text-white/30 bg-transparent hover:border-white/20'
+                  : 'border-gray-200 text-gray-400 bg-transparent hover:border-gray-300'
               }`}
               style={active ? { background: NUTRIENT_COLORS[key] } : {}}
             >
@@ -135,27 +135,27 @@ export default function NutrientEvolutionChart() {
 
       {/* Chart */}
       {isLoading ? (
-        <div className="flex items-center justify-center h-48 text-white/30 text-sm">
+        <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
           {t('common.loading')}
         </div>
       ) : chartData.length === 0 ? (
-        <div className="flex items-center justify-center h-48 text-white/20 text-sm">
+        <div className="flex items-center justify-center h-48 text-gray-300 text-sm">
           {t('stats.noData')}
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
+            <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={formatDateShort}
-              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+              tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+              tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
             />

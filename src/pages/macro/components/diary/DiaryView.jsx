@@ -30,14 +30,14 @@ function DailyProgress({ totals, goals }) {
         const pct = goal > 0 ? Math.min((current / goal) * 100, 100) : 0
         const over = goal > 0 && current > goal
         return (
-          <div key={key} className="bg-white/[0.04] rounded-xl p-3">
+          <div key={key} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
             <div className="flex justify-between items-baseline mb-1.5">
               <span className="text-xs font-bold" style={{ color }}>{label}</span>
-              <span className={`text-xs ${over ? 'text-red-400' : 'text-white/40'}`}>
+              <span className={`text-xs font-semibold ${over ? 'text-red-500' : 'text-gray-600'}`}>
                 {Math.round(current)}{unit}
               </span>
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
@@ -46,7 +46,7 @@ function DailyProgress({ totals, goals }) {
                 }}
               />
             </div>
-            <p className="text-white/25 text-xs mt-1 text-right">{Math.round(goal)}{unit}</p>
+            <p className="text-gray-400 text-xs mt-1 text-right">{Math.round(goal)}{unit}</p>
           </div>
         )
       })}
@@ -64,7 +64,6 @@ export default function DiaryView({ date, onDateChange }) {
   const isToday    = date === today
   const isFuture   = date > today
 
-  // Build a map: mealType → entries[]
   const mealMap = {}
   summary?.meals?.forEach((meal) => {
     mealMap[meal.meal_type] = meal.entries
@@ -76,22 +75,22 @@ export default function DiaryView({ date, onDateChange }) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => onDateChange(addDays(date, -1))}
-          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 transition-colors flex items-center justify-center"
+          className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors flex items-center justify-center"
         >
           ‹
         </button>
 
         <div className="flex-1 text-center">
-          <p className="text-white/90 text-sm font-semibold capitalize">{formatDate(date)}</p>
+          <p className="text-gray-800 text-sm font-semibold capitalize">{formatDate(date)}</p>
           {isToday && (
-            <span className="text-[#f59e0b] text-xs">{t('diary.today')}</span>
+            <span className="text-[#f59e0b] text-xs font-medium">{t('diary.today')}</span>
           )}
         </div>
 
         <button
           onClick={() => onDateChange(addDays(date, 1))}
           disabled={isToday || isFuture}
-          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
         >
           ›
         </button>
@@ -99,7 +98,7 @@ export default function DiaryView({ date, onDateChange }) {
         {!isToday && (
           <button
             onClick={() => onDateChange(today)}
-            className="text-xs text-[#f59e0b] hover:text-[#d97706] transition-colors"
+            className="text-xs text-[#f59e0b] hover:text-[#d97706] font-medium transition-colors"
           >
             {t('diary.today')}
           </button>
@@ -114,7 +113,7 @@ export default function DiaryView({ date, onDateChange }) {
       {/* Meal sections */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="text-white/30 text-sm">{t('common.loading')}</div>
+          <div className="text-gray-400 text-sm">{t('common.loading')}</div>
         </div>
       ) : (
         <div className="space-y-2">

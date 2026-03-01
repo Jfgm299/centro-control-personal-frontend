@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import api from '../../../../services/api'
 import { useBarcodeFromImage } from '../../hooks/useBarcodeFromImage'
 import { useAddDiaryEntry } from '../../hooks/useDiaryMutations'
-import { MEAL_TYPES, NUTRISCORE_COLORS } from '../../constants'
+import { NUTRISCORE_COLORS } from '../../constants'
 
 const STEP = { UPLOAD: 'upload', LOADING: 'loading', CONFIRM: 'confirm', SEARCH: 'search' }
 
@@ -30,7 +30,6 @@ export default function AddProductFlow({ mealType, date, onClose }) {
   const [searching, setSearching] = useState(false)
   const [dragOver, setDragOver] = useState(false)
 
-  // ── Step 1: image → barcode ───────────────────────────────────────────────
   async function handleFile(file) {
     if (!file || !file.type.startsWith('image/')) return
     setError(null)
@@ -45,7 +44,6 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     }
   }
 
-  // ── Lookup product by barcode ─────────────────────────────────────────────
   async function fetchProductByBarcode(barcode) {
     setStep(STEP.LOADING)
     try {
@@ -66,7 +64,6 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     }
   }
 
-  // ── Search by name ────────────────────────────────────────────────────────
   async function handleSearch() {
     if (!searchQ.trim()) return
     setSearching(true)
@@ -89,7 +86,6 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     setStep(STEP.CONFIRM)
   }
 
-  // ── Step 3: confirm + POST ────────────────────────────────────────────────
   async function handleConfirm() {
     const amount = parseFloat(amountG)
     if (!product || isNaN(amount) || amount <= 0) return
@@ -106,7 +102,6 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     }
   }
 
-  // ── Drag & drop ───────────────────────────────────────────────────────────
   const onDrop = (e) => {
     e.preventDefault()
     setDragOver(false)
@@ -114,33 +109,32 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     if (file) handleFile(file)
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   const fmt = (v, d = 1) => (v == null ? '—' : Number(v).toFixed(d))
   const nsColor = product?.nutriscore
-    ? NUTRISCORE_COLORS[product.nutriscore.toLowerCase()] ?? '#6b7280'
-    : '#6b7280'
+    ? NUTRISCORE_COLORS[product.nutriscore.toLowerCase()] ?? '#9ca3af'
+    : '#9ca3af'
 
   return (
-    <div className="bg-[#1a0a3a] border border-white/10 rounded-xl p-4 mt-2 space-y-4">
+    <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-2 space-y-4">
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <span className="text-white/70 text-sm font-medium">{t('add.title')}</span>
-        <button onClick={onClose} className="text-white/30 hover:text-white/60 text-lg leading-none">×</button>
+        <span className="text-gray-600 text-sm font-medium">{t('add.title')}</span>
+        <button onClick={onClose} className="text-gray-300 hover:text-gray-500 text-lg leading-none">×</button>
       </div>
 
       {/* Error banner */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-red-400 text-xs">
+        <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-red-500 text-xs">
           {error}
         </div>
       )}
 
-      {/* ── STEP: UPLOAD ─────────────────────────────────────────────────── */}
+      {/* STEP: UPLOAD */}
       {(step === STEP.UPLOAD || step === STEP.LOADING) && (
         <div
           className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-            dragOver ? 'border-[#f59e0b] bg-[#f59e0b]/5' : 'border-white/20 hover:border-white/40'
+            dragOver ? 'border-[#f59e0b] bg-amber-50' : 'border-gray-300 hover:border-gray-400'
           } ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
@@ -157,22 +151,22 @@ export default function AddProductFlow({ mealType, date, onClose }) {
           {step === STEP.LOADING ? (
             <div className="space-y-2">
               <div className="text-2xl animate-spin inline-block">⟳</div>
-              <p className="text-white/50 text-sm">{t('add.decoding')}</p>
+              <p className="text-gray-400 text-sm">{t('add.decoding')}</p>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="text-3xl">📷</div>
-              <p className="text-white/70 text-sm font-medium">{t('add.uploadPrompt')}</p>
-              <p className="text-white/30 text-xs">{t('add.uploadHint')}</p>
+              <p className="text-gray-600 text-sm font-medium">{t('add.uploadPrompt')}</p>
+              <p className="text-gray-400 text-xs">{t('add.uploadHint')}</p>
             </div>
           )}
         </div>
       )}
 
-      {/* ── STEP: SEARCH (barcode not found fallback) ─────────────────────── */}
+      {/* STEP: SEARCH */}
       {step === STEP.SEARCH && (
         <div className="space-y-3">
-          <p className="text-white/50 text-xs">{t('add.searchFallback')}</p>
+          <p className="text-gray-500 text-xs">{t('add.searchFallback')}</p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -180,7 +174,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
               onChange={(e) => setSearchQ(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={t('add.searchPlaceholder')}
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder-white/30 outline-none focus:border-white/30"
+              className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm placeholder-gray-400 outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]"
             />
             <button
               onClick={handleSearch}
@@ -197,20 +191,20 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                 <button
                   key={p.id}
                   onClick={() => selectProduct(p)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 text-left transition-colors"
                 >
-                  <div className="w-8 h-8 rounded bg-white/10 overflow-hidden flex-shrink-0">
+                  <div className="w-8 h-8 rounded bg-gray-100 overflow-hidden flex-shrink-0">
                     {p.image_url
                       ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-cover" />
-                      : <span className="w-full h-full flex items-center justify-center text-white/20 text-xs">🍽</span>
+                      : <span className="w-full h-full flex items-center justify-center text-gray-300 text-xs">🍽</span>
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white/90 text-sm truncate">{p.product_name}</p>
-                    {p.brand && <p className="text-white/35 text-xs truncate">{p.brand}</p>}
+                    <p className="text-gray-800 text-sm truncate">{p.product_name}</p>
+                    {p.brand && <p className="text-gray-400 text-xs truncate">{p.brand}</p>}
                   </div>
                   {p.energy_kcal_100g != null && (
-                    <span className="text-[#f59e0b] text-xs flex-shrink-0">
+                    <span className="text-[#f59e0b] text-xs font-semibold flex-shrink-0">
                       {Math.round(p.energy_kcal_100g)} kcal
                     </span>
                   )}
@@ -221,18 +215,18 @@ export default function AddProductFlow({ mealType, date, onClose }) {
 
           <button
             onClick={() => { setStep(STEP.UPLOAD); setError(null) }}
-            className="text-white/30 hover:text-white/60 text-xs"
+            className="text-gray-400 hover:text-gray-600 text-xs"
           >
             ← {t('add.backToUpload')}
           </button>
         </div>
       )}
 
-      {/* ── STEP: CONFIRM ────────────────────────────────────────────────── */}
+      {/* STEP: CONFIRM */}
       {step === STEP.CONFIRM && product && (
         <div className="space-y-4">
           {/* Product card */}
-          <div className="flex gap-3 bg-white/5 rounded-xl p-3">
+          <div className="flex gap-3 bg-white border border-gray-200 rounded-xl p-3">
             {product.image_url && (
               <img
                 src={product.image_url}
@@ -242,7 +236,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-start gap-2">
-                <p className="text-white/90 text-sm font-semibold flex-1 leading-tight">{product.product_name}</p>
+                <p className="text-gray-800 text-sm font-semibold flex-1 leading-tight">{product.product_name}</p>
                 {product.nutriscore && (
                   <span
                     className="text-white text-xs font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0"
@@ -252,9 +246,8 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                   </span>
                 )}
               </div>
-              {product.brand && <p className="text-white/40 text-xs mt-0.5">{product.brand}</p>}
+              {product.brand && <p className="text-gray-400 text-xs mt-0.5">{product.brand}</p>}
 
-              {/* Macros per 100g */}
               <div className="flex gap-3 mt-2">
                 {[
                   { label: 'kcal', value: fmt(product.energy_kcal_100g, 0), color: '#f59e0b' },
@@ -264,17 +257,17 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                 ].map(({ label, value, color }) => (
                   <div key={label} className="text-center">
                     <p className="text-xs font-semibold" style={{ color }}>{value}</p>
-                    <p className="text-white/30 text-xs">{label}</p>
+                    <p className="text-gray-400 text-xs">{label}</p>
                   </div>
                 ))}
               </div>
-              <p className="text-white/25 text-xs mt-1">{t('add.per100g')}</p>
+              <p className="text-gray-300 text-xs mt-1">{t('add.per100g')}</p>
             </div>
           </div>
 
           {/* Amount input */}
           <div className="flex items-center gap-3">
-            <label className="text-white/60 text-sm flex-shrink-0">{t('add.amount')}</label>
+            <label className="text-gray-500 text-sm flex-shrink-0">{t('add.amount')}</label>
             <input
               type="number"
               min="1"
@@ -282,40 +275,22 @@ export default function AddProductFlow({ mealType, date, onClose }) {
               step="1"
               value={amountG}
               onChange={(e) => setAmountG(e.target.value)}
-              className="w-24 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm text-center outline-none focus:border-white/30"
+              className="w-24 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 text-sm text-center outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]"
             />
-            <span className="text-white/40 text-sm">g</span>
+            <span className="text-gray-400 text-sm">g</span>
 
-            {/* Calculated kcal preview */}
             {product.energy_kcal_100g != null && parseFloat(amountG) > 0 && (
-              <span className="text-[#f59e0b] text-sm ml-auto">
+              <span className="text-[#f59e0b] text-sm font-semibold ml-auto">
                 ≈ {Math.round(product.energy_kcal_100g * parseFloat(amountG) / 100)} kcal
               </span>
             )}
-          </div>
-
-          {/* Meal selector */}
-          <div className="flex flex-wrap gap-2">
-            {MEAL_TYPES.map((m) => (
-              <button
-                key={m.key}
-                onClick={() => setSelectedMeal(m.key)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  selectedMeal === m.key
-                    ? 'bg-[#f59e0b] text-black'
-                    : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80'
-                }`}
-              >
-                {m.icon}
-              </button>
-            ))}
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 pt-1">
             <button
               onClick={() => { setStep(STEP.UPLOAD); setProduct(null); setError(null) }}
-              className="flex-1 py-2 rounded-lg border border-white/10 text-white/50 text-sm hover:bg-white/5 transition-colors"
+              className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-500 text-sm hover:bg-gray-50 transition-colors"
             >
               {t('common.cancel')}
             </button>

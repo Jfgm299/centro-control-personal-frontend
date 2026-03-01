@@ -1,7 +1,3 @@
-/**
- * NutrientGauge — gauge circular SVG que muestra consumo vs meta diaria.
- * No depende de ninguna librería externa: SVG puro.
- */
 export default function NutrientGauge({ label, current, goal, color, unit = 'g' }) {
   const SIZE   = 88
   const STROKE = 7
@@ -26,7 +22,7 @@ export default function NutrientGauge({ label, current, goal, color, unit = 'g' 
           <circle
             cx={SIZE / 2} cy={SIZE / 2} r={R}
             fill="none"
-            stroke="rgba(255,255,255,0.07)"
+            stroke="rgba(0,0,0,0.08)"
             strokeWidth={STROKE}
           />
           {/* Progress */}
@@ -51,17 +47,17 @@ export default function NutrientGauge({ label, current, goal, color, unit = 'g' 
             lineHeight: 1.1,
           }}
         >
-          <span className="text-sm font-bold text-white" style={{ color: fillColor }}>
+          <span className="text-sm font-bold" style={{ color: fillColor }}>
             {fmtVal(current)}
           </span>
-          <span className="text-white/30 text-xs">{unit}</span>
+          <span className="text-gray-400 text-xs">{unit}</span>
         </div>
       </div>
 
       {/* Label + goal */}
       <div className="text-center">
-        <p className="text-white/80 text-xs font-semibold">{label}</p>
-        <p className="text-white/25 text-xs">/ {fmtVal(goal)}{unit}</p>
+        <p className="text-gray-700 text-xs font-semibold">{label}</p>
+        <p className="text-gray-300 text-xs">/ {fmtVal(goal)}{unit}</p>
       </div>
     </div>
   )

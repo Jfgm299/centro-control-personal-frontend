@@ -16,7 +16,7 @@ export default function ProductRow({ entry, date }) {
   const { product } = entry
 
   const nutriscore = product.nutriscore?.toLowerCase()
-  const nsColor    = NUTRISCORE_COLORS[nutriscore] ?? '#6b7280'
+  const nsColor    = NUTRISCORE_COLORS[nutriscore] ?? '#9ca3af'
 
   const handleDelete = () => {
     if (!confirm) { setConfirm(true); return }
@@ -25,11 +25,11 @@ export default function ProductRow({ entry, date }) {
 
   return (
     <div
-      className="group flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
-      style={{ borderLeft: '2px solid rgba(255,255,255,0.05)' }}
+      className="group flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+      style={{ borderLeft: '2px solid rgba(0,0,0,0.06)' }}
     >
       {/* Product image or placeholder */}
-      <div className="w-7 h-7 rounded flex-shrink-0 overflow-hidden bg-white/10 flex items-center justify-center">
+      <div className="w-7 h-7 rounded flex-shrink-0 overflow-hidden bg-gray-100 flex items-center justify-center">
         {product.image_url ? (
           <img
             src={product.image_url}
@@ -38,17 +38,17 @@ export default function ProductRow({ entry, date }) {
             onError={(e) => { e.target.style.display = 'none' }}
           />
         ) : (
-          <span className="text-xs text-white/30">🍽</span>
+          <span className="text-xs text-gray-300">🍽</span>
         )}
       </div>
 
       {/* Name + brand */}
       <div className="flex-1 min-w-0">
-        <span className="text-white/90 text-sm font-medium truncate block leading-tight">
+        <span className="text-gray-800 text-sm font-medium truncate block leading-tight">
           {product.product_name}
         </span>
         {product.brand && (
-          <span className="text-white/35 text-xs truncate block leading-tight">
+          <span className="text-gray-400 text-xs truncate block leading-tight">
             {product.brand}
           </span>
         )}
@@ -65,7 +65,7 @@ export default function ProductRow({ entry, date }) {
       )}
 
       {/* Amount */}
-      <span className="text-white/50 text-xs flex-shrink-0 w-12 text-right">
+      <span className="text-gray-400 text-xs flex-shrink-0 w-12 text-right">
         {entry.amount_g}g
       </span>
 
@@ -81,7 +81,7 @@ export default function ProductRow({ entry, date }) {
       <button
         onClick={handleDelete}
         disabled={del.isPending}
-        className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-white/30 hover:text-red-400 text-xs px-1"
+        className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-gray-300 hover:text-red-400 text-xs px-1"
         title={confirm ? t('common.confirm') : t('common.delete')}
       >
         {confirm ? '✓' : '×'}
@@ -94,7 +94,7 @@ function NutrientPill({ label, value, color }) {
   return (
     <span className="flex items-center gap-0.5 text-xs">
       <span className="font-semibold" style={{ color }}>{value}</span>
-      <span className="text-white/30">{label}</span>
+      <span className="text-gray-400">{label}</span>
     </span>
   )
 }

@@ -4,17 +4,17 @@ import { useMacroGoals, useUpsertGoals } from '../hooks/useMacroGoals'
 import { NUTRIENT_COLORS }      from '../constants'
 
 const FIELDS = [
-  { key: 'energy_kcal',     label: 'kcal',   unit: 'kcal', color: NUTRIENT_COLORS.energy_kcal,     min: 500,  max: 10000, step: 50  },
-  { key: 'proteins_g',      label: 'Prot',   unit: 'g',    color: NUTRIENT_COLORS.proteins_g,      min: 10,   max: 500,   step: 5   },
-  { key: 'carbohydrates_g', label: 'Carbs',  unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 1000,  step: 5   },
-  { key: 'fat_g',           label: 'Grasas', unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 500,   step: 5   },
+  { key: 'energy_kcal',     label: 'kcal',   unit: 'kcal', color: NUTRIENT_COLORS.energy_kcal,     min: 500,  max: 5000, step: 50  },
+  { key: 'proteins_g',      label: 'Prot',   unit: 'g',    color: NUTRIENT_COLORS.proteins_g,      min: 10,   max: 300,   step: 5   },
+  { key: 'carbohydrates_g', label: 'Carbs',  unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 300,  step: 5   },
+  { key: 'fat_g',           label: 'Grasas', unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 200,   step: 5   },
   { key: 'fiber_g',         label: 'Fibra',  unit: 'g',    color: NUTRIENT_COLORS.fiber_g,         min: 0,    max: 100,   step: 1   },
 ]
 
 export default function GoalsModal({ onClose }) {
-  const { t }              = useTranslation('macro')
-  const { data: goals }    = useMacroGoals()
-  const upsert             = useUpsertGoals()
+  const { t }           = useTranslation('macro')
+  const { data: goals } = useMacroGoals()
+  const upsert          = useUpsertGoals()
 
   const [form, setForm] = useState({
     energy_kcal:     2000,
@@ -44,18 +44,17 @@ export default function GoalsModal({ onClose }) {
   }
 
   return (
-    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-[#0f0728] border border-white/10 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-2xl">
+      <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-xl">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-white font-semibold">{t('goals.title')}</h2>
-          <button onClick={onClose} className="text-white/30 hover:text-white/60 text-xl leading-none">×</button>
+          <h2 className="text-gray-800 font-semibold">{t('goals.title')}</h2>
+          <button onClick={onClose} className="text-gray-300 hover:text-gray-500 text-xl leading-none">×</button>
         </div>
 
         {/* Fields */}
@@ -63,11 +62,11 @@ export default function GoalsModal({ onClose }) {
           {FIELDS.map(({ key, label, unit, color, min, max, step }) => (
             <div key={key}>
               <div className="flex justify-between mb-1.5">
-                <label className="text-white/70 text-sm font-medium" style={{ color }}>
+                <label className="text-sm font-medium" style={{ color }}>
                   {label}
                 </label>
-                <span className="text-white/90 text-sm font-semibold">
-                  {form[key]}<span className="text-white/30 text-xs ml-1">{unit}</span>
+                <span className="text-gray-700 text-sm font-semibold">
+                  {form[key]}<span className="text-gray-400 text-xs ml-1">{unit}</span>
                 </span>
               </div>
               <input
@@ -77,10 +76,10 @@ export default function GoalsModal({ onClose }) {
                 step={step}
                 value={form[key] ?? 0}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: Number(e.target.value) }))}
-                className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200"
                 style={{ accentColor: color }}
               />
-              <div className="flex justify-between text-white/20 text-xs mt-0.5">
+              <div className="flex justify-between text-gray-300 text-xs mt-0.5">
                 <span>{min}</span>
                 <span>{max}</span>
               </div>
@@ -92,7 +91,7 @@ export default function GoalsModal({ onClose }) {
         <div className="flex gap-3 pt-1">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/50 text-sm hover:bg-white/5 transition-colors"
+            className="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-500 text-sm hover:bg-gray-50 transition-colors"
           >
             {t('common.cancel')}
           </button>
