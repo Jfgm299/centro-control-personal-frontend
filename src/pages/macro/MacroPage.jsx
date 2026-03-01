@@ -13,6 +13,7 @@ export default function MacroPage() {
   const [date, setDate]           = useState(today)
 
   return (
+    <div className="min-h-screen bg-[#0a0520]">
     <div className="p-4 pb-10 max-w-2xl mx-auto space-y-4">
 
       {/* Page header */}
@@ -45,6 +46,7 @@ export default function MacroPage() {
       {activeTab === 'stats' && (
         <StatsView />
       )}
+    </div>
     </div>
   )
 }

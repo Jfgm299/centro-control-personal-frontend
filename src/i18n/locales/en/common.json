@@ -3,7 +3,8 @@
     "home": "Home",
     "gym": "Gym",
     "expenses": "Expenses",
-    "flights": "Flights"
+    "flights": "Flights",
+    "macro": "Macro"
   },
   "actions": {
     "close": "Close",
