@@ -1,4 +1,75 @@
 {
   "title": "Macro Tracker",
-  "subtitle": "Track your daily nutrition and macronutrients"
+  "subtitle": "Track your daily nutrition",
+
+  "tabs": {
+    "diary": "Diary",
+    "stats": "Statistics"
+  },
+
+  "meals": {
+    "breakfast":       "Breakfast",
+    "morning_snack":   "Morning snack",
+    "lunch":           "Lunch",
+    "afternoon_snack": "Afternoon snack",
+    "dinner":          "Dinner",
+    "other":           "Other"
+  },
+
+  "nutrients": {
+    "energy_kcal":     "Calories",
+    "proteins_g":      "Protein",
+    "carbohydrates_g": "Carbs",
+    "fat_g":           "Fat",
+    "fiber_g":         "Fiber"
+  },
+
+  "diary": {
+    "today": "Today"
+  },
+
+  "add": {
+    "title":           "Add product",
+    "addProduct":      "Add food",
+    "uploadPrompt":    "Upload or drag a photo of the barcode",
+    "uploadHint":      "JPG, PNG · Scanned automatically",
+    "decoding":        "Reading barcode…",
+    "searchFallback":  "Code not found. Search by name:",
+    "searchPlaceholder": "e.g. brown rice, semi-skimmed milk…",
+    "search":          "Search",
+    "backToUpload":    "Upload another photo",
+    "per100g":         "per 100g",
+    "amount":          "Amount",
+    "addToDiary":      "Add to diary",
+    "error": {
+      "noBarcode":      "No barcode detected in the image",
+      "imageLoad":      "Could not load the image",
+      "unknown":        "Unexpected error. Please try again.",
+      "productNotFound": "Product not found. Try searching by name."
+    }
+  },
+
+  "goals": {
+    "title": "My daily goals"
+  },
+
+  "stats": {
+    "dailyAvg":    "Daily average",
+    "evolution":   "Nutrient evolution",
+    "topProducts": "Most frequent products",
+    "editGoals":   "Edit goals",
+    "daysLogged":  "Days logged",
+    "consistency": "Consistency",
+    "totalEntries":"Total entries",
+    "noData":      "No data for this period"
+  },
+
+  "common": {
+    "loading": "Loading…",
+    "save":    "Save",
+    "cancel":  "Cancel",
+    "delete":  "Delete",
+    "confirm": "Confirm?",
+    "saving":  "Saving…"
+  }
 }

@@ -3,7 +3,8 @@
     "home": "Inicio",
     "gym": "Gimnasio",
     "expenses": "Gastos",
-    "flights": "Vuelos"
+    "flights": "Vuelos",
+    "macro": "Macro"
   },
   "actions": {
     "close": "Cerrar",
