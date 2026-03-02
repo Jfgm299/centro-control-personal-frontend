@@ -1,21 +1,19 @@
 import { create } from 'zustand'
-import { modulesService } from '../services/modulesService'
-import MODULE_REGISTRY from '../config/moduleRegistry'
+import { loadAllModules, getHomeModule } from '../lib/moduleLoader'
 
-const HOME = MODULE_REGISTRY['home']
+const HOME = getHomeModule()
 
 export const useModuleStore = create((set, get) => ({
   modules: [],
   modulesLoaded: false,
   modulesError: null,
 
-  // Home siempre abierto por defecto
   openTabs: [HOME],
   activeTabId: HOME.id,
 
   loadModules: async () => {
     try {
-      const modules = await modulesService.getActiveModules()
+      const modules = loadAllModules()
       set({
         modules,
         modulesLoaded: true,
@@ -29,7 +27,6 @@ export const useModuleStore = create((set, get) => ({
   openModule: (moduleId) => {
     const { modules, openTabs } = get()
 
-    // Home se maneja aparte
     if (moduleId === 'home') {
       set({ activeTabId: 'home' })
       return
@@ -48,7 +45,6 @@ export const useModuleStore = create((set, get) => ({
   closeTab: (moduleId) => {
     const { openTabs, activeTabId } = get()
 
-    // Home no se puede cerrar
     if (moduleId === 'home') return
 
     const newTabs = openTabs.filter(t => t.id !== moduleId)
