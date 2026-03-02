@@ -4,7 +4,8 @@
     "gym": "Gimnasio",
     "expenses": "Gastos",
     "flights": "Vuelos",
-    "macro": "Macro"
+    "macro": "Macro",
+    "travels": "Viajes"
   },
   "actions": {
     "close": "Cerrar",

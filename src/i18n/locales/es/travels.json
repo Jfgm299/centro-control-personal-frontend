@@ -1,0 +1,116 @@
+{
+  "title": "Viajes",
+  "subtitle": "Tus viajes por el mundo",
+
+  "tabs": {
+    "map": "Mapa",
+    "trips": "Viajes",
+    "stats": "Estadísticas"
+  },
+
+  "kpi": {
+    "countries": "Países",
+    "trips": "Viajes",
+    "days": "Días"
+  },
+
+  "map": {
+    "empty": "Añade tu primer viaje para verlo en el mapa.",
+    "noCoords": "Tus viajes no tienen coordenadas. Edítalos para que aparezcan en el mapa."
+  },
+
+  "form": {
+    "titleCreate": "Nuevo viaje",
+    "titleEdit": "Editar viaje",
+    "title": "Título",
+    "titlePlaceholder": "p. ej. Tokio verano 2024",
+    "destination": "Destino",
+    "destinationPlaceholder": "p. ej. Tokio, Japón",
+    "countryCode": "Código de país (ISO-2)",
+    "lat": "Latitud",
+    "lon": "Longitud",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "description": "Descripción",
+    "descriptionPlaceholder": "¿De qué trató este viaje?",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "create": "Crear",
+    "saving": "Guardando…",
+    "errorTitle": "El título es obligatorio",
+    "errorDestination": "El destino es obligatorio",
+    "errorGeneric": "Algo salió mal"
+  },
+
+  "list": {
+    "count": "viajes",
+    "create": "Nuevo viaje",
+    "empty": "Aún no hay viajes. ¡Empieza a añadir tus aventuras!",
+    "edit": "Editar",
+    "delete": "Eliminar"
+  },
+
+  "detail": {
+    "back": "Volver",
+    "tabs": {
+      "albums": "Álbumes",
+      "activities": "Actividades"
+    }
+  },
+
+  "albums": {
+    "createTitle": "Nuevo álbum",
+    "editTitle": "Editar álbum",
+    "name": "Nombre",
+    "namePlaceholder": "p. ej. Día 1 - Llegada",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Descripción opcional",
+    "create": "Nuevo álbum",
+    "empty": "Aún no hay álbumes. Crea uno para empezar a añadir fotos."
+  },
+
+  "photos": {
+    "count": "fotos",
+    "upload": "Añadir fotos",
+    "uploading": "Subiendo…",
+    "empty": "Aún no hay fotos. Sube algunas para empezar.",
+    "invalidType": "Tipo de archivo no compatible. Usa JPEG, PNG, WEBP, HEIC o GIF.",
+    "limitReached": "Se alcanzó el límite de fotos del viaje (máx. {{max}}). Elimina algunas antes de añadir más.",
+    "uploadError": "La subida falló. Inténtalo de nuevo.",
+    "favorite": "Marcar como favorita"
+  },
+
+  "activities": {
+    "createTitle": "Nueva actividad",
+    "editTitle": "Editar actividad",
+    "title": "Título",
+    "titlePlaceholder": "p. ej. Templo Senso-ji",
+    "category": "Categoría",
+    "date": "Fecha",
+    "rating": "Valoración",
+    "description": "Notas",
+    "descriptionPlaceholder": "Notas opcionales",
+    "create": "Nueva actividad",
+    "empty": "Aún no hay actividades. Añade lo que hiciste en este viaje."
+  },
+
+  "stats": {
+    "countries": "Países",
+    "countriesSub": "Destinos únicos",
+    "trips": "Viajes",
+    "tripsSub": "Total registrados",
+    "days": "Días",
+    "daysSub": "Media de {{avg}}d por viaje",
+    "favorites": "Favoritos",
+    "favoritesSub": "Fotos guardadas",
+    "countriesVisited": "Países visitados",
+    "tripsByYear": "Viajes por año",
+    "favoritesGallery": "Fotos favoritas",
+    "empty": "Aún no hay viajes",
+    "emptySub": "Empieza a añadir viajes para ver aquí tus estadísticas."
+  },
+
+  "error": {
+    "title": "No se pudieron cargar los viajes"
+  }
+}

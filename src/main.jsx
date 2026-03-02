@@ -11,6 +11,7 @@ import GymPage from './pages/gym/GymPage'
 import ExpensesPage from './pages/expenses/ExpensesPage'
 import FlightsPage from './pages/flights/FlightsPage'
 import MacroPage from './pages/macro/MacroPage'
+import TravelsPage from './pages/travels/TravelsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/expenses" element={<ExpensesPage />} />
               <Route path="/flights" element={<FlightsPage />} />
               <Route path='/macro' element={<MacroPage />} />
+              <Route path='/travels' element={<TravelsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

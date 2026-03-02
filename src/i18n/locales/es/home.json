@@ -15,6 +15,9 @@
     },
     "macro": {
       "description": "Seguimiento de macronutrientes"
+    },
+    "travels": {
+      "description": "Registro de viajes y aventuras"
     }
   }
 }
