@@ -17,7 +17,7 @@ export const flightsService = {
     await api.delete(`/api/v1/flights/${id}`)
   },
   async updateNotes(id, notes) {
-  const { data } = await api.patch(`/api/v1/flights/${id}/notes`, { notes })
-  return data
+    const { data } = await api.patch(`/api/v1/flights/${id}/notes`, { notes })
+    return data
   },
 }

@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 const EARTH_KM    = 40075
 const SUN_ORBIT_KM = 940000000
 
-// ISO-2 → emoji flag
 export const toFlag = (code) => {
   if (!code || code.length !== 2) return '🌐'
   return String.fromCodePoint(
@@ -11,7 +10,6 @@ export const toFlag = (code) => {
   )
 }
 
-// Classify flight
 const classifyFlight = (f) => {
   if (f.origin_country_code && f.destination_country_code &&
       f.origin_country_code === f.destination_country_code) return 'domestic'
@@ -19,13 +17,11 @@ const classifyFlight = (f) => {
   return 'international'
 }
 
-// JS day (0=Sun) → Mon-indexed (0=Mon)
 const toMonIndex = (d) => (d === 0 ? 6 : d - 1)
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
-// Country → region mapping (ISO-2)
 const REGION_MAP = {
   europe:    new Set(['AL','AD','AT','BY','BE','BA','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','XK','LV','LI','LT','LU','MT','MD','MC','ME','NL','MK','NO','PL','PT','RO','RU','SM','RS','SK','SI','ES','SE','CH','UA','GB','VA']),
   middleEast:new Set(['BH','EG','IR','IQ','IL','JO','KW','LB','OM','PS','QA','SA','SY','TR','AE','YE']),
@@ -45,30 +41,25 @@ export const useFlightStats = (flights) => {
     const past = flights.filter(f => f.is_past)
     if (!past.length) return null
 
-    // Totals
     const total       = past.length
     const totalDist   = past.reduce((s, f) => s + (f.distance_km || 0), 0)
     const totalMins   = past.reduce((s, f) => s + (f.duration_minutes || 0), 0)
     const totalHours  = totalMins / 60
 
-    // Classification
     const domestic     = past.filter(f => classifyFlight(f) === 'domestic').length
     const longHaul     = past.filter(f => classifyFlight(f) === 'longHaul').length
     const international = total - domestic - longHaul
 
-    // Weekday distribution
     const weekdayCounts = WEEKDAYS.map((day, i) => ({
       day,
       count: past.filter(f => toMonIndex(new Date(f.flight_date).getDay()) === i).length,
     }))
 
-    // Month distribution
     const monthCounts = MONTHS.map((month, i) => ({
       month,
       count: past.filter(f => new Date(f.flight_date).getMonth() === i).length,
     }))
 
-    // Year distribution
     const yearMap = {}
     past.forEach(f => {
       const y = new Date(f.flight_date).getFullYear()
@@ -78,11 +69,9 @@ export const useFlightStats = (flights) => {
       .map(([year, count]) => ({ year: Number(year), count }))
       .sort((a, b) => a.year - b.year)
 
-    // Around Earth / Sun
     const aroundEarth = totalDist / EARTH_KM
     const aroundSun   = totalDist / SUN_ORBIT_KM
 
-    // Unique airports
     const airportMap = {}
     past.forEach(f => {
       const addAirport = (iata, name, city, country) => {
@@ -95,7 +84,6 @@ export const useFlightStats = (flights) => {
     })
     const topAirports = Object.values(airportMap).sort((a, b) => b.count - a.count)
 
-    // Unique airlines
     const airlineMap = {}
     past.forEach(f => {
       if (!f.airline_iata) return
@@ -112,7 +100,6 @@ export const useFlightStats = (flights) => {
     })
     const topAirlines = Object.values(airlineMap).sort((a, b) => b.count - a.count)
 
-    // Countries
     const countryMap = {}
     past.forEach(f => {
       const addCountry = (code) => {
@@ -126,7 +113,6 @@ export const useFlightStats = (flights) => {
     const topCountries = Object.values(countryMap).sort((a, b) => b.count - a.count)
     const uniqueCountryCodes = topCountries.map(c => c.code)
 
-    // Regions
     const regions = Object.entries(REGION_MAP).map(([key, codes]) => {
       const count = uniqueCountryCodes.filter(c => codes.has(c)).length
       const pct   = uniqueCountryCodes.length > 0
@@ -135,12 +121,10 @@ export const useFlightStats = (flights) => {
       return { key, count, pct }
     })
 
-    // Shortest / Longest
     const withDist     = past.filter(f => f.distance_km)
     const shortest     = withDist.length ? withDist.reduce((a, b) => a.distance_km < b.distance_km ? a : b) : null
     const longest      = withDist.length ? withDist.reduce((a, b) => a.distance_km > b.distance_km ? a : b) : null
 
-    // Available years for filter
     const availableYears = Object.keys(yearMap).map(Number).sort((a, b) => b - a)
 
     return {
