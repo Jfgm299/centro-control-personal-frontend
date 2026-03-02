@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useWorkouts } from './hooks/useWorkouts'
+import { useWorkouts, useWorkoutDetail } from './hooks/useWorkouts'
 import { useWorkoutMutations } from './hooks/useWorkoutMutations'
-import { useWorkoutDetail } from './hooks/useWorkouts'
 import { useActiveWorkoutStore } from './store/activeWorkoutStore'
 import { getWorkoutDays, computeKPIs, getSessionChartData } from './hooks/useWorkoutAnalytics'
 
@@ -51,7 +50,6 @@ export default function GymPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">{t('title')}</h1>
@@ -67,12 +65,10 @@ export default function GymPage() {
         )}
       </div>
 
-      {/* Active workout */}
       {activeWorkout && (
         <ActiveWorkout onEnd={handleEndWorkout} />
       )}
 
-      {/* Workout analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
         <div className="flex flex-col gap-4">
           <WorkoutCalendar workoutDays={workoutDays} />
@@ -83,13 +79,10 @@ export default function GymPage() {
         </div>
       </div>
 
-      {/* Body measurements */}
       <BodyMeasuresChart />
 
-      {/* Exercise progression */}
       <ExerciseProgressChart />
 
-      {/* Modals */}
       {showStartModal && (
         <StartWorkoutModal
           onStart={handleStartWorkout}
