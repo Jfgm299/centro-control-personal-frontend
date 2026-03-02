@@ -1,0 +1,116 @@
+{
+  "title": "Travels",
+  "subtitle": "Your journeys around the world",
+
+  "tabs": {
+    "map": "Map",
+    "trips": "Trips",
+    "stats": "Stats"
+  },
+
+  "kpi": {
+    "countries": "Countries",
+    "trips": "Trips",
+    "days": "Days"
+  },
+
+  "map": {
+    "empty": "Add your first trip to see it on the map.",
+    "noCoords": "Your trips have no coordinates. Edit them to appear on the map."
+  },
+
+  "form": {
+    "titleCreate": "New Trip",
+    "titleEdit": "Edit Trip",
+    "title": "Title",
+    "titlePlaceholder": "e.g. Tokyo Summer 2024",
+    "destination": "Destination",
+    "destinationPlaceholder": "e.g. Tokyo, Japan",
+    "countryCode": "Country Code (ISO-2)",
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "description": "Description",
+    "descriptionPlaceholder": "What was this trip about?",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "saving": "Saving…",
+    "errorTitle": "Title is required",
+    "errorDestination": "Destination is required",
+    "errorGeneric": "Something went wrong"
+  },
+
+  "list": {
+    "count": "trips",
+    "create": "New trip",
+    "empty": "No trips yet. Start adding your adventures!",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+
+  "detail": {
+    "back": "Back",
+    "tabs": {
+      "albums": "Albums",
+      "activities": "Activities"
+    }
+  },
+
+  "albums": {
+    "createTitle": "New Album",
+    "editTitle": "Edit Album",
+    "name": "Name",
+    "namePlaceholder": "e.g. Day 1 - Arrival",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional description",
+    "create": "New album",
+    "empty": "No albums yet. Create one to start adding photos."
+  },
+
+  "photos": {
+    "count": "photos",
+    "upload": "Add photos",
+    "uploading": "Uploading…",
+    "empty": "No photos yet. Upload some to get started.",
+    "invalidType": "File type not supported. Use JPEG, PNG, WEBP, HEIC or GIF.",
+    "limitReached": "Trip photo limit reached ({{max}} max). Delete some before adding more.",
+    "uploadError": "Upload failed. Please try again.",
+    "favorite": "Toggle favorite"
+  },
+
+  "activities": {
+    "createTitle": "New Activity",
+    "editTitle": "Edit Activity",
+    "title": "Title",
+    "titlePlaceholder": "e.g. Senso-ji Temple",
+    "category": "Category",
+    "date": "Date",
+    "rating": "Rating",
+    "description": "Notes",
+    "descriptionPlaceholder": "Optional notes",
+    "create": "New activity",
+    "empty": "No activities yet. Add what you did on this trip."
+  },
+
+  "stats": {
+    "countries": "Countries",
+    "countriesSub": "Unique destinations",
+    "trips": "Trips",
+    "tripsSub": "Total logged",
+    "days": "Days",
+    "daysSub": "Avg {{avg}}d per trip",
+    "favorites": "Favorites",
+    "favoritesSub": "Photos saved",
+    "countriesVisited": "Countries visited",
+    "tripsByYear": "Trips per year",
+    "favoritesGallery": "Favorite photos",
+    "empty": "No trips yet",
+    "emptySub": "Start adding trips to see your travel stats here."
+  },
+
+  "error": {
+    "title": "Could not load trips"
+  }
+}

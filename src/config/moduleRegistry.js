@@ -39,6 +39,14 @@ const MODULE_REGISTRY = {
     color: '#8b5cf6',
     descriptionKey: 'home:modules.macro.description',
   },
+  travels_tracker: {
+    id: 'travels_tracker',
+    labelKey: 'nav.travels',
+    icon: '🧳',
+    path: '/travels',
+    color: '#f472b6',
+    descriptionKey: 'home:modules.travels.description',
+  },
 }
 
 export default MODULE_REGISTRY

@@ -15,6 +15,9 @@
     },
     "macro": {
       "description": "Macronutrients tracking"
+    },
+    "travels": {
+      "description": "Travel and adventures logging"
     }
   }
 }

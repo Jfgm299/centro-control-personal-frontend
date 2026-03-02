@@ -4,7 +4,8 @@
     "gym": "Gym",
     "expenses": "Expenses",
     "flights": "Flights",
-    "macro": "Macro"
+    "macro": "Macro",
+    "travels": "Travels"
   },
   "actions": {
     "close": "Close",
