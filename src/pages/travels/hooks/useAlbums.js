@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
-
-// ─── useAlbums ────────────────────────────────────────────────────────────────
+import api from '../services/api'
 
 export function useAlbums(tripId) {
   return useQuery({
@@ -26,8 +24,6 @@ export function useAlbumById(albumId) {
     staleTime: 1000 * 60 * 5,
   })
 }
-
-// ─── useAlbumMutations ────────────────────────────────────────────────────────
 
 function invalidateAlbums(qc, tripId, albumId = null) {
   qc.invalidateQueries({ queryKey: ['travels', 'trips', tripId, 'albums'] })

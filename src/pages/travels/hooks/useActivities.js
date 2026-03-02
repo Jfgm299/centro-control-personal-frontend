@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
-
-// ─── useActivities ────────────────────────────────────────────────────────────
+import api from '../services/api'
 
 export function useActivities(tripId) {
   return useQuery({
@@ -14,8 +12,6 @@ export function useActivities(tripId) {
     staleTime: 1000 * 60 * 5,
   })
 }
-
-// ─── useActivityMutations ─────────────────────────────────────────────────────
 
 function invalidateActivities(qc, tripId) {
   qc.invalidateQueries({ queryKey: ['travels', 'trips', tripId, 'activities'] })

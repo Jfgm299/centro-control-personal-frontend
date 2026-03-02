@@ -2,10 +2,6 @@ import { useMemo } from 'react'
 import { useTrips } from './useTrips'
 import { useFavoritePhotos } from './useTrips'
 
-/**
- * Derives all stats from trips data — no extra API call.
- * Returns KPIs: countries, trips, photos, favorites, top destination.
- */
 export function useTravelsStats() {
   const { data: trips = [], isLoading } = useTrips()
   const { data: favorites = [] } = useFavoritePhotos()
@@ -17,7 +13,6 @@ export function useTravelsStats() {
 
     const tripsWithCoords = trips.filter(t => t.lat && t.lon)
 
-    // Group trips by country for top destinations
     const byCountry = trips.reduce((acc, t) => {
       if (!t.country_code) return acc
       acc[t.country_code] = (acc[t.country_code] || 0) + 1
@@ -27,7 +22,6 @@ export function useTravelsStats() {
     const topCountry = Object.entries(byCountry)
       .sort(([, a], [, b]) => b - a)[0]
 
-    // Trip duration stats
     const tripsWithDates = trips.filter(t => t.start_date && t.end_date)
     const totalDays = tripsWithDates.reduce((sum, t) => {
       const days = Math.ceil(
@@ -40,7 +34,6 @@ export function useTravelsStats() {
       ? Math.round(totalDays / tripsWithDates.length)
       : 0
 
-    // Trips by year for chart
     const byYear = trips.reduce((acc, t) => {
       if (!t.start_date) return acc
       const year = new Date(t.start_date).getFullYear()
