@@ -1,11 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
+import api from '../services/api'
 
-/**
- * Mutations para gastos.
- * Cada mutación invalida automáticamente la caché de 'expenses'
- * para que el listado se refresque sin recargar la página.
- */
 export function useExpenseMutations() {
   const queryClient = useQueryClient()
 

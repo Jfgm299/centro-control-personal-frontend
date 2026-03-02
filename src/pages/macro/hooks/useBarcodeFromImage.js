@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 
 const SUPPORTED_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code']
 
-/** Carga un File en un HTMLImageElement y lo devuelve junto a su object URL */
 function loadImage(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file)
@@ -13,7 +12,6 @@ function loadImage(file) {
   })
 }
 
-/** Barcode Detection API nativa (Chrome 83+, Edge, Android WebView) */
 async function decodeWithNativeAPI(img) {
   const detector = new window.BarcodeDetector({ formats: SUPPORTED_FORMATS })
   const barcodes = await detector.detect(img)
@@ -21,14 +19,12 @@ async function decodeWithNativeAPI(img) {
   return barcodes[0].rawValue
 }
 
-/** @zxing/browser — fallback universal (Firefox, Safari, iOS) */
 async function decodeWithZxing(img) {
   const { BrowserMultiFormatReader } = await import('@zxing/browser')
   const canvas = document.createElement('canvas')
   canvas.width  = img.naturalWidth
   canvas.height = img.naturalHeight
   canvas.getContext('2d').drawImage(img, 0, 0)
-  // decodeFromCanvas retorna una promesa
   const reader = new BrowserMultiFormatReader()
   try {
     const result = await reader.decodeFromCanvas(canvas)
@@ -38,10 +34,6 @@ async function decodeWithZxing(img) {
   }
 }
 
-/**
- * Detecta si la API nativa soporta EAN-13 en el navegador actual.
- * Se cachea tras la primera llamada para no repetir la comprobación.
- */
 let _nativeSupportCache = null
 async function nativeSupportsEAN13() {
   if (_nativeSupportCache !== null) return _nativeSupportCache
@@ -55,13 +47,6 @@ async function nativeSupportsEAN13() {
   return _nativeSupportCache
 }
 
-/**
- * Hook para extraer un código de barras a partir de una imagen subida por el usuario.
- *
- * Uso:
- *   const { decodeImage, isDecoding, error } = useBarcodeFromImage()
- *   const barcode = await decodeImage(file)  // File desde un <input type="file">
- */
 export function useBarcodeFromImage() {
   const [isDecoding, setIsDecoding] = useState(false)
   const [error, setError]           = useState(null)

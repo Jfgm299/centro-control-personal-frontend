@@ -1,4 +1,4 @@
-import './i18n/index.js'  // ← debe ser el primer import después de React
+import './i18n/index.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -6,12 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './context/AuthContext'
 import './index.css'
 import AppShell from './components/layout/AppShell'
-import HomePage from './pages/home/HomePage'
-import GymPage from './pages/gym/GymPage'
-import ExpensesPage from './pages/expenses/ExpensesPage'
-import FlightsPage from './pages/flights/FlightsPage'
-import MacroPage from './pages/macro/MacroPage'
-import TravelsPage from './pages/travels/TravelsPage'
+import { loadAllModules } from './lib/moduleLoader'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +17,8 @@ const queryClient = new QueryClient({
   },
 })
 
+const modules = loadAllModules()
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
@@ -29,12 +26,13 @@ createRoot(document.getElementById('root')).render(
         <BrowserRouter>
           <Routes>
             <Route element={<AppShell />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/gym" element={<GymPage />} />
-              <Route path="/expenses" element={<ExpensesPage />} />
-              <Route path="/flights" element={<FlightsPage />} />
-              <Route path='/macro' element={<MacroPage />} />
-              <Route path='/travels' element={<TravelsPage />} />
+              {modules.map((module) => (
+                <Route 
+                  key={module.id} 
+                  path={module.path} 
+                  element={<module.component />} 
+                />
+              ))}
             </Route>
           </Routes>
         </BrowserRouter>

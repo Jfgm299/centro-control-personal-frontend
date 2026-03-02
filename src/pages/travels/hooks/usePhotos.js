@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
-
-// ─── usePhotos ────────────────────────────────────────────────────────────────
+import api from '../services/api'
 
 export function usePhotos(albumId) {
   return useQuery({
@@ -15,8 +13,6 @@ export function usePhotos(albumId) {
   })
 }
 
-// ─── usePhotoMutations ────────────────────────────────────────────────────────
-
 function invalidatePhotos(qc, albumId, tripId = null) {
   qc.invalidateQueries({ queryKey: ['travels', 'albums', albumId, 'photos'] })
   qc.invalidateQueries({ queryKey: ['travels', 'favorites'] })
@@ -26,32 +22,22 @@ function invalidatePhotos(qc, albumId, tripId = null) {
   }
 }
 
-/**
- * Full upload flow:
- *   1. POST /upload-url  → get presigned URL + photo_id
- *   2. PUT presigned URL → upload file directly to R2
- *   3. POST /confirm     → mark as uploaded
- *   4. (Optional) Set as album cover if first photo
- */
 export function useUploadPhoto(albumId, tripId) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ file }) => {
-      // Step 1: request presigned URL
       const { data: urlData } = await api.post(
         `/api/v1/travels/albums/${albumId}/photos/upload-url`,
         { filename: file.name, content_type: file.type }
       )
       const { photo_id, upload_url } = urlData
 
-      // Step 2: upload directly to R2 (no auth header — it's a presigned URL)
       await fetch(upload_url, {
         method: 'PUT',
         headers: { 'Content-Type': file.type },
         body: file,
       })
 
-      // Step 3: confirm
       const { data: photo } = await api.post(
         `/api/v1/travels/photos/${photo_id}/confirm`,
         { size_bytes: file.size }
@@ -108,11 +94,6 @@ export function useReorderPhotos(albumId) {
   })
 }
 
-// ─── Cover photo mutations ────────────────────────────────────────────────────
-
-/**
- * Set album cover photo
- */
 export function useSetAlbumCover(albumId, tripId) {
   const qc = useQueryClient()
   return useMutation({
@@ -126,9 +107,6 @@ export function useSetAlbumCover(albumId, tripId) {
   })
 }
 
-/**
- * Set trip cover photo
- */
 export function useSetTripCover(tripId) {
   const qc = useQueryClient()
   return useMutation({

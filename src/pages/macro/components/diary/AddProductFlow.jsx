@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import api from '../../../../services/api'
+import api from '../../services/api'
 import { useBarcodeFromImage } from '../../hooks/useBarcodeFromImage'
 import { useAddDiaryEntry } from '../../hooks/useDiaryMutations'
 import { NUTRISCORE_COLORS } from '../../constants'

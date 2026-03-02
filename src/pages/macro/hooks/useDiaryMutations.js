@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
+import api from '../services/api'
 
 function invalidateDiary(qc, date) {
   qc.invalidateQueries({ queryKey: ['macros', 'diary', 'summary', date] })
@@ -7,7 +7,6 @@ function invalidateDiary(qc, date) {
   qc.invalidateQueries({ queryKey: ['macros', 'stats'] })
 }
 
-/** Añade una entrada al diario. Calcula los nutrientes automáticamente en el backend. */
 export function useAddDiaryEntry(date) {
   const qc = useQueryClient()
   return useMutation({
@@ -19,7 +18,6 @@ export function useAddDiaryEntry(date) {
   })
 }
 
-/** Elimina una entrada del diario */
 export function useDeleteDiaryEntry(date) {
   const qc = useQueryClient()
   return useMutation({
@@ -30,7 +28,6 @@ export function useDeleteDiaryEntry(date) {
   })
 }
 
-/** Actualiza la cantidad (g) de una entrada y recalcula nutrientes */
 export function useUpdateEntryAmount(date) {
   const qc = useQueryClient()
   return useMutation({

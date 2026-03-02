@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../../../services/api'
+import api from '../services/api'
 
-/** Objetivos nutricionales del usuario (se crean con defaults si no existen) */
 export function useMacroGoals() {
   return useQuery({
     queryKey: ['macros', 'goals'],
@@ -13,7 +12,6 @@ export function useMacroGoals() {
   })
 }
 
-/** Crea o actualiza los objetivos nutricionales */
 export function useUpsertGoals() {
   const qc = useQueryClient()
   return useMutation({

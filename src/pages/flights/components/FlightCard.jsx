@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDeleteFlight } from '../hooks/useFlights'
-import { flightsService } from '../../../services/flightsService'
+import { flightsService } from '../services/flightsService'
 import { useQueryClient } from '@tanstack/react-query'
 
 const statusColors = {

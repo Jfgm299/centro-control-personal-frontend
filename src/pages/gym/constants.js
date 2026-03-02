@@ -1,8 +1,3 @@
-/**
- * constants.js — espeja exactamente los enums del backend.
- * Si el backend cambia, solo hay que tocar este archivo.
- */
-
 export const MUSCLE_GROUPS = [
   'Chest', 'Back', 'Biceps', 'Triceps', 'Core', 'Abs', 'Shoulders', 'Legs',
 ]

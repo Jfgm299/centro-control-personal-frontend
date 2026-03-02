@@ -15,13 +15,11 @@ export default function MacroPage() {
   return (
     <div className="p-4 pb-10 max-w-2xl mx-auto space-y-4">
 
-      {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
         <p className="text-gray-400 text-sm mt-0.5">{t('subtitle')}</p>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
         {TABS.map((tab) => (
           <button
@@ -38,7 +36,6 @@ export default function MacroPage() {
         ))}
       </div>
 
-      {/* Tab content */}
       {activeTab === 'diary' && (
         <DiaryView date={date} onDateChange={setDate} />
       )}

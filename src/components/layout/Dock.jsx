@@ -25,13 +25,15 @@ export default function Dock() {
   }
 
   return (
-    <div className="dock-wrapper">
-      <div
-        className="dock-container"
-        onMouseMove={(e) => mouseX.set(e.clientX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
-      >
-        {modules.map((module, idx) => (
+  <div className="dock-wrapper">
+    <div
+      className="dock-container"
+      onMouseMove={(e) => mouseX.set(e.clientX)}
+      onMouseLeave={() => mouseX.set(Infinity)}
+    >
+      {modules
+        .filter((module) => module.id !== 'home')
+        .map((module, idx) => (
           <DockIcon
             key={module.id}
             module={module}
@@ -42,7 +44,7 @@ export default function Dock() {
             onClick={() => handleClick(module, idx)}
           />
         ))}
-      </div>
     </div>
+  </div>
   )
 }

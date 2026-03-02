@@ -15,7 +15,6 @@ export const NUTRIENT_COLORS = {
   fiber_g:         '#8b5cf6',
 }
 
-// Maps diary entry fields → goal fields
 export const NUTRIENT_GOAL_MAP = {
   energy_kcal:     'energy_kcal',
   proteins_g:      'proteins_g',
@@ -24,7 +23,6 @@ export const NUTRIENT_GOAL_MAP = {
   fiber_g:         'fiber_g',
 }
 
-// Keys shown in gauges and charts
 export const TRACKED_NUTRIENTS = [
   'energy_kcal',
   'proteins_g',

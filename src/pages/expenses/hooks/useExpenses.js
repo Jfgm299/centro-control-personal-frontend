@@ -1,12 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '../../../services/api'
+import api from '../services/api'
 
-/**
- * Fetches all expenses using React Query.
- * - Caché de 5 min (staleTime heredado del QueryClient global)
- * - Refetch automático al volver a la pestaña
- * - Estados loading/error listos para usar
- */
 export function useExpenses() {
   const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['expenses'],
@@ -23,10 +17,6 @@ export function useExpenses() {
   }
 }
 
-/**
- * Returns aggregated analytics from a list of expenses.
- * Pure function — no side effects, easy to test.
- */
 export function aggregateExpenses(expenses) {
   if (!expenses.length) return null
 

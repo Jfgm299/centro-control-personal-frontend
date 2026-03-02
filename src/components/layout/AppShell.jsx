@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useModuleStore } from '../../store/moduleStore'
 import { useAuth } from '../../context/AuthContext'
@@ -14,14 +14,11 @@ export default function AppShell() {
   const { loadModules, modulesLoaded } = useModuleStore()
   const { t } = useTranslation('common')
   const { user, isLoading } = useAuth()
-  const navigate = useNavigate()
 
   useEffect(() => {
     loadModules()
-    navigate('/')
-  }, [])
+  }, [loadModules])
 
-  // Espera a que AuthContext compruebe la sesión antes de renderizar
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-400">
@@ -34,7 +31,6 @@ export default function AppShell() {
     <>
       <DotBackground />
 
-      {/* Popup de login — solo visible si no hay sesión */}
       {!user && <LoginPopup />}
 
       <UserMenu />

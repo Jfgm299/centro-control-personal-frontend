@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { flightsService } from '../../../services/flightsService'
+import { flightsService } from '../services/flightsService'
 
 export const useFlights = () => {
   const { data: flights = [], isLoading, error } = useQuery({
