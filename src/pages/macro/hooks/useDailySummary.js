@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '../../../services/api'
+import api from '../services/api'
 
-/** Resumen del día: entradas agrupadas por comida, totales y % de objetivos */
 export function useDailySummary(date) {
   return useQuery({
     queryKey: ['macros', 'diary', 'summary', date],
