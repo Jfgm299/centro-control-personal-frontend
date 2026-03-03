@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">centro-control-app</string>
+    <string name="title_activity_main">centro-control-app</string>
+    <string name="package_name">com.myapp.centrocontrol</string>
+    <string name="custom_url_scheme">com.myapp.centrocontrol</string>
+</resources>
