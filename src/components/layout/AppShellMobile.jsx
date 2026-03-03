@@ -5,27 +5,10 @@ import { useModuleStore } from '../../store/moduleStore'
 import { useAuth } from '../../context/AuthContext'
 import DotBackground from './DotBackground'
 import UserMenu from './UserMenu'
-import Dock from './DockMobile'
+import DockMobile from './DockMobile'
 import LoginPopup from '../auth/LoginPopup'
 
-/**
- * Mobile AppShell
- *
- * Layout:
- *   ┌─────────────────────┐  ← safe-area-inset-top (status bar iOS)
- *   │  UserMenu (top-right)│
- *   ├─────────────────────┤
- *   │                     │
- *   │   <Outlet />        │  ← scrollable content area
- *   │                     │
- *   ├─────────────────────┤
- *   │   Dock (5 icons)    │
- *   └─────────────────────┘  ← safe-area-inset-bottom (home indicator iOS)
- *
- * TabBar removed — navigation is handled by the Dock on mobile.
- * ModuleContainer removed — pages manage their own scroll.
- */
-export default function AppShell() {
+export default function AppShellMobile() {
   const { loadModules, modulesLoaded } = useModuleStore()
   const { t } = useTranslation('common')
   const { user, isLoading } = useAuth()
@@ -43,15 +26,12 @@ export default function AppShell() {
   }
 
   return (
-    <div
-      className="relative flex flex-col w-full overflow-hidden bg-transparent"
-      style={{ height: '100dvh' }} // dvh respeta la barra de dirección en Safari mobile
-    >
+    <div className="relative w-full bg-transparent" style={{ height: '100dvh' }}>
       <DotBackground />
 
       {!user && <LoginPopup />}
 
-      {/* Status bar spacer — respeta la notch/dynamic island en iOS */}
+      {/* Status bar spacer */}
       <div style={{ paddingTop: 'env(safe-area-inset-top)' }} />
 
       {/* Top-right user menu */}
@@ -59,8 +39,13 @@ export default function AppShell() {
         <UserMenu />
       </div>
 
-      {/* Main content — scrollable, takes all available space */}
-      <main className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
+      {/* Main content — scrollable, ocupa todo el alto */}
+      <main
+        className="relative z-10 overflow-y-auto overflow-x-hidden"
+        style={{
+          height: 'calc(100dvh - env(safe-area-inset-top) - 48px)',
+        }}
+      >
         {modulesLoaded ? (
           <Outlet />
         ) : (
@@ -70,8 +55,13 @@ export default function AppShell() {
         )}
       </main>
 
-      {/* Dock — fixed at bottom with safe area */}
-      <Dock />
+      {/* Dock flotante — fixed, no ocupa espacio en el layout */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-30"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <DockMobile />
+      </div>
     </div>
   )
 }
