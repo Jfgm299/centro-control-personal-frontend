@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { useFlights } from './hooks/useFlights'
 import FlightCardMobile from './components/FlightCardMobile'
 import AddFlightModal from './components/AddFlightModal'
-import PassportView from './components/passport/PassportView'
+import PassportViewMobile from './components/passport/PassportViewMobile'
 
 export default function FlightsPageMobile() {
   const { t } = useTranslation('flights')
@@ -75,7 +75,7 @@ export default function FlightsPageMobile() {
           </div>
         ) : (
           <div className="pb-32">
-            <PassportView flights={flights} />
+            <PassportViewMobile flights={flights} />
           </div>
         )}
       </div>

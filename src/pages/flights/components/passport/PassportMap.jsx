@@ -8,16 +8,7 @@ const MAX_ZOOM = 12
 function CircularFlag({ code, size = 28 }) {
   const lower = code.toLowerCase()
   return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: '50%',
-        overflow: 'hidden',
-        border: '2px solid rgba(255,255,255,0.3)',
-        flexShrink: 0,
-      }}
-    >
+    <div style={{ width: size, height: size, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.3)', flexShrink: 0 }}>
       <img
         src={`https://flagcdn.com/w40/${lower}.png`}
         alt={code}
@@ -30,34 +21,31 @@ function CircularFlag({ code, size = 28 }) {
 
 export { CircularFlag }
 
-export default function PassportMap({ flights, uniqueCountryCodes }) {
-  const [zoom, setZoom]     = useState(1)
-  const [center, setCenter] = useState([0, 20])
+export default function PassportMap({
+  flights,
+  uniqueCountryCodes,
+  height = 650,
+  initialZoom = 1,
+  initialCenter = [0, 20],
+}) {
+  const [zoom, setZoom]     = useState(initialZoom)
+  const [center, setCenter] = useState(initialCenter)
   const containerRef        = useRef(null)
 
-  // Intercept wheel events before d3-zoom sees them (capture phase = runs first).
-  // ctrlKey=true  → pinch gesture on trackpad → zoom the map
-  // ctrlKey=false → two-finger scroll         → let the page scroll normally
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-
     const onWheel = (e) => {
       if (e.ctrlKey) {
-        // Pinch: prevent browser page-zoom, zoom the map instead
         e.preventDefault()
-        e.stopImmediatePropagation() // d3-zoom never sees this event
+        e.stopImmediatePropagation()
         const factor = e.deltaY > 0 ? 0.97 : 1.03
         setZoom(z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * factor)))
       } else {
-        // Two-finger scroll: stop d3 from treating it as zoom,
-        // then manually forward the scroll so the page moves normally.
         e.stopImmediatePropagation()
         window.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: 'auto' })
       }
     }
-
-    // passive:false so we can call preventDefault() for the pinch case
     el.addEventListener('wheel', onWheel, { capture: true, passive: false })
     return () => el.removeEventListener('wheel', onWheel, { capture: true })
   }, [])
@@ -69,7 +57,7 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
 
   const handleZoomIn  = () => setZoom(z => Math.min(z * 2, MAX_ZOOM))
   const handleZoomOut = () => setZoom(z => Math.max(z / 2, MIN_ZOOM))
-  const handleReset   = () => { setZoom(1); setCenter([0, 20]) }
+  const handleReset   = () => { setZoom(initialZoom); setCenter(initialCenter) }
 
   const routes = useMemo(() => {
     const seen = new Set()
@@ -81,10 +69,7 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
         seen.add(key)
         return true
       })
-      .map(f => ({
-        from: [f.origin_lon, f.origin_lat],
-        to:   [f.destination_lon, f.destination_lat],
-      }))
+      .map(f => ({ from: [f.origin_lon, f.origin_lat], to: [f.destination_lon, f.destination_lat] }))
   }, [flights])
 
   const airports = useMemo(() => {
@@ -106,7 +91,6 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #1a0550 0%, #2d0a8a 100%)' }}>
-
       {/* Airport strip */}
       <div className="overflow-hidden py-2 px-2 border-b border-white/10">
         <div className="flex gap-3 text-white/60 text-xs font-mono">
@@ -119,20 +103,14 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
         </div>
       </div>
 
-      {/* Map */}
-      <div ref={containerRef} style={{ position: 'relative', height: 650, overflow: 'hidden' }}>
+      {/* Map — height controlada por prop */}
+      <div ref={containerRef} style={{ position: 'relative', height, overflow: 'hidden' }}>
         <ComposableMap
           projection="geoNaturalEarth1"
           projectionConfig={{ scale: 140, center: [50, -90] }}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         >
-          <ZoomableGroup
-            zoom={zoom}
-            center={center}
-            minZoom={MIN_ZOOM}
-            maxZoom={MAX_ZOOM}
-            onMoveEnd={handleMoveEnd}
-          >
+          <ZoomableGroup zoom={zoom} center={center} minZoom={MIN_ZOOM} maxZoom={MAX_ZOOM} onMoveEnd={handleMoveEnd}>
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
                 geographies.map(geo => (
@@ -142,37 +120,17 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
                     fill="#3d1f8a"
                     stroke="#5a2fd4"
                     strokeWidth={0.4 / zoom}
-                    style={{
-                      default: { outline: 'none' },
-                      hover:   { outline: 'none', fill: '#4a2aaa' },
-                      pressed: { outline: 'none' },
-                    }}
+                    style={{ default: { outline: 'none' }, hover: { outline: 'none', fill: '#4a2aaa' }, pressed: { outline: 'none' } }}
                   />
                 ))
               }
             </Geographies>
-
             {routes.map((route, i) => (
-              <Line
-                key={i}
-                from={route.from}
-                to={route.to}
-                stroke="#f59e0b"
-                strokeWidth={strokeWidth}
-                strokeOpacity={0.5}
-                strokeLinecap="round"
-              />
+              <Line key={i} from={route.from} to={route.to} stroke="#f59e0b" strokeWidth={strokeWidth} strokeOpacity={0.5} strokeLinecap="round" />
             ))}
-
             {airports.map(airport => (
               <Marker key={airport.iata} coordinates={airport.coords}>
-                <circle
-                  r={markerRadius}
-                  fill="#f59e0b"
-                  stroke="#fff"
-                  strokeWidth={0.5 / zoom}
-                  opacity={0.9}
-                />
+                <circle r={markerRadius} fill="#f59e0b" stroke="#fff" strokeWidth={0.5 / zoom} opacity={0.9} />
               </Marker>
             ))}
           </ZoomableGroup>
@@ -180,39 +138,17 @@ export default function PassportMap({ flights, uniqueCountryCodes }) {
 
         {/* Zoom controls */}
         <div style={{ position: 'absolute', bottom: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {[
-            { label: '+', action: handleZoomIn,  title: 'Zoom in'  },
-            { label: '−', action: handleZoomOut, title: 'Zoom out' },
-            { label: '⊙', action: handleReset,   title: 'Reset'    },
-          ].map(({ label, action, title }) => (
-            <button
-              key={label}
-              onClick={action}
-              title={title}
-              style={{
-                width: 28, height: 28, borderRadius: 6,
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                color: 'white', fontSize: 16, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(4px)', transition: 'background 0.15s',
-              }}
+          {[{ label: '+', action: handleZoomIn }, { label: '−', action: handleZoomOut }, { label: '⊙', action: handleReset }].map(({ label, action }) => (
+            <button key={label} onClick={action}
+              style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-            >
-              {label}
-            </button>
+            >{label}</button>
           ))}
         </div>
 
         {zoom > 1 && (
-          <div style={{
-            position: 'absolute', bottom: 12, left: 12,
-            background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)',
-            borderRadius: 6, padding: '2px 8px',
-            color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'monospace',
-            backdropFilter: 'blur(4px)',
-          }}>
+          <div style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '2px 8px', color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'monospace', backdropFilter: 'blur(4px)' }}>
             {zoom.toFixed(1)}×
           </div>
         )}
