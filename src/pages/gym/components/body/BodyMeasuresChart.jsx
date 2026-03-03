@@ -31,6 +31,7 @@ export default function BodyMeasuresChart() {
   const { create, remove } = useBodyMeasureMutations()
   const [showModal, setShowModal] = useState(false)
   const [confirmId, setConfirmId] = useState(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
 
   const sorted = [...measures].sort((a, b) => a.created_at.localeCompare(b.created_at))
 
@@ -41,9 +42,7 @@ export default function BodyMeasuresChart() {
   }))
 
   const hasFat = sorted.some((m) => m.body_fat_percent != null)
-
-  // Latest measurement for KPIs
-  const latest  = sorted[sorted.length - 1]
+  const latest   = sorted[sorted.length - 1]
   const previous = sorted[sorted.length - 2]
   const weightDiff = latest && previous
     ? (latest.weight_kg - previous.weight_kg).toFixed(1)
@@ -78,12 +77,16 @@ export default function BodyMeasuresChart() {
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-slate-900 rounded-xl px-4 py-3">
               <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentWeight')}</p>
-              <p className="text-2xl font-bold font-mono text-white mt-0.5">{latest.weight_kg}<span className="text-sm font-normal text-slate-400 ml-1">kg</span></p>
+              <p className="text-2xl font-bold font-mono text-white mt-0.5">
+                {latest.weight_kg}<span className="text-sm font-normal text-slate-400 ml-1">kg</span>
+              </p>
             </div>
             {latest.body_fat_percent != null && (
               <div className="bg-white border border-slate-100 rounded-xl px-4 py-3">
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentFat')}</p>
-                <p className="text-2xl font-bold font-mono text-slate-900 mt-0.5">{latest.body_fat_percent}<span className="text-sm font-normal text-slate-400 ml-0.5">%</span></p>
+                <p className="text-2xl font-bold font-mono text-slate-900 mt-0.5">
+                  {latest.body_fat_percent}<span className="text-sm font-normal text-slate-400 ml-0.5">%</span>
+                </p>
               </div>
             )}
             {weightDiff !== null && (
@@ -134,41 +137,63 @@ export default function BodyMeasuresChart() {
           </p>
         )}
 
-        {/* Recent measurements list */}
+        {/* Historial — colapsable */}
         {sorted.length > 0 && (
-          <div className="flex flex-col divide-y divide-slate-50">
-            {[...sorted].reverse().slice(0, 5).map((m) => (
-              <div key={m.id} className="flex items-center justify-between py-2.5 group">
-                <div>
-                  <p className="text-sm font-medium text-slate-800">{m.weight_kg} kg
-                    {m.body_fat_percent != null && (
-                      <span className="text-slate-400 font-normal ml-2 text-xs">· {m.body_fat_percent}% grasa</span>
-                    )}
-                  </p>
-                  <p className="text-xs text-slate-400">{new Date(m.created_at).toLocaleDateString()}{m.notes && ` · ${m.notes}`}</p>
-                </div>
+          <div className="border-t border-slate-50 pt-3">
+            <button
+              onClick={() => setHistoryOpen(v => !v)}
+              className="flex items-center gap-2 w-full text-left"
+            >
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest flex-1">
+                {t('body.history') ?? 'Historial'}
+              </span>
+              <svg
+                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${historyOpen ? 'rotate-180' : ''}`}
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
-                {confirmId === m.id ? (
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => { remove.mutateAsync(m.id); setConfirmId(null) }}
-                      className="px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
-                      {t('common.confirm')}
-                    </button>
-                    <button onClick={() => setConfirmId(null)}
-                      className="px-2 py-0.5 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
-                      {t('common.cancel')}
-                    </button>
+            {historyOpen && (
+              <div className="flex flex-col divide-y divide-slate-50 mt-2">
+                {[...sorted].reverse().slice(0, 5).map((m) => (
+                  <div key={m.id} className="flex items-center justify-between py-2.5 group">
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">
+                        {m.weight_kg} kg
+                        {m.body_fat_percent != null && (
+                          <span className="text-slate-400 font-normal ml-2 text-xs">· {m.body_fat_percent}% grasa</span>
+                        )}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {new Date(m.created_at).toLocaleDateString()}{m.notes && ` · ${m.notes}`}
+                      </p>
+                    </div>
+
+                    {confirmId === m.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => { remove.mutateAsync(m.id); setConfirmId(null) }}
+                          className="px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
+                          {t('common.confirm')}
+                        </button>
+                        <button onClick={() => setConfirmId(null)}
+                          className="px-2 py-0.5 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
+                          {t('common.cancel')}
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setConfirmId(m.id)}
+                        className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
-                ) : (
-                  <button onClick={() => setConfirmId(m.id)}
-                    className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                )}
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

@@ -103,6 +103,7 @@
     "currentFat": "Body fat",
     "change": "Change",
     "empty": "No measurements yet — add your first one",
-    "needMore": "Add at least 2 measurements to see the chart"
+    "needMore": "Add at least 2 measurements to see the chart",
+    "history": "Measurement history"
   }
 }

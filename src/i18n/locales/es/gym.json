@@ -103,6 +103,7 @@
     "currentFat": "Grasa corporal",
     "change": "Variación",
     "empty": "Sin mediciones todavía — añade la primera",
-    "needMore": "Añade al menos 2 mediciones para ver la gráfica"
+    "needMore": "Añade al menos 2 mediciones para ver la gráfica",
+    "history": "Historial de mediciones"
   }
 }
