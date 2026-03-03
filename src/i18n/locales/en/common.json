@@ -27,5 +27,11 @@
   "settings": {
     "language": "Language",
     "logout": "Log out"
-  }
+  },
+  "dock": {
+    "removeConfirm": "Remove from dock?",
+    "full": "Dock full · max 4 apps",
+    "hint": "Hold an app to add it to the dock",
+    "dropHint": "Release to add to dock"
+}
 }
