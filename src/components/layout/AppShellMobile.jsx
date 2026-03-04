@@ -9,18 +9,13 @@ import UserMenu from './UserMenu'
 import DockMobile from './DockMobile'
 import LoginPopup from '../auth/LoginPopup'
 
-/**
- * Rendered at the root of the shell — outside any overflow/scroll container.
- * This guarantees z-index: 99999 actually appears above everything.
- */
+const DOCK_HEIGHT = 96 // px aproximados que ocupa el dock + safe area
+
 function DragGhost() {
   const { isDragging, draggingModule, ghostX, ghostY, overDock } = useDragStore()
   if (!isDragging || !draggingModule) return null
   return (
-    <div
-      className="pointer-events-none fixed"
-      style={{ zIndex: 99999, left: ghostX - 32, top: ghostY - 32 }}
-    >
+    <div className="pointer-events-none fixed" style={{ zIndex: 99999, left: ghostX - 32, top: ghostY - 32 }}>
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
         style={{
@@ -42,9 +37,7 @@ export default function AppShellMobile() {
   const { t } = useTranslation('common')
   const { user, isLoading } = useAuth()
 
-  useEffect(() => {
-    loadModules()
-  }, [loadModules])
+  useEffect(() => { loadModules() }, [loadModules])
 
   if (isLoading) {
     return (
@@ -55,7 +48,7 @@ export default function AppShellMobile() {
   }
 
   return (
-    <div className="relative w-full bg-transparent" style={{ height: '100dvh' }}>
+    <div className="relative w-full bg-transparent" style={{ height: '100dvh', overflow: 'hidden' }}>
       <DotBackground />
 
       {!user && <LoginPopup />}
@@ -68,21 +61,21 @@ export default function AppShellMobile() {
         <UserMenu />
       </div>
 
-      {/* Main content — scrollable */}
+      {/* Main content — deja espacio para el dock abajo */}
       <main
         className="relative z-10 overflow-y-auto overflow-x-hidden"
-        style={{ height: 'calc(100dvh - env(safe-area-inset-top) - 48px)' }}
+        style={{
+          height: `calc(100dvh - env(safe-area-inset-top) - 48px - ${DOCK_HEIGHT}px)`,
+        }}
       >
-        {modulesLoaded ? (
-          <Outlet />
-        ) : (
+        {modulesLoaded ? <Outlet /> : (
           <div className="flex items-center justify-center h-full text-gray-400">
             {t('status.loading')}
           </div>
         )}
       </main>
 
-      {/* Dock — fixed bottom */}
+      {/* Dock — fixed al fondo, nunca se corta */}
       <div
         className="fixed bottom-0 left-0 right-0 z-30"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -90,7 +83,6 @@ export default function AppShellMobile() {
         <DockMobile />
       </div>
 
-      {/* Drag ghost — rendered LAST so it's above everything including the dock */}
       <DragGhost />
     </div>
   )

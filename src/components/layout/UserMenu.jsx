@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '../../store/authStore'
+import { useAuth } from '../../context/AuthContext'
 import clsx from 'clsx'
 
 const LANGUAGES = [
@@ -10,7 +10,7 @@ const LANGUAGES = [
 
 export default function UserMenu() {
   const [open, setOpen] = useState(false)
-  const { user } = useAuthStore()
+  const { user, logout } = useAuth()   // ← useAuth, no useAuthStore
   const { t, i18n } = useTranslation('common')
   const menuRef = useRef(null)
 
@@ -22,19 +22,26 @@ export default function UserMenu() {
     localStorage.setItem('language', code)
   }
 
-  // Cerrar al clicar fuera
+  const handleLogout = async () => {
+    setOpen(false)
+    await logout()
+    window.location.reload()
+  }
+
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpen(false)
-      }
+      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false)
     }
     if (open) document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
   return (
-    <div ref={menuRef} className="fixed top-4 right-6 z-50">
+    <div
+      ref={menuRef}
+      className="fixed right-4 z-50"
+      style={{ top: 'calc(env(safe-area-inset-top) + 12px)' }}
+    >
       {/* Avatar */}
       <button
         onClick={() => setOpen(o => !o)}
@@ -43,22 +50,20 @@ export default function UserMenu() {
         {user?.avatar ? (
           <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
         ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-white text-sm font-bold"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #38bdf8)' }}
-          >
+          <div className="w-full h-full flex items-center justify-center text-white text-sm font-bold"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #38bdf8)' }}>
             {initials}
           </div>
         )}
       </button>
 
-      {/* Panel flotante */}
+      {/* Panel */}
       {open && (
         <div
           className="absolute right-0 top-12 w-64 rounded-2xl shadow-xl border border-white/60 overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)' }}
+          style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)' }}
         >
-          {/* Header usuario */}
+          {/* Usuario */}
           <div className="px-4 py-4 border-b border-gray-100">
             <p className="font-semibold text-gray-800">{user?.username}</p>
             <p className="text-xs text-gray-400">{user?.email}</p>
@@ -71,16 +76,13 @@ export default function UserMenu() {
             </p>
             <div className="flex gap-2">
               {LANGUAGES.map(lang => (
-                <button
-                  key={lang.code}
-                  onClick={() => handleLanguageChange(lang.code)}
+                <button key={lang.code} onClick={() => handleLanguageChange(lang.code)}
                   className={clsx(
                     'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all',
                     currentLang === lang.code
                       ? 'bg-indigo-500 text-white font-medium'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  )}
-                >
+                  )}>
                   <span>{lang.flag}</span>
                   <span>{lang.label}</span>
                 </button>
@@ -88,9 +90,10 @@ export default function UserMenu() {
             </div>
           </div>
 
-          {/* Opciones futuras */}
+          {/* Logout */}
           <div className="px-4 py-3">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 transition-colors">
+            <button onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 transition-colors">
               <span>→</span>
               <span>{t('settings.logout')}</span>
             </button>
