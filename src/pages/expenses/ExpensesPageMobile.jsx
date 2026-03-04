@@ -7,14 +7,17 @@ import FilterBar from './components/FilterBar'
 import SpendingChart from './components/SpendingChart'
 import AccountBreakdown from './components/AccountBreakdown'
 import RecentExpensesMobile from './components/RecentExpensesMobile'
+import SubscriptionsTabMobile from './components/SubscriptionsTabMobile'
 
 const fmt = (v) => `€${Number(v).toFixed(2)}`
+const TABS = ['expenses', 'subscriptions']
 
 export default function ExpensesPageMobile() {
   const { t } = useTranslation('expenses')
   const { expenses, isLoading, error } = useExpenses()
   const { create, update, remove } = useExpenseMutations()
 
+  const [tab, setTab] = useState('expenses')
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [drilldownWeek, setDrilldownWeek] = useState(null)
 
@@ -27,15 +30,13 @@ export default function ExpensesPageMobile() {
 
   const kpiSource = selectedMonthData ?? {
     total: analytics?.monthlyData.reduce((s, m) => s + m.total, 0) ?? 0,
-    avgPerDay:
-      analytics?.monthlyData.reduce((s, m) => s + m.avgPerDay, 0) /
+    avgPerDay: analytics?.monthlyData.reduce((s, m) => s + m.avgPerDay, 0) /
       (analytics?.monthlyData.length || 1),
     count: expenses.length,
-    byAccount:
-      analytics?.accounts.reduce((acc, a) => {
-        acc[a] = analytics.monthlyData.reduce((s, m) => s + (m.byAccount[a] ?? 0), 0)
-        return acc
-      }, {}) ?? {},
+    byAccount: analytics?.accounts.reduce((acc, a) => {
+      acc[a] = analytics.monthlyData.reduce((s, m) => s + (m.byAccount[a] ?? 0), 0)
+      return acc
+    }, {}) ?? {},
   }
 
   const filteredExpenses = useMemo(() => {
@@ -60,57 +61,66 @@ export default function ExpensesPageMobile() {
         <p className="text-sm text-slate-400 mt-0.5">{t('subtitle')}</p>
       </div>
 
-      {/* KPI 2x2 compact */}
-      <div className="grid grid-cols-2 gap-2">
-        <KPICard compact label={t('kpi.totalSpend')} value={fmt(kpiSource.total)} sub={selectedMonth ? selectedMonthData?.label : t('kpi.allTime')} accent />
-        <KPICard compact label={t('kpi.avgPerDay')} value={fmt(kpiSource.avgPerDay ?? 0)} sub={t('kpi.avgPerDaySub')} />
-        <KPICard compact label={t('kpi.transactions')} value={kpiSource.count} sub={t('kpi.transactionsSub')} />
-        <KPICard compact label={t('kpi.topAccount')} value={Object.entries(kpiSource.byAccount ?? {}).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'} sub={t('kpi.topAccountSub')} />
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+        {TABS.map(tabKey => (
+          <button key={tabKey} onClick={() => setTab(tabKey)}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors
+              ${tab === tabKey ? 'bg-slate-900 text-white shadow-sm' : 'text-gray-400'}`}>
+            {tabKey === 'expenses' ? '💸 ' + t('tabs.expenses') : '🔄 ' + t('tabs.subscriptions')}
+          </button>
+        ))}
       </div>
 
-      {/* Lista colapsable — justo debajo de los KPIs */}
-      <RecentExpensesMobile
-        expenses={filteredExpenses}
-        onCreate={create.mutateAsync}
-        onUpdate={update.mutateAsync}
-        onRemove={remove.mutateAsync}
-      />
-
-      {/* Month filter pills */}
-      {analytics && (
-        <FilterBar
-          months={analytics.monthlyData}
-          selectedMonth={selectedMonth}
-          drilldownWeek={drilldownWeek}
-          onSelectMonth={handleSelectMonth}
-          onClearDrilldown={() => setDrilldownWeek(null)}
-        />
-      )}
-
-      {/* Bar chart */}
-      {analytics && (
-        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
-          <div style={{ height: 280 }}>
-            <SpendingChart
-              monthlyData={analytics.monthlyData}
-              selectedMonthData={drilldownWeek ? null : selectedMonthData}
-              drilldownWeek={drilldownWeek}
-              onDrilldown={(key) => setSelectedMonth(key)}
-              accounts={analytics.accounts}
-            />
+      {/* Tab: Gastos */}
+      {tab === 'expenses' && (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <KPICard compact label={t('kpi.totalSpend')} value={fmt(kpiSource.total)}
+              sub={selectedMonth ? selectedMonthData?.label : t('kpi.allTime')} accent />
+            <KPICard compact label={t('kpi.avgPerDay')} value={fmt(kpiSource.avgPerDay ?? 0)}
+              sub={t('kpi.avgPerDaySub')} />
+            <KPICard compact label={t('kpi.transactions')} value={kpiSource.count}
+              sub={t('kpi.transactionsSub')} />
+            <KPICard compact label={t('kpi.topAccount')}
+              value={Object.entries(kpiSource.byAccount ?? {}).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'}
+              sub={t('kpi.topAccountSub')} />
           </div>
-        </div>
+
+          <RecentExpensesMobile expenses={filteredExpenses}
+            onCreate={create.mutateAsync}
+            onUpdate={update.mutateAsync}
+            onRemove={remove.mutateAsync} />
+
+          {analytics && (
+            <FilterBar months={analytics.monthlyData} selectedMonth={selectedMonth}
+              drilldownWeek={drilldownWeek} onSelectMonth={handleSelectMonth}
+              onClearDrilldown={() => setDrilldownWeek(null)} />
+          )}
+
+          {analytics && (
+            <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
+              <div style={{ height: 280 }}>
+                <SpendingChart monthlyData={analytics.monthlyData}
+                  selectedMonthData={drilldownWeek ? null : selectedMonthData}
+                  drilldownWeek={drilldownWeek}
+                  onDrilldown={(key) => setSelectedMonth(key)}
+                  accounts={analytics.accounts} />
+              </div>
+            </div>
+          )}
+
+          {analytics && (
+            <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
+              <AccountBreakdown byAccount={kpiSource.byAccount}
+                title={selectedMonth ? t('chart.accountBreakdownMonth') : t('chart.accountBreakdown')} />
+            </div>
+          )}
+        </>
       )}
 
-      {/* Donut */}
-      {analytics && (
-        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
-          <AccountBreakdown
-            byAccount={kpiSource.byAccount}
-            title={selectedMonth ? t('chart.accountBreakdownMonth') : t('chart.accountBreakdown')}
-          />
-        </div>
-      )}
+      {/* Tab: Suscripciones */}
+      {tab === 'subscriptions' && <SubscriptionsTabMobile />}
     </div>
   )
 }

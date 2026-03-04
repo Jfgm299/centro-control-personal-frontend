@@ -1,30 +1,34 @@
 {
-  "title": "Control de Gastos",
+  "title": "Control de gastos",
   "subtitle": "Gestiona tus finanzas personales",
+  "tabs": {
+    "expenses": "Gastos",
+    "subscriptions": "Suscripciones"
+  },
   "kpi": {
-    "totalSpend": "Gasto Total",
-    "allTime": "Todo el tiempo",
-    "avgPerDay": "Media / Día",
+    "totalSpend": "Gasto total",
+    "allTime": "Histórico",
+    "avgPerDay": "Media / día",
     "avgPerDaySub": "Media en días con gastos",
     "transactions": "Transacciones",
     "transactionsSub": "Total registradas",
-    "topAccount": "Cuenta Principal",
+    "topAccount": "Cuenta principal",
     "topAccountSub": "Por gasto total"
   },
   "filter": {
     "backToMonth": "Volver a"
   },
   "chart": {
-    "monthlyTitle": "Gasto Mensual por Cuenta",
-    "weeklyTitle": "Desglose Semanal",
+    "monthlyTitle": "Gasto mensual por cuenta",
+    "weeklyTitle": "Desglose semanal",
     "clickToDrilldown": "Haz clic en una barra para ver el detalle semanal",
-    "accountBreakdown": "Desglose por Cuenta",
-    "accountBreakdownMonth": "Desglose por Cuenta (mes)",
+    "accountBreakdown": "Desglose por cuenta",
+    "accountBreakdownMonth": "Desglose por cuenta (mes)",
     "accountBreakdownSub": "Distribución del gasto"
   },
   "list": {
-    "title": "Gastos Recientes",
-    "empty": "No hay gastos para este período.",
+    "title": "Gastos recientes",
+    "empty": "No se encontraron gastos para este periodo.",
     "create": "Nuevo gasto",
     "edit": "Editar",
     "delete": "Eliminar",
@@ -41,7 +45,23 @@
     "save": "Guardar cambios",
     "create": "Crear",
     "saving": "Guardando…",
-    "errorGeneric": "Algo ha ido mal"
+    "errorGeneric": "Algo salió mal"
+  },
+  "scheduled": {
+    "title": "Suscripciones y programados",
+    "subtitle": "Gastos recurrentes y planificados",
+    "monthlyTotal": "Gasto mensual",
+    "yearlyTotal": "Gasto anual",
+    "active": "Activos",
+    "upcoming": "Próximos pagos",
+    "addNew": "Añadir",
+    "empty": "Sin gastos programados",
+    "emptyAction": "Añadir el primero",
+    "filterAll": "Todos",
+    "paused": "Pausado",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "inDays": "En {{days}}d"
   },
   "error": {
     "title": "No se pudieron cargar los gastos"

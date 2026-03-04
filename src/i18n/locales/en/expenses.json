@@ -1,6 +1,10 @@
 {
   "title": "Expense Control",
   "subtitle": "Manage your personal finances",
+  "tabs": {
+    "expenses": "Expenses",
+    "subscriptions": "Subscriptions"
+  },
   "kpi": {
     "totalSpend": "Total Spend",
     "allTime": "All time",
@@ -42,6 +46,22 @@
     "create": "Create",
     "saving": "Saving…",
     "errorGeneric": "Something went wrong"
+  },
+  "scheduled": {
+    "title": "Subscriptions & Scheduled",
+    "subtitle": "Recurring and planned expenses",
+    "monthlyTotal": "Monthly total",
+    "yearlyTotal": "Yearly total",
+    "active": "Active",
+    "upcoming": "Upcoming payments",
+    "addNew": "Add new",
+    "empty": "No scheduled expenses yet",
+    "emptyAction": "Add the first one",
+    "filterAll": "All",
+    "paused": "Paused",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "inDays": "In {{days}}d"
   },
   "error": {
     "title": "Could not load expenses"
