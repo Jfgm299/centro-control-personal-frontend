@@ -1,50 +1,44 @@
 import { useState, useCallback } from 'react'
+import Quagga from '@ericblade/quagga2'
 
-const SUPPORTED_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code']
+/**
+ * useBarcodeFromImage
+ * Decodes a barcode from a static image file using QuaggaJS2.
+ * Much better than ZXing for photos: adaptive thresholding, Sobel edge detection,
+ * works at multiple scales.
+ */
 
-function loadImage(file) {
+function decodeWithQuagga(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file)
-    const img = new Image()
-    img.onload = () => resolve({ img, url })
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('IMAGE_LOAD_FAILED')) }
-    img.src = url
+
+    Quagga.decodeSingle(
+      {
+        src: url,
+        numOfWorkers: 0, // must be 0 for single-image mode
+        inputStream: { size: 1200 }, // upscale for better detection
+        decoder: {
+          readers: [
+            'ean_reader',
+            'ean_8_reader',
+            'upc_reader',
+            'upc_e_reader',
+            'code_128_reader',
+            'code_39_reader',
+          ],
+        },
+        locate: true, // let Quagga find the barcode within the image
+      },
+      (result) => {
+        URL.revokeObjectURL(url)
+        if (result?.codeResult?.code) {
+          resolve(result.codeResult.code)
+        } else {
+          reject(new Error('NO_BARCODE_IN_IMAGE'))
+        }
+      }
+    )
   })
-}
-
-async function decodeWithNativeAPI(img) {
-  const detector = new window.BarcodeDetector({ formats: SUPPORTED_FORMATS })
-  const barcodes = await detector.detect(img)
-  if (barcodes.length === 0) throw new Error('NO_BARCODE_IN_IMAGE')
-  return barcodes[0].rawValue
-}
-
-async function decodeWithZxing(img) {
-  const { BrowserMultiFormatReader } = await import('@zxing/browser')
-  const canvas = document.createElement('canvas')
-  canvas.width  = img.naturalWidth
-  canvas.height = img.naturalHeight
-  canvas.getContext('2d').drawImage(img, 0, 0)
-  const reader = new BrowserMultiFormatReader()
-  try {
-    const result = await reader.decodeFromCanvas(canvas)
-    return result.getText()
-  } catch {
-    throw new Error('NO_BARCODE_IN_IMAGE')
-  }
-}
-
-let _nativeSupportCache = null
-async function nativeSupportsEAN13() {
-  if (_nativeSupportCache !== null) return _nativeSupportCache
-  if (!('BarcodeDetector' in window)) { _nativeSupportCache = false; return false }
-  try {
-    const formats = await window.BarcodeDetector.getSupportedFormats()
-    _nativeSupportCache = formats.includes('ean_13')
-  } catch {
-    _nativeSupportCache = false
-  }
-  return _nativeSupportCache
 }
 
 export function useBarcodeFromImage() {
@@ -54,24 +48,14 @@ export function useBarcodeFromImage() {
   const decodeImage = useCallback(async (file) => {
     setIsDecoding(true)
     setError(null)
-
-    let url = null
     try {
-      const { img, url: objectUrl } = await loadImage(file)
-      url = objectUrl
-
-      const useNative = await nativeSupportsEAN13()
-      const barcode   = useNative
-        ? await decodeWithNativeAPI(img)
-        : await decodeWithZxing(img)
-
+      const barcode = await decodeWithQuagga(file)
       return barcode
     } catch (err) {
       const code = err.message || 'UNKNOWN_ERROR'
       setError(code)
       throw err
     } finally {
-      if (url) URL.revokeObjectURL(url)
       setIsDecoding(false)
     }
   }, [])
