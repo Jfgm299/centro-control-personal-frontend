@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   useScheduledExpenses,
   useScheduledMutations,
@@ -8,12 +9,24 @@ import {
 import ScheduledExpenseModal from './ScheduledExpenseModal'
 
 const fmt = (v) => `€${Number(v).toFixed(2)}`
-const FREQ_LABEL = { WEEKLY: 'Semanal', MONTHLY: 'Mensual', YEARLY: 'Anual' }
 
 function ScheduledCard({ item, onEdit, onDelete }) {
+  const { t } = useTranslation('expenses')
   const days = daysUntil(item.next_payment_date)
   const urgent = days !== null && days <= 7
   const isOneTime = item.category === 'ONE_TIME'
+
+  const freqLabel = {
+    WEEKLY:  t('scheduled.freqWeekly'),
+    MONTHLY: t('scheduled.freqMonthly'),
+    YEARLY:  t('scheduled.freqYearly'),
+  }
+
+  const urgentLabel = days === 0
+    ? t('scheduled.today')
+    : days === 1
+    ? t('scheduled.tomorrow')
+    : t('scheduled.inDays', { days })
 
   return (
     <div className={`bg-white rounded-2xl border p-4 flex items-start gap-3
@@ -30,7 +43,7 @@ function ScheduledCard({ item, onEdit, onDelete }) {
             <p className="font-semibold text-slate-800 text-sm truncate">{item.name}</p>
             <p className="text-xs text-slate-400 mt-0.5">
               {item.account}
-              {!isOneTime && ` · ${FREQ_LABEL[item.frequency] ?? item.frequency}`}
+              {!isOneTime && ` · ${freqLabel[item.frequency] ?? item.frequency}`}
             </p>
           </div>
           <p className="font-bold text-slate-800 text-sm flex-shrink-0">{fmt(item.amount)}</p>
@@ -40,17 +53,17 @@ function ScheduledCard({ item, onEdit, onDelete }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium
               ${isOneTime ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600'}`}>
-              {isOneTime ? 'Pago único' : 'Suscripción'}
+              {isOneTime ? t('scheduled.typeOneTimeShort') : t('scheduled.typeSubscriptionShort')}
             </span>
             {item.next_payment_date && (
               <span className={`text-xs font-medium ${urgent ? 'text-red-500' : 'text-slate-400'}`}>
-                {urgent
-                  ? `⚡ ${days === 0 ? 'Hoy' : days === 1 ? 'Mañana' : `${days}d`}`
-                  : item.next_payment_date}
+                {urgent ? `⚡ ${urgentLabel}` : item.next_payment_date}
               </span>
             )}
             {!item.is_active && !isOneTime && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-400">Pausada</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-400">
+                {t('scheduled.paused')}
+              </span>
             )}
           </div>
           <div className="flex gap-1">
@@ -76,6 +89,7 @@ function ScheduledCard({ item, onEdit, onDelete }) {
 }
 
 export default function SubscriptionsTabMobile() {
+  const { t } = useTranslation('expenses')
   const { scheduled, isLoading } = useScheduledExpenses()
   const { create, update, remove } = useScheduledMutations()
   const [modal, setModal] = useState(null)
@@ -96,7 +110,7 @@ export default function SubscriptionsTabMobile() {
   }
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Eliminar?')) await remove.mutateAsync(id)
+    if (window.confirm(t('list.confirmDelete'))) await remove.mutateAsync(id)
   }
 
   if (isLoading) return (
@@ -113,19 +127,21 @@ export default function SubscriptionsTabMobile() {
       {/* KPIs 2x2 */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white rounded-2xl border border-gray-100 p-3">
-          <p className="text-xs text-slate-400">Suscripciones/mes</p>
+          <p className="text-xs text-slate-400">{t('scheduled.kpiMonthly')}</p>
           <p className="font-bold text-sm mt-0.5 text-indigo-600">{fmt(stats.monthlyTotal)}</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-100 p-3">
-          <p className="text-xs text-slate-400">Pagos únicos</p>
+          <p className="text-xs text-slate-400">{t('scheduled.kpiOneTime')}</p>
           <p className="font-bold text-sm mt-0.5 text-amber-500">
             {fmt(oneTimePending.reduce((s, i) => s + i.amount, 0))}
           </p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-100 p-3 col-span-2">
-          <p className="text-xs text-slate-400">Próximo pago</p>
+          <p className="text-xs text-slate-400">{t('scheduled.kpiNext')}</p>
           <p className="font-bold text-sm mt-0.5 truncate">
-            {stats.upcoming[0] ? `${stats.upcoming[0].icon} ${stats.upcoming[0].name} · ${fmt(stats.upcoming[0].amount)}` : '—'}
+            {stats.upcoming[0]
+              ? `${stats.upcoming[0].icon} ${stats.upcoming[0].name} · ${fmt(stats.upcoming[0].amount)}`
+              : '—'}
           </p>
         </div>
       </div>
@@ -133,27 +149,31 @@ export default function SubscriptionsTabMobile() {
       {/* Upcoming urgentes */}
       {stats.upcoming.filter(s => daysUntil(s.next_payment_date) <= 7).length > 0 && (
         <div className="bg-amber-50 border border-amber-100 rounded-2xl p-3">
-          <p className="text-xs font-semibold text-amber-700 mb-2">⏰ Esta semana</p>
-          {stats.upcoming.filter(s => daysUntil(s.next_payment_date) <= 7).map(s => (
-            <div key={s.id} className="flex items-center justify-between py-1">
-              <div className="flex items-center gap-2">
-                <span>{s.icon}</span>
-                <span className="text-xs font-medium text-slate-700">{s.name}</span>
+          <p className="text-xs font-semibold text-amber-700 mb-2">⏰ {t('scheduled.upcomingWeek')}</p>
+          {stats.upcoming.filter(s => daysUntil(s.next_payment_date) <= 7).map(s => {
+            const days = daysUntil(s.next_payment_date)
+            const label = days === 0 ? t('scheduled.today') : days === 1 ? t('scheduled.tomorrow') : t('scheduled.inDays', { days })
+            return (
+              <div key={s.id} className="flex items-center justify-between py-1">
+                <div className="flex items-center gap-2">
+                  <span>{s.icon}</span>
+                  <span className="text-xs font-medium text-slate-700">{s.name}</span>
+                </div>
+                <span className="text-xs text-amber-600 font-medium">
+                  {label} · {fmt(s.amount)}
+                </span>
               </div>
-              <span className="text-xs text-amber-600 font-medium">
-                {daysUntil(s.next_payment_date) === 0 ? 'Hoy' : `${daysUntil(s.next_payment_date)}d`} · {fmt(s.amount)}
-              </span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
       {/* Filtros + Añadir */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {[
-          { key: 'all',           label: 'Todos' },
-          { key: 'subscriptions', label: '🔄 Suscripciones' },
-          { key: 'one_time',      label: '📅 Pagos únicos' },
+          { key: 'all',           label: t('scheduled.filterAll') },
+          { key: 'subscriptions', label: `🔄 ${t('scheduled.filterSubs')}` },
+          { key: 'one_time',      label: `📅 ${t('scheduled.filterOneTime')}` },
         ].map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)}
             className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all
@@ -163,7 +183,7 @@ export default function SubscriptionsTabMobile() {
         ))}
         <button onClick={() => setModal('create')}
           className="flex-shrink-0 ml-auto px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-full">
-          + Añadir
+          + {t('scheduled.addNew')}
         </button>
       </div>
 
@@ -171,10 +191,10 @@ export default function SubscriptionsTabMobile() {
       {filtered.length === 0 ? (
         <div className="text-center py-10 text-slate-300">
           <p className="text-3xl mb-2">{filter === 'one_time' ? '📅' : '🔄'}</p>
-          <p className="text-sm">Nada aquí todavía</p>
+          <p className="text-sm">{t('scheduled.empty')}</p>
           <button onClick={() => setModal('create')}
             className="mt-3 px-4 py-2 bg-slate-900 text-white text-xs rounded-xl">
-            Añadir
+            {t('scheduled.emptyAction')}
           </button>
         </div>
       ) : (
