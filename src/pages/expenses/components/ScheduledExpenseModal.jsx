@@ -124,7 +124,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-slate-600">Cuenta</label>
               <select value={form.account} onChange={e => set('account', e.target.value)}
-              className="w-full h-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900">
+              className="w-full h-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 appearance-none">
                 {ACCOUNTS.map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
