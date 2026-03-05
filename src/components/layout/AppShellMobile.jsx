@@ -9,8 +9,6 @@ import UserMenu from './UserMenu'
 import DockMobile from './DockMobile'
 import LoginPopup from '../auth/LoginPopup'
 
-const DOCK_HEIGHT = 96 // px aproximados que ocupa el dock + safe area
-
 function DragGhost() {
   const { isDragging, draggingModule, ghostX, ghostY, overDock } = useDragStore()
   if (!isDragging || !draggingModule) return null
@@ -48,26 +46,26 @@ export default function AppShellMobile() {
   }
 
   return (
-    <div className="relative w-full bg-transparent" style={{ height: '100dvh', overflow: 'hidden' }}>
+    <div
+      className="relative w-full bg-transparent flex flex-col"
+      style={{
+        height: '100vh',
+        maxHeight: '-webkit-fill-available',
+        overflow: 'hidden',
+      }}
+    >
       <DotBackground />
-
       {!user && <LoginPopup />}
 
-      {/* Status bar spacer */}
-      <div style={{ paddingTop: 'env(safe-area-inset-top)' }} />
-
-      {/* Top-right user menu */}
-      <div className="relative z-20 flex justify-end px-4 pt-2">
-        <UserMenu />
+      {/* Safe area top + UserMenu */}
+      <div className="relative z-20 flex-shrink-0" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="flex justify-end px-4 pt-2">
+          <UserMenu />
+        </div>
       </div>
 
-      {/* Main content — deja espacio para el dock abajo */}
-      <main
-        className="relative z-10 overflow-y-auto overflow-x-hidden"
-        style={{
-          height: `calc(100dvh - env(safe-area-inset-top) - 48px - ${DOCK_HEIGHT}px)`,
-        }}
-      >
+      {/* Main content */}
+      <main className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden min-h-0">
         {modulesLoaded ? <Outlet /> : (
           <div className="flex items-center justify-center h-full text-gray-400">
             {t('status.loading')}
@@ -75,9 +73,9 @@ export default function AppShellMobile() {
         )}
       </main>
 
-      {/* Dock — fixed al fondo, nunca se corta */}
+      {/* Dock — safe area bottom gestionado aquí, una sola vez */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-30"
+        className="relative z-30 flex-shrink-0"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <DockMobile />

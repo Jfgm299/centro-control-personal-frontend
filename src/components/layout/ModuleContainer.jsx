@@ -1,10 +1,16 @@
+import { Capacitor } from '@capacitor/core'
+
+const IS_MOBILE = Capacitor.isNativePlatform() || window.innerWidth < 768
+
 export default function ModuleContainer({ children }) {
   return (
     <div
       className="fixed left-0 right-0 px-4 pb-4"
       style={{
         top: '52px',
-        bottom: 'calc(env(safe-area-inset-bottom) + 80px)',
+        bottom: IS_MOBILE
+          ? 'calc(env(safe-area-inset-bottom) + 80px)'
+          : '0',
       }}
     >
       <div

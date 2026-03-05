@@ -10,12 +10,14 @@ const config: CapacitorConfig = {
     // cleartext: true,
   },
   ios: {
-    contentInset: 'automatic', // respeta safe areas automáticamente
+    contentInset: 'never', // el WebView ocupa toda la pantalla, CSS gestiona el safe area
+    scrollEnabled: false,
   },
   plugins: {
     StatusBar: {
       style: 'dark',
-      backgroundColor: '#00000000', // transparente — el contenido va bajo la status bar
+      backgroundColor: '#00000000',
+      overlaysWebView: true, // status bar flota sobre el WebView
     },
   },
 }
