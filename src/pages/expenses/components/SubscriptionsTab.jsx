@@ -4,72 +4,60 @@ import {
   useScheduledMutations,
   aggregateScheduled,
   daysUntil,
-  FREQUENCY_LABELS,
-  CATEGORY_LABELS,
-  CATEGORY_COLORS,
 } from '../hooks/useScheduledExpenses'
 import ScheduledExpenseModal from './ScheduledExpenseModal'
 
 const fmt = (v) => `€${Number(v).toFixed(2)}`
 
-function KPIBadge({ label, value, sub, color }) {
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: color ?? '#0f172a' }}>{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
-    </div>
-  )
-}
+const FREQ_LABEL = { WEEKLY: 'Semanal', MONTHLY: 'Mensual', YEARLY: 'Anual' }
 
 function ScheduledRow({ item, onEdit, onDelete }) {
   const days = daysUntil(item.next_payment_date)
   const urgent = days !== null && days <= 7
+  const isOneTime = item.category === 'ONE_TIME'
 
   return (
     <div className={`flex items-center gap-4 p-4 rounded-2xl border transition-all hover:shadow-sm
       ${item.is_active ? 'bg-white border-gray-100' : 'bg-slate-50 border-slate-100 opacity-60'}`}>
 
-      {/* Icon */}
       <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
-        style={{ background: `${CATEGORY_COLORS[item.category]}18` }}>
-        {item.icon ?? '📦'}
+        style={{ background: isOneTime ? '#f59e0b18' : '#6366f118' }}>
+        {item.icon ?? (isOneTime ? '📅' : '🔄')}
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-slate-800 text-sm">{item.name}</span>
-          <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-            style={{ background: `${CATEGORY_COLORS[item.category]}18`, color: CATEGORY_COLORS[item.category] }}>
-            {CATEGORY_LABELS[item.category]}
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+            ${isOneTime ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600'}`}>
+            {isOneTime ? 'Pago único' : 'Suscripción'}
           </span>
-          {!item.is_active && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-400">Pausado</span>
+          {!item.is_active && !isOneTime && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-400">Pausada</span>
           )}
         </div>
         <div className="flex items-center gap-3 mt-1 flex-wrap">
           <span className="text-xs text-slate-400">{item.account}</span>
-          <span className="text-xs text-slate-400">·</span>
-          <span className="text-xs text-slate-400">{FREQUENCY_LABELS[item.frequency]}</span>
+          {!isOneTime && (
+            <><span className="text-xs text-slate-400">·</span>
+            <span className="text-xs text-slate-400">{FREQ_LABEL[item.frequency] ?? item.frequency}</span></>
+          )}
           {item.next_payment_date && (
-            <>
-              <span className="text-xs text-slate-400">·</span>
-              <span className={`text-xs font-medium ${urgent ? 'text-red-500' : 'text-slate-500'}`}>
-                {urgent ? `⚡ ${days === 0 ? 'Hoy' : `En ${days}d`}` : `Próximo: ${item.next_payment_date}`}
-              </span>
-            </>
+            <><span className="text-xs text-slate-400">·</span>
+            <span className={`text-xs font-medium ${urgent ? 'text-red-500' : 'text-slate-500'}`}>
+              {urgent
+                ? `⚡ ${days === 0 ? 'Hoy' : days === 1 ? 'Mañana' : `En ${days}d`}`
+                : item.next_payment_date}
+            </span></>
           )}
         </div>
       </div>
 
-      {/* Amount */}
       <div className="text-right flex-shrink-0">
         <p className="font-bold text-slate-800">{fmt(item.amount)}</p>
-        <p className="text-xs text-slate-400">/{FREQUENCY_LABELS[item.frequency].toLowerCase()}</p>
+        {!isOneTime && <p className="text-xs text-slate-400">/{FREQ_LABEL[item.frequency]?.toLowerCase()}</p>}
       </div>
 
-      {/* Actions */}
       <div className="flex gap-1 flex-shrink-0">
         <button onClick={() => onEdit(item)}
           className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
@@ -93,13 +81,15 @@ function ScheduledRow({ item, onEdit, onDelete }) {
 export default function SubscriptionsTab() {
   const { scheduled, isLoading } = useScheduledExpenses()
   const { create, update, remove } = useScheduledMutations()
-  const [modal, setModal] = useState(null) // null | 'create' | item object
-  const [filter, setFilter] = useState('all') // all | subscription | recurring | installment
+  const [modal, setModal] = useState(null)
+  const [filter, setFilter] = useState('all')
 
   const stats = aggregateScheduled(scheduled)
 
   const filtered = scheduled.filter(s =>
-    filter === 'all' ? true : s.category === filter
+    filter === 'all' ? true :
+    filter === 'subscriptions' ? s.category === 'SUBSCRIPTION' :
+    s.category === 'ONE_TIME'
   )
 
   const handleSave = async (payload) => {
@@ -109,9 +99,7 @@ export default function SubscriptionsTab() {
   }
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Eliminar este gasto programado?')) {
-      await remove.mutateAsync(id)
-    }
+    if (window.confirm('¿Eliminar este gasto?')) await remove.mutateAsync(id)
   }
 
   if (isLoading) return (
@@ -124,23 +112,65 @@ export default function SubscriptionsTab() {
     <div className="flex flex-col gap-6">
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPIBadge label="Gasto mensual" value={fmt(stats.monthlyTotal)} sub="Activos" color="#6366f1" />
-        <KPIBadge label="Gasto anual" value={fmt(stats.yearlyTotal)} sub="Proyectado" />
-        <KPIBadge label="Activos" value={stats.activeCount} sub="Gastos programados" />
-        <KPIBadge label="Próximo pago"
-          value={stats.upcoming[0] ? stats.upcoming[0].icon + ' ' + stats.upcoming[0].name : '—'}
-          sub={stats.upcoming[0]?.next_payment_date ?? ''} />
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">Suscripciones / mes</p>
+          <p className="text-2xl font-bold mt-1 text-indigo-600">{fmt(stats.monthlyTotal)}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{fmt(stats.yearlyTotal)} al año</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">Pagos únicos pendientes</p>
+          <p className="text-2xl font-bold mt-1 text-amber-500">
+            {fmt(scheduled.filter(s => s.category === 'ONE_TIME' && s.is_active).reduce((sum, s) => sum + s.amount, 0))}
+          </p>
+          <p className="text-xs text-slate-400 mt-0.5">
+            {scheduled.filter(s => s.category === 'ONE_TIME' && s.is_active).length} pendientes
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">Próximo pago</p>
+          <p className="text-lg font-bold mt-1 text-slate-800">
+            {stats.upcoming[0] ? `${stats.upcoming[0].icon} ${stats.upcoming[0].name}` : '—'}
+          </p>
+          <p className="text-xs text-slate-400 mt-0.5">{stats.upcoming[0]?.next_payment_date ?? ''}</p>
+        </div>
       </div>
 
-      {/* Header + filters */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-2 flex-wrap">
-          {['all', 'subscription', 'recurring', 'installment'].map(f => (
-            <button key={f} onClick={() => setFilter(f)}
+      {/* Upcoming banner */}
+      {stats.upcoming.filter(s => daysUntil(s.next_payment_date) <= 7).length > 0 && (
+        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+          <p className="text-xs font-semibold text-amber-700 mb-3">⏰ Próximos 7 días</p>
+          <div className="flex gap-3 flex-wrap">
+            {stats.upcoming.filter(s => daysUntil(s.next_payment_date) <= 7).map(s => {
+              const days = daysUntil(s.next_payment_date)
+              return (
+                <div key={s.id} className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-amber-100">
+                  <span>{s.icon}</span>
+                  <div>
+                    <p className="text-xs font-medium text-slate-700">{s.name}</p>
+                    <p className="text-xs text-amber-600">
+                      {days === 0 ? 'Hoy' : days === 1 ? 'Mañana' : `En ${days} días`} · {fmt(s.amount)}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Filter + Add */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          {[
+            { key: 'all',           label: 'Todos' },
+            { key: 'subscriptions', label: '🔄 Suscripciones' },
+            { key: 'one_time',      label: '📅 Pagos únicos' },
+          ].map(f => (
+            <button key={f.key} onClick={() => setFilter(f.key)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all
-                ${filter === f ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-400'}`}>
-              {f === 'all' ? 'Todos' : CATEGORY_LABELS[f]}
+                ${filter === f.key ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-400'}`}>
+              {f.label}
             </button>
           ))}
         </div>
@@ -153,47 +183,21 @@ export default function SubscriptionsTab() {
       {/* List */}
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-slate-300">
-          <p className="text-4xl mb-3">📋</p>
-          <p className="text-sm">No hay gastos programados aún</p>
+          <p className="text-4xl mb-3">{filter === 'one_time' ? '📅' : '🔄'}</p>
+          <p className="text-sm">No hay nada aquí todavía</p>
           <button onClick={() => setModal('create')}
-            className="mt-4 px-4 py-2 bg-slate-900 text-white text-sm rounded-xl hover:bg-slate-700 transition-all">
-            Añadir el primero
+            className="mt-4 px-4 py-2 bg-slate-900 text-white text-sm rounded-xl hover:bg-slate-700">
+            Añadir
           </button>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {/* Upcoming banner */}
-          {stats.upcoming.length > 0 && (
-            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 mb-2">
-              <p className="text-xs font-semibold text-amber-700 mb-2">⏰ Próximos pagos</p>
-              <div className="flex gap-3 flex-wrap">
-                {stats.upcoming.map(s => {
-                  const days = daysUntil(s.next_payment_date)
-                  return (
-                    <div key={s.id} className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-amber-100">
-                      <span>{s.icon}</span>
-                      <div>
-                        <p className="text-xs font-medium text-slate-700">{s.name}</p>
-                        <p className="text-xs text-amber-600">
-                          {days === 0 ? 'Hoy' : days === 1 ? 'Mañana' : `En ${days} días`} · {fmt(s.amount)}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
           {filtered.map(item => (
-            <ScheduledRow key={item.id} item={item}
-              onEdit={setModal}
-              onDelete={handleDelete} />
+            <ScheduledRow key={item.id} item={item} onEdit={setModal} onDelete={handleDelete} />
           ))}
         </div>
       )}
 
-      {/* Modal */}
       {modal && (
         <ScheduledExpenseModal
           item={modal === 'create' ? null : modal}

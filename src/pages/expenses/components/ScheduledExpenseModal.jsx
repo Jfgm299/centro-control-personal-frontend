@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
-import { FREQUENCY_LABELS, CATEGORY_LABELS } from '../hooks/useScheduledExpenses'
 
 const ACCOUNTS = ['REVOLUT', 'IMAGIN']
-const FREQUENCIES = ['monthly', 'yearly', 'weekly', 'custom']
-const CATEGORIES = ['subscription', 'recurring', 'installment']
-const DEFAULT_ICONS = ['📺', '🎵', '☁️', '🏋️', '📰', '🎮', '🏠', '💳', '📱', '🚗', '💡', '🌐']
+const FREQUENCIES = [
+  { value: 'WEEKLY',  label: 'Semanal' },
+  { value: 'MONTHLY', label: 'Mensual' },
+  { value: 'YEARLY',  label: 'Anual' },
+]
+const DEFAULT_ICONS = ['📺', '🎵', '☁️', '🏋️', '📰', '🎮', '🏠', '💳', '📱', '🚗', '💡', '🌐', '🏨', '✈️', '🎭', '🛒']
 
 const empty = () => ({
   name: '', amount: '', account: 'REVOLUT',
-  frequency: 'monthly', category: 'subscription',
-  next_payment_date: '', is_active: true,
-  icon: '📦', color: '#6366f1', notes: '', custom_days: '',
+  category: 'SUBSCRIPTION',
+  frequency: 'MONTHLY',
+  next_payment_date: '',
+  is_active: true,
+  icon: '📦', notes: '',
 })
 
 export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading }) {
@@ -19,31 +23,36 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
   useEffect(() => {
     if (item) {
       setForm({
-        name:               item.name ?? '',
-        amount:             item.amount ?? '',
-        account:            item.account ?? 'REVOLUT',
-        frequency:          item.frequency ?? 'monthly',
-        category:           item.category ?? 'subscription',
-        next_payment_date:  item.next_payment_date ?? '',
-        is_active:          item.is_active ?? true,
-        icon:               item.icon ?? '📦',
-        color:              item.color ?? '#6366f1',
-        notes:              item.notes ?? '',
-        custom_days:        item.custom_days ?? '',
+        name:              item.name ?? '',
+        amount:            item.amount ?? '',
+        account:           item.account ?? 'REVOLUT',
+        category:          item.category ?? 'SUBSCRIPTION',
+        frequency:         item.frequency ?? 'MONTHLY',
+        next_payment_date: item.next_payment_date ?? '',
+        is_active:         item.is_active ?? true,
+        icon:              item.icon ?? '📦',
+        notes:             item.notes ?? '',
       })
     }
   }, [item])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const isOneTime = form.category === 'ONE_TIME'
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const payload = {
-      ...form,
-      amount:      parseFloat(form.amount),
-      custom_days: form.custom_days ? parseInt(form.custom_days) : null,
+      name:              form.name.trim(),
+      amount:            parseFloat(form.amount),
+      account:           form.account,
+      category:          form.category,
+      frequency:         isOneTime ? 'MONTHLY' : form.frequency, // ignorado para ONE_TIME
       next_payment_date: form.next_payment_date || null,
-      notes:       form.notes || null,
+      is_active:         form.is_active,
+      icon:              form.icon,
+      notes:             form.notes || null,
+      custom_days:       null,
+      color:             null,
     }
     if (item?.id) payload.id = item.id
     onSave(payload)
@@ -57,7 +66,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <h2 className="text-base font-semibold text-slate-800">
-            {item ? 'Editar gasto programado' : 'Nuevo gasto programado'}
+            {item ? 'Editar' : 'Nuevo gasto programado'}
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +77,26 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
 
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
 
-          {/* Icon picker + Name */}
+          {/* Tipo — lo primero, condiciona el resto */}
+          <div className="flex gap-2">
+            {[
+              { value: 'SUBSCRIPTION', label: '🔄 Suscripción',      desc: 'Cobro recurrente' },
+              { value: 'ONE_TIME',     label: '📅 Gasto programado', desc: 'Pago único futuro' },
+            ].map(opt => (
+              <button key={opt.value} type="button" onClick={() => set('category', opt.value)}
+                className={`flex-1 py-3 px-3 rounded-xl border text-left transition-all
+                  ${form.category === opt.value
+                    ? 'bg-slate-900 text-white border-slate-900'
+                    : 'border-slate-200 text-slate-600 hover:border-slate-400'}`}>
+                <p className="text-sm font-semibold">{opt.label}</p>
+                <p className={`text-xs mt-0.5 ${form.category === opt.value ? 'text-slate-300' : 'text-slate-400'}`}>
+                  {opt.desc}
+                </p>
+              </button>
+            ))}
+          </div>
+
+          {/* Icon + Name */}
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-slate-600">Icono</label>
@@ -80,7 +108,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
             <div className="flex-1 flex flex-col gap-1.5">
               <label className="text-xs font-medium text-slate-600">Nombre *</label>
               <input required type="text" value={form.name} onChange={e => set('name', e.target.value)}
-                placeholder="Netflix, Spotify…"
+                placeholder={isOneTime ? 'Hotel, vuelo, reserva…' : 'Netflix, Spotify…'}
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900" />
             </div>
           </div>
@@ -102,73 +130,64 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
             </div>
           </div>
 
-          {/* Category */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-slate-600">Tipo</label>
-            <div className="flex gap-2">
-              {CATEGORIES.map(c => (
-                <button key={c} type="button" onClick={() => set('category', c)}
-                  className={`flex-1 py-2 rounded-xl text-xs font-medium border transition-all
-                    ${form.category === c ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-500 hover:border-slate-400'}`}>
-                  {CATEGORY_LABELS[c]}
-                </button>
-              ))}
+          {/* Frecuencia — solo para suscripciones */}
+          {!isOneTime && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-slate-600">Frecuencia</label>
+              <div className="flex gap-2">
+                {FREQUENCIES.map(f => (
+                  <button key={f.value} type="button" onClick={() => set('frequency', f.value)}
+                    className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all
+                      ${form.frequency === f.value
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'border-slate-200 text-slate-500 hover:border-slate-400'}`}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Frequency */}
+          {/* Fecha de pago */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-slate-600">Frecuencia</label>
-            <div className="flex gap-2 flex-wrap">
-              {FREQUENCIES.map(f => (
-                <button key={f} type="button" onClick={() => set('frequency', f)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all
-                    ${form.frequency === f ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-500 hover:border-slate-400'}`}>
-                  {FREQUENCY_LABELS[f]}
-                </button>
-              ))}
-            </div>
-            {form.frequency === 'custom' && (
-              <input type="number" min="1" value={form.custom_days}
-                onChange={e => set('custom_days', e.target.value)} placeholder="Cada X días"
-                className="mt-2 w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900" />
-            )}
-          </div>
-
-          {/* Next payment date */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-slate-600">Próximo pago</label>
-            <input type="date" value={form.next_payment_date} onChange={e => set('next_payment_date', e.target.value)}
+            <label className="text-xs font-medium text-slate-600">
+              {isOneTime ? 'Fecha del pago *' : 'Próximo pago'}
+            </label>
+            <input type="date" value={form.next_payment_date}
+              onChange={e => set('next_payment_date', e.target.value)}
+              required={isOneTime}
               className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
 
-          {/* Active toggle */}
-          <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-xl">
-            <span className="text-sm text-slate-700 font-medium">Activo</span>
-            <button type="button" onClick={() => set('is_active', !form.is_active)}
-              className={`w-11 h-6 rounded-full transition-colors relative ${form.is_active ? 'bg-indigo-500' : 'bg-slate-300'}`}>
-              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform
-                ${form.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
-            </button>
-          </div>
+          {/* Activo — solo para suscripciones */}
+          {!isOneTime && (
+            <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-xl">
+              <span className="text-sm text-slate-700 font-medium">Activa</span>
+              <button type="button" onClick={() => set('is_active', !form.is_active)}
+                className={`w-11 h-6 rounded-full transition-colors relative ${form.is_active ? 'bg-indigo-500' : 'bg-slate-300'}`}>
+                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform
+                  ${form.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
+          )}
 
-          {/* Notes */}
+          {/* Notas */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-slate-600">Notas (opcional)</label>
             <textarea value={form.notes} onChange={e => set('notes', e.target.value)}
-              rows={2} placeholder="Ej. Familiar, compartido con…"
+              rows={2} placeholder={isOneTime ? 'Ej. Reserva hotel Roma, check-in 12 marzo' : 'Ej. Plan familiar'}
               className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none" />
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose}
-              className="flex-1 py-2.5 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+              className="flex-1 py-2.5 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50">
               Cancelar
             </button>
             <button type="submit" disabled={isLoading}
-              className="flex-1 py-2.5 text-sm font-medium bg-slate-900 text-white rounded-xl hover:bg-slate-700 disabled:opacity-40 transition-all">
-              {isLoading ? 'Guardando…' : item ? 'Guardar cambios' : 'Crear'}
+              className="flex-1 py-2.5 text-sm font-medium bg-slate-900 text-white rounded-xl hover:bg-slate-700 disabled:opacity-40">
+              {isLoading ? 'Guardando…' : item ? 'Guardar' : 'Crear'}
             </button>
           </div>
         </form>
