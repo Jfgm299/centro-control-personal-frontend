@@ -46,7 +46,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
       amount:            parseFloat(form.amount),
       account:           form.account,
       category:          form.category,
-      frequency:         isOneTime ? 'MONTHLY' : form.frequency, // ignorado para ONE_TIME
+      frequency:         isOneTime ? 'MONTHLY' : form.frequency,
       next_payment_date: form.next_payment_date || null,
       is_active:         form.is_active,
       icon:              form.icon,
@@ -77,7 +77,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
 
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
 
-          {/* Tipo — lo primero, condiciona el resto */}
+          {/* Tipo */}
           <div className="flex gap-2">
             {[
               { value: 'SUBSCRIPTION', label: '🔄 Suscripción',      desc: 'Cobro recurrente' },
@@ -130,7 +130,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
             </div>
           </div>
 
-          {/* Frecuencia — solo para suscripciones */}
+          {/* Frecuencia — solo suscripciones */}
           {!isOneTime && (
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-slate-600">Frecuencia</label>
@@ -148,7 +148,7 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
             </div>
           )}
 
-          {/* Fecha de pago */}
+          {/* Fecha */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-slate-600">
               {isOneTime ? 'Fecha del pago *' : 'Próximo pago'}
@@ -159,14 +159,37 @@ export default function ScheduledExpenseModal({ item, onSave, onClose, isLoading
               className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900" />
           </div>
 
-          {/* Activo — solo para suscripciones */}
+          {/* Toggle activa — solo suscripciones — FIXED */}
           {!isOneTime && (
             <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-xl">
               <span className="text-sm text-slate-700 font-medium">Activa</span>
-              <button type="button" onClick={() => set('is_active', !form.is_active)}
-                className={`w-11 h-6 rounded-full transition-colors relative ${form.is_active ? 'bg-indigo-500' : 'bg-slate-300'}`}>
-                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform
-                  ${form.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              <button
+                type="button"
+                onClick={() => set('is_active', !form.is_active)}
+                style={{
+                  width: 44,
+                  height: 24,
+                  borderRadius: 12,
+                  background: form.is_active ? '#6366f1' : '#cbd5e1',
+                  position: 'relative',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: form.is_active ? 22 : 2,
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  background: 'white',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  transition: 'left 0.2s',
+                  display: 'block',
+                }} />
               </button>
             </div>
           )}
