@@ -12,7 +12,7 @@ export default function AddMeasureModal({ onAdd, onClose, isLoading }) {
     if (!weight) return
     onAdd({
       weight_kg:        parseFloat(weight),
-      body_fat_percent: fat ? parseFloat(fat) : null,
+      body_fat_percentage: fat ? parseFloat(fat) : null,
       notes:            notes || null,
     })
   }

@@ -11,7 +11,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-white border border-slate-100 shadow-lg rounded-xl p-3 text-xs">
-      <p className="font-semibold text-slate-600 mb-1">{label}</p>
+      <p className="font-semibold text-slate-600 mb-1">{label.slice(0, 10)}</p>
       {payload.map((p) => (
         <div key={p.dataKey} className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
@@ -36,12 +36,13 @@ export default function BodyMeasuresChart() {
   const sorted = [...measures].sort((a, b) => a.created_at.localeCompare(b.created_at))
 
   const chartData = sorted.map((m) => ({
-    date: m.created_at.slice(0, 10),
+    date: m.created_at,           // timestamp completo como clave única
+    dateLabel: m.created_at.slice(0, 10),  // solo para mostrar en el eje
     weight: m.weight_kg,
-    fat: m.body_fat_percent ?? undefined,
+    fat: m.body_fat_percentage ?? undefined,
   }))
 
-  const hasFat = sorted.some((m) => m.body_fat_percent != null)
+  const hasFat = sorted.some((m) => m.body_fat_percentage != null)
   const latest   = sorted[sorted.length - 1]
   const previous = sorted[sorted.length - 2]
   const weightDiff = latest && previous
@@ -81,11 +82,11 @@ export default function BodyMeasuresChart() {
                 {latest.weight_kg}<span className="text-sm font-normal text-slate-400 ml-1">kg</span>
               </p>
             </div>
-            {latest.body_fat_percent != null && (
+            {latest.body_fat_percentage != null && (
               <div className="bg-white border border-slate-100 rounded-xl px-4 py-3">
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentFat')}</p>
                 <p className="text-2xl font-bold font-mono text-slate-900 mt-0.5">
-                  {latest.body_fat_percent}<span className="text-sm font-normal text-slate-400 ml-0.5">%</span>
+                  {latest.body_fat_percentage}<span className="text-sm font-normal text-slate-400 ml-0.5">%</span>
                 </p>
               </div>
             )}
@@ -109,7 +110,7 @@ export default function BodyMeasuresChart() {
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }}
-                  axisLine={false} tickLine={false} tickFormatter={(d) => d.slice(5)} />
+                  axisLine={false} tickLine={false} tickFormatter={(d) => d.slice(0, 10).slice(5)} />
                 <YAxis yAxisId="weight" tick={{ fontSize: 10, fill: '#94a3b8' }}
                   axisLine={false} tickLine={false} tickFormatter={(v) => `${v}kg`}
                   domain={['dataMin - 2', 'dataMax + 2']} />
@@ -162,8 +163,8 @@ export default function BodyMeasuresChart() {
                     <div>
                       <p className="text-sm font-medium text-slate-800">
                         {m.weight_kg} kg
-                        {m.body_fat_percent != null && (
-                          <span className="text-slate-400 font-normal ml-2 text-xs">· {m.body_fat_percent}% grasa</span>
+                        {m.body_fat_percentage != null && (
+                          <span className="text-slate-400 font-normal ml-2 text-xs">· {m.body_fat_percentage}% grasa</span>
                         )}
                       </p>
                       <p className="text-xs text-slate-400">
