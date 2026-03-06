@@ -25,7 +25,8 @@
     "muscleGroups": "Muscle groups",
     "notes": "Notes (optional)",
     "notesPlaceholder": "e.g. Focus on form",
-    "begin": "Start"
+    "begin": "Start",
+    "readyMessage": "Muscle groups will be automatically added as you add exercises."
   },
   "active": {
     "title": "Workout in progress",
