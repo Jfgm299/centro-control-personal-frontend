@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Capacitor } from '@capacitor/core'
 import { useActiveWorkoutStore } from '../../store/activeWorkoutStore'
@@ -26,12 +26,20 @@ function useElapsed(startedAt) {
 
 function SetRow({ set, type, onDelete }) {
   const { t } = useTranslation('gym')
-  const isCardio = type === EXERCISE_TYPES.CARDIO
+  const isCardio     = type === EXERCISE_TYPES.CARDIO
+  const isBodyweight = type === EXERCISE_TYPES.BODYWEIGHT
+
   const label = isCardio
     ? [
-        set.speed_kmh         ? `${set.speed_kmh} km/h` : null,
-        set.incline_percent   ? `${set.incline_percent}% inc` : null,
-        set.duration_seconds  ? `${Math.round(set.duration_seconds / 60)} min` : null,
+        set.speed_kmh        ? `${set.speed_kmh} km/h` : null,
+        set.incline_percent  ? `${set.incline_percent}% inc` : null,
+        set.duration_seconds ? `${Math.round(set.duration_seconds / 60)} min` : null,
+      ].filter(Boolean).join(' · ')
+    : isBodyweight
+    ? [
+        set.reps             ? `× ${set.reps}` : null,
+        set.duration_seconds ? `${Math.round(set.duration_seconds / 60)} min` : null,
+        set.rpe              ? `RPE ${set.rpe}` : null,
       ].filter(Boolean).join(' · ')
     : [
         set.weight_kg != null ? `${set.weight_kg} kg` : null,
@@ -55,7 +63,7 @@ function SetRow({ set, type, onDelete }) {
   )
 }
 
-function ExerciseBlock({ exercise, workoutId, onDeleteExercise }) {
+function ExerciseBlock({ exercise, workoutId }) {
   const { t } = useTranslation('gym')
   const [showAddSet, setShowAddSet] = useState(false)
   const { add: addSet, remove: removeSet } = useSetMutations(workoutId, exercise.id)
@@ -75,24 +83,36 @@ function ExerciseBlock({ exercise, workoutId, onDeleteExercise }) {
   const handleDeleteExercise = async () => {
     await removeExercise.mutateAsync(exercise.id)
     useActiveWorkoutStore.getState().removeExercise(exercise.id)
-    onDeleteExercise?.()
   }
 
-  const isCardio = exercise.exercise_type === EXERCISE_TYPES.CARDIO
+  const type = exercise.exercise_type
+  const typeLabel = type === EXERCISE_TYPES.CARDIO
+    ? '🏃 Cardio'
+    : type === EXERCISE_TYPES.BODYWEIGHT
+    ? '💪 Bodyweight'
+    : '🏋️ Weights'
+  const typeColor = type === EXERCISE_TYPES.CARDIO
+    ? 'bg-orange-50 text-orange-500'
+    : type === EXERCISE_TYPES.BODYWEIGHT
+    ? 'bg-emerald-50 text-emerald-600'
+    : 'bg-indigo-50 text-indigo-500'
 
   return (
     <div className="ml-4 mt-2">
       <div className="flex items-center justify-between group">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-slate-300 text-sm">├─</span>
           <span className="text-sm font-medium text-slate-700">{exercise.name}</span>
-          <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium
-            ${isCardio ? 'bg-orange-50 text-orange-500' : 'bg-indigo-50 text-indigo-500'}`}>
-            {isCardio ? '🏃 Cardio' : '🏋️ Weights'}
+          <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${typeColor}`}>
+            {typeLabel}
           </span>
+          {(exercise.muscle_groups || []).map(g => (
+            <span key={g} className="text-xs px-1.5 py-0.5 rounded-full text-white font-medium"
+              style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#94a3b8' }}>
+              {g}
+            </span>
+          ))}
         </div>
-
-        {/* En móvil siempre visible, en desktop solo en hover */}
         <div className={`flex items-center gap-1 transition-opacity
           ${IS_MOBILE ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
           <button
@@ -110,7 +130,7 @@ function ExerciseBlock({ exercise, workoutId, onDeleteExercise }) {
 
       <div className="ml-6">
         {exercise.sets.map((s) => (
-          <SetRow key={s.id} set={s} type={exercise.exercise_type} onDelete={handleDeleteSet} />
+          <SetRow key={s.id} set={s} type={type} onDelete={handleDeleteSet} />
         ))}
         {exercise.sets.length === 0 && (
           <p className="text-xs text-slate-300 ml-6 mt-1">{t('set.empty')}</p>
@@ -136,6 +156,15 @@ export default function ActiveWorkout({ onEnd }) {
   const { add: addExercise } = useExerciseMutations(workout?.id)
   const elapsed = useElapsed(startedAt)
 
+  // Muscle groups computed dynamically from exercises
+  const dynamicMuscleGroups = useMemo(() => {
+    const seen = new Set()
+    for (const ex of exercises) {
+      for (const g of (ex.muscle_groups || [])) seen.add(g)
+    }
+    return [...seen]
+  }, [exercises])
+
   const handleAddExercise = async (payload) => {
     const ex = await addExercise.mutateAsync(payload)
     useActiveWorkoutStore.getState().addExercise({ ...ex, sets: [] })
@@ -153,15 +182,18 @@ export default function ActiveWorkout({ onEnd }) {
             <span className="text-xs font-medium text-green-600">{t('active.inProgress')}</span>
           </div>
           <h2 className="text-base font-semibold text-slate-800">{t('active.title')}</h2>
-          <div className="flex flex-wrap gap-1.5 mt-1.5">
-            {workout.muscle_groups?.map((g) => (
-              <span key={g}
-                className="text-xs px-2 py-0.5 rounded-full text-white font-medium"
-                style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#94a3b8' }}>
-                {t(`muscles.${g}`, { defaultValue: g })}
-              </span>
-            ))}
-          </div>
+          {/* Muscle groups — computed live from exercises */}
+          {dynamicMuscleGroups.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              {dynamicMuscleGroups.map((g) => (
+                <span key={g}
+                  className="text-xs px-2 py-0.5 rounded-full text-white font-medium"
+                  style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#94a3b8' }}>
+                  {g}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         <div className="text-right">
           <p className="text-2xl font-mono font-bold text-slate-800">{elapsed}</p>

@@ -6,14 +6,14 @@ export function computeKPIs(workouts = []) {
   const completed = workouts.filter((w) => w.ended_at)
   if (!completed.length) return null
 
-  const totalMinutes = completed.reduce((s, w) => s + (w.duration_minutes ?? 0), 0)
-  const totalExercises = completed.reduce((s, w) => s + (w.total_exercises ?? 0), 0)
-  const totalSets = completed.reduce((s, w) => s + (w.total_sets ?? 0), 0)
+  const totalMinutes    = completed.reduce((s, w) => s + (w.duration_minutes ?? 0), 0)
+  const totalExercises  = completed.reduce((s, w) => s + (w.total_exercises ?? 0), 0)
+  const totalSets       = completed.reduce((s, w) => s + (w.total_sets ?? 0), 0)
 
-  const dates = completed.map((w) => new Date(w.started_at))
+  const dates  = completed.map((w) => new Date(w.started_at))
   const oldest = new Date(Math.min(...dates))
   const newest = new Date(Math.max(...dates))
-  const weeks = Math.max(1, (newest - oldest) / (1000 * 60 * 60 * 24 * 7))
+  const weeks  = Math.max(1, (newest - oldest) / (1000 * 60 * 60 * 24 * 7))
   const perWeek = completed.length / weeks
 
   let streak = 0
@@ -29,20 +29,20 @@ export function computeKPIs(workouts = []) {
   return {
     total: completed.length,
     totalMinutes,
-    avgMinutes: Math.round(totalMinutes / completed.length),
+    avgMinutes:    Math.round(totalMinutes / completed.length),
     totalExercises,
     totalSets,
-    perWeek: Math.round(perWeek * 10) / 10,
+    perWeek:       Math.round(perWeek * 10) / 10,
     streak,
   }
 }
 
+// ── KEY CHANGE: muscle groups now come from each exercise, not the workout ──
 export function groupExercisesByMuscle(detailedWorkouts = []) {
   const map = {}
   for (const workout of detailedWorkouts) {
-    const groups = workout.muscle_groups ?? []
     for (const ex of workout.exercises ?? []) {
-      for (const group of groups) {
+      for (const group of ex.muscle_groups ?? []) {
         if (!map[group]) map[group] = new Set()
         map[group].add(ex.name)
       }
@@ -68,11 +68,20 @@ export function getExerciseProgression(detailedWorkouts = [], exerciseName) {
       points.push({
         date,
         weight: best.weight_kg,
-        reps: best.reps,
+        reps:   best.reps,
         volume: best.vol,
-        rpe: best.rpe,
+        rpe:    best.rpe,
+      })
+    } else if (ex.exercise_type === 'Bodyweight') {
+      // Best set by reps
+      const best = ex.sets.reduce((top, s) => (s.reps ?? 0) > (top.reps ?? 0) ? s : top, {})
+      points.push({
+        date,
+        reps:    best.reps,
+        seconds: best.duration_seconds,
       })
     } else {
+      // Cardio
       const totalDistance = ex.sets.reduce(
         (s, set_) => s + (set_.speed_kmh ?? 0) * ((set_.duration_seconds ?? 0) / 3600),
         0
@@ -81,7 +90,7 @@ export function getExerciseProgression(detailedWorkouts = [], exerciseName) {
         ex.sets.reduce((s, set_) => s + (set_.speed_kmh ?? 0), 0) / (ex.sets.length || 1)
       points.push({
         date,
-        distanceKm: Math.round(totalDistance * 100) / 100,
+        distanceKm:  Math.round(totalDistance * 100) / 100,
         avgSpeedKmh: Math.round(avgSpeed * 10) / 10,
       })
     }
@@ -94,9 +103,9 @@ export function getSessionChartData(workouts = []) {
     .filter((w) => w.ended_at)
     .sort((a, b) => a.started_at.localeCompare(b.started_at))
     .map((w) => ({
-      date: w.started_at.slice(0, 10),
+      date:      w.started_at.slice(0, 10),
       exercises: w.total_exercises ?? 0,
-      sets: w.total_sets ?? 0,
-      minutes: w.duration_minutes ?? 0,
+      sets:      w.total_sets ?? 0,
+      minutes:   w.duration_minutes ?? 0,
     }))
 }
