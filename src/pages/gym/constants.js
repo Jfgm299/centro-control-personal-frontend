@@ -5,6 +5,7 @@ export const MUSCLE_GROUPS = [
 export const EXERCISE_TYPES = {
   WEIGHT_REPS: 'Weight_reps',
   CARDIO:      'Cardio',
+  BODYWEIGHT:  'Bodyweight',
 }
 
 export const MUSCLE_GROUP_COLORS = {

@@ -11,45 +11,52 @@ const Field = ({ label, children }) => (
 
 const NumberInput = ({ value, onChange, placeholder, min = 0, step = 1 }) => (
   <input
-    type="number"
-    min={min}
-    step={step}
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    placeholder={placeholder}
+    type="number" min={min} step={step} value={value}
+    onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
     className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all"
   />
 )
 
 export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
   const { t } = useTranslation('gym')
-  const isCardio = exercise.exercise_type === EXERCISE_TYPES.CARDIO
+  const type = exercise.exercise_type
 
-  // Weight/reps fields
+  const isCardio     = type === EXERCISE_TYPES.CARDIO
+  const isBodyweight = type === EXERCISE_TYPES.BODYWEIGHT
+
   const [weight, setWeight]   = useState('')
   const [reps, setReps]       = useState('')
   const [rpe, setRpe]         = useState('')
-
-  // Cardio fields
-  const [speed, setSpeed]         = useState('')
-  const [incline, setIncline]     = useState('')
-  const [duration, setDuration]   = useState('')
+  const [speed, setSpeed]     = useState('')
+  const [incline, setIncline] = useState('')
+  const [duration, setDuration] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const payload = isCardio
-      ? {
-          speed_kmh:        speed   ? parseFloat(speed)   : null,
-          incline_percent:  incline ? parseFloat(incline) : null,
-          duration_seconds: duration ? parseInt(duration) * 60 : null, // input en minutos
-          weight_kg: null, reps: null, rpe: null,
-        }
-      : {
-          weight_kg: weight ? parseFloat(weight) : null,
-          reps:      reps   ? parseInt(reps)     : null,
-          rpe:       rpe    ? parseInt(rpe)      : null,
-          speed_kmh: null, incline_percent: null, duration_seconds: null,
-        }
+    let payload
+
+    if (isCardio) {
+      payload = {
+        speed_kmh:        speed    ? parseFloat(speed)   : null,
+        incline_percent:  incline  ? parseFloat(incline) : null,
+        duration_seconds: duration ? parseInt(duration) * 60 : null,
+        weight_kg: null, reps: null, rpe: null,
+      }
+    } else if (isBodyweight) {
+      payload = {
+        reps:             reps     ? parseInt(reps)      : null,
+        duration_seconds: duration ? parseInt(duration) * 60 : null,
+        rpe:              rpe      ? parseInt(rpe)       : null,
+        weight_kg: null, speed_kmh: null, incline_percent: null,
+      }
+    } else {
+      payload = {
+        weight_kg: weight ? parseFloat(weight) : null,
+        reps:      reps   ? parseInt(reps)     : null,
+        rpe:       rpe    ? parseInt(rpe)      : null,
+        speed_kmh: null, incline_percent: null, duration_seconds: null,
+      }
+    }
     onAdd(payload)
   }
 
@@ -72,21 +79,50 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
-          {isCardio ? (
+          {isCardio && (
             <>
               <Field label={t('set.speed')}>
                 <NumberInput value={speed} onChange={setSpeed} placeholder="10.5" step="0.1" />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label={t('set.incline')}>
-                  <NumberInput value={incline} onChange={setIncline} placeholder="1.5" step="0.5" min={0} />
+                  <NumberInput value={incline} onChange={setIncline} placeholder="1.5" step="0.5" />
                 </Field>
                 <Field label={t('set.durationMin')}>
                   <NumberInput value={duration} onChange={setDuration} placeholder="20" min={1} />
                 </Field>
               </div>
             </>
-          ) : (
+          )}
+
+          {isBodyweight && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label={t('set.reps')}>
+                  <NumberInput value={reps} onChange={setReps} placeholder="15" min={1} />
+                </Field>
+                <Field label={`${t('set.durationMin')} (${t('set.optional', { defaultValue: 'opcional' })})`}>
+                  <NumberInput value={duration} onChange={setDuration} placeholder="1" min={1} />
+                </Field>
+              </div>
+              <Field label={`${t('set.rpe')} (1–10)`}>
+                <div className="flex gap-1.5">
+                  {[...Array(10)].map((_, i) => {
+                    const val = i + 1
+                    return (
+                      <button key={val} type="button" onClick={() => setRpe(String(val))}
+                        className={`flex-1 py-1.5 text-xs font-medium rounded-lg border transition-all
+                          ${rpe === String(val) ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-500 hover:border-slate-400'}`}>
+                        {val}
+                      </button>
+                    )
+                  })}
+                </div>
+              </Field>
+            </>
+          )}
+
+          {!isCardio && !isBodyweight && (
             <>
               <div className="grid grid-cols-2 gap-3">
                 <Field label={t('set.weight')}>
@@ -101,16 +137,9 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
                   {[...Array(10)].map((_, i) => {
                     const val = i + 1
                     return (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setRpe(String(val))}
+                      <button key={val} type="button" onClick={() => setRpe(String(val))}
                         className={`flex-1 py-1.5 text-xs font-medium rounded-lg border transition-all
-                          ${rpe === String(val)
-                            ? 'bg-slate-900 text-white border-slate-900'
-                            : 'border-slate-200 text-slate-500 hover:border-slate-400'
-                          }`}
-                      >
+                          ${rpe === String(val) ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-500 hover:border-slate-400'}`}>
                         {val}
                       </button>
                     )
