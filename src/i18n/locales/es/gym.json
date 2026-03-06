@@ -25,7 +25,8 @@
     "muscleGroups": "Grupos musculares",
     "notes": "Notas (opcional)",
     "notesPlaceholder": "Ej. Centrarme en la técnica",
-    "begin": "Comenzar"
+    "begin": "Comenzar",
+    "readyMessage": "Los grupos musculares se añadirán automáticamente a medida que añadas ejercicios."
   },
   "active": {
     "title": "Entrenamiento en curso",

@@ -163,15 +163,15 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
               {/* Muscle filter pills */}
-              <div className="flex gap-1.5 overflow-x-auto pb-1">
+              <div className="grid grid-cols-5 gap-1.5">
                 <button onClick={() => setFilter(null)}
-                  className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-medium border transition-all
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all text-center
                     ${!filterMuscle ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-500'}`}>
-                  {t('exercise.filterAll', { defaultValue: 'Todos' })}
+                  {t('exercise.filterAll', { defaultValue: 'All' })}
                 </button>
                 {ALL_MUSCLES.map(m => (
                   <button key={m} onClick={() => setFilter(m === filterMuscle ? null : m)}
-                    className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-medium border transition-all
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all text-center
                       ${filterMuscle === m ? 'text-white border-transparent' : 'border-slate-200 text-slate-500'}`}
                     style={filterMuscle === m ? { background: MUSCLE_GROUP_COLORS[m] ?? '#6366f1' } : {}}>
                     {m}
@@ -181,7 +181,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
             </div>
 
             {/* Exercise list */}
-            <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <div className="overflow-y-auto px-4 pb-4 max-h-[380px]">
               {loadingCatalog ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="w-6 h-6 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
