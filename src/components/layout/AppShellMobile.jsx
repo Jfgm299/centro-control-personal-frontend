@@ -64,8 +64,11 @@ export default function AppShellMobile() {
         </div>
       </div>
 
-      {/* Main content */}
-      <main className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+      {/* Main content — pb para que el contenido no quede tapado por el dock flotante */}
+      <main
+        className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden min-h-0"
+        style={{ paddingBottom: 'calc(90px + env(safe-area-inset-bottom))' }}
+      >
         {modulesLoaded ? <Outlet /> : (
           <div className="flex items-center justify-center h-full text-gray-400">
             {t('status.loading')}
@@ -73,9 +76,9 @@ export default function AppShellMobile() {
         )}
       </main>
 
-      {/* Dock — safe area bottom gestionado aquí, una sola vez */}
+      {/* Dock flotante — fixed sobre el contenido, no reserva espacio */}
       <div
-        className="relative z-30 flex-shrink-0"
+        className="fixed bottom-0 left-0 right-0 z-30"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <DockMobile />

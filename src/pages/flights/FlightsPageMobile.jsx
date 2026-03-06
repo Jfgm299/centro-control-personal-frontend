@@ -21,12 +21,11 @@ export default function FlightsPageMobile() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-full">
       {/* Header */}
       <div className="px-5 pt-2 pb-0 border-b border-gray-100">
         <h1 className="text-2xl font-bold text-gray-800 mb-3">{t('title')}</h1>
 
-        {/* Tabs + Add button en la misma fila */}
         <div className="flex items-center justify-between">
           <div className="flex gap-1">
             {['upcoming', 'passport'].map(tabId => (
@@ -63,9 +62,9 @@ export default function FlightsPageMobile() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1">
         {tab === 'upcoming' ? (
-          <div className="px-5 py-4 flex flex-col gap-2 pb-32">
+          <div className="px-5 py-4 flex flex-col gap-2">
             {upcoming.length === 0 ? (
               <p className="text-center text-gray-400 text-sm py-12">{t('upcoming.empty')}</p>
             ) : (
@@ -75,9 +74,7 @@ export default function FlightsPageMobile() {
             )}
           </div>
         ) : (
-          <div className="pb-32">
-            <PassportViewMobile flights={flights} />
-          </div>
+          <PassportViewMobile flights={flights} />
         )}
       </div>
 
