@@ -4,8 +4,11 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
+import { Capacitor } from '@capacitor/core'
 import { useBodyMeasures, useBodyMeasureMutations } from '../../hooks/useBodyMeasures'
 import AddMeasureModal from './AddMeasureModal'
+
+const IS_MOBILE = Capacitor.isNativePlatform() || window.innerWidth < 768
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
@@ -36,8 +39,8 @@ export default function BodyMeasuresChart() {
   const sorted = [...measures].sort((a, b) => a.created_at.localeCompare(b.created_at))
 
   const chartData = sorted.map((m) => ({
-    date: m.created_at,           // timestamp completo como clave única
-    dateLabel: m.created_at.slice(0, 10),  // solo para mostrar en el eje
+    date: m.created_at,
+    dateLabel: m.created_at.slice(0, 10),
     weight: m.weight_kg,
     fat: m.body_fat_percentage ?? undefined,
   }))
@@ -53,6 +56,11 @@ export default function BodyMeasuresChart() {
     await create.mutateAsync(payload)
     setShowModal(false)
   }
+
+  // Clases condicionales según plataforma
+  const kpiPad     = IS_MOBILE ? 'px-3 py-2'   : 'px-4 py-3'
+  const kpiNum     = IS_MOBILE ? 'text-lg'      : 'text-2xl'
+  const kpiUnit    = IS_MOBILE ? 'text-xs'      : 'text-sm'
 
   return (
     <>
@@ -75,26 +83,26 @@ export default function BodyMeasuresChart() {
 
         {/* Latest KPIs */}
         {latest && (
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-slate-900 rounded-xl px-4 py-3">
+          <div className="grid grid-cols-3 gap-2">
+            <div className={`bg-slate-900 rounded-xl ${kpiPad}`}>
               <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentWeight')}</p>
-              <p className="text-2xl font-bold font-mono text-white mt-0.5">
-                {latest.weight_kg}<span className="text-sm font-normal text-slate-400 ml-1">kg</span>
+              <p className={`${kpiNum} font-bold font-mono text-white mt-0.5`}>
+                {latest.weight_kg}<span className={`${kpiUnit} font-normal text-slate-400 ml-1`}>kg</span>
               </p>
             </div>
             {latest.body_fat_percentage != null && (
-              <div className="bg-white border border-slate-100 rounded-xl px-4 py-3">
+              <div className={`bg-white border border-slate-100 rounded-xl ${kpiPad}`}>
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentFat')}</p>
-                <p className="text-2xl font-bold font-mono text-slate-900 mt-0.5">
-                  {latest.body_fat_percentage}<span className="text-sm font-normal text-slate-400 ml-0.5">%</span>
+                <p className={`${kpiNum} font-bold font-mono text-slate-900 mt-0.5`}>
+                  {latest.body_fat_percentage}<span className={`${kpiUnit} font-normal text-slate-400 ml-0.5`}>%</span>
                 </p>
               </div>
             )}
             {weightDiff !== null && (
-              <div className="bg-white border border-slate-100 rounded-xl px-4 py-3">
+              <div className={`bg-white border border-slate-100 rounded-xl ${kpiPad}`}>
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.change')}</p>
-                <p className={`text-2xl font-bold font-mono mt-0.5 ${parseFloat(weightDiff) < 0 ? 'text-green-500' : parseFloat(weightDiff) > 0 ? 'text-red-500' : 'text-slate-900'}`}>
-                  {parseFloat(weightDiff) > 0 ? '+' : ''}{weightDiff}<span className="text-sm font-normal text-slate-400 ml-1">kg</span>
+                <p className={`${kpiNum} font-bold font-mono mt-0.5 ${parseFloat(weightDiff) < 0 ? 'text-green-500' : parseFloat(weightDiff) > 0 ? 'text-red-500' : 'text-slate-900'}`}>
+                  {parseFloat(weightDiff) > 0 ? '+' : ''}{weightDiff}<span className={`${kpiUnit} font-normal text-slate-400 ml-1`}>kg</span>
                 </p>
               </div>
             )}
