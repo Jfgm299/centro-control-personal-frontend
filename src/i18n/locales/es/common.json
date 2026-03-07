@@ -5,7 +5,8 @@
     "expenses": "Gastos",
     "flights": "Vuelos",
     "macro": "Macro",
-    "travels": "Viajes"
+    "travels": "Viajes",
+    "calendar": "Calendario"
   },
   "actions": {
     "close": "Cerrar",

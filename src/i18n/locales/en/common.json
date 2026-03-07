@@ -5,7 +5,8 @@
     "expenses": "Expenses",
     "flights": "Flights",
     "macro": "Macro",
-    "travels": "Travels"
+    "travels": "Travels",
+    "calendar": "Calendar"
   },
   "actions": {
     "close": "Close",
