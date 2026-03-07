@@ -9,6 +9,7 @@ import esExpenses from './locales/es/expenses.json'
 import esFlights from './locales/es/flights.json'
 import esMacro from './locales/es/macro.json'
 import esTrip from './locales/es/travels.json'
+import esCalendar from './locales/es/calendar.json'
 
 import enCommon from './locales/en/common.json'
 import enHome from './locales/en/home.json'
@@ -17,6 +18,7 @@ import enExpenses from './locales/en/expenses.json'
 import enFlights from './locales/en/flights.json'
 import enMacro from './locales/en/macro.json'
 import enTrip from './locales/en/travels.json'
+import enCalendar from './locales/en/calendar.json'
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -27,7 +29,8 @@ i18n.use(initReactI18next).init({
       expenses: esExpenses,
       flights:  esFlights,
       macro:    esMacro,
-      travels:     esTrip,
+      travels:  esTrip,
+      calendar: esCalendar,
     },
     en: {
       common:   enCommon,
@@ -36,13 +39,14 @@ i18n.use(initReactI18next).init({
       expenses: enExpenses,
       flights:  enFlights,
       macro:    enMacro,
-      travels:     enTrip,
+      travels:  enTrip,
+      calendar: enCalendar,
     },
   },
   lng: localStorage.getItem('language') || 'es',
   fallbackLng: 'es',
   interpolation: {
-    escapeValue: false, // React ya escapa por defecto
+    escapeValue: false,
   },
 })
 

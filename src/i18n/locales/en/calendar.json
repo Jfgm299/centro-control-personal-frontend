@@ -1,0 +1,184 @@
+{
+  "title": "Calendar",
+  "subtitle": "Your events, routines and reminders",
+  "tabs": {
+    "calendar": "Calendar",
+    "routines": "Routines"
+  },
+  "views": {
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "today": "Today"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "empty": "No pending reminders",
+    "emptyCategory": "No reminders in this category",
+    "uncategorized": "Uncategorized",
+    "addToCategory": "Add reminder",
+    "dragHint": "Drag to calendar to schedule",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "label": "Priority"
+    },
+    "add": "Add",
+    "searchPlaceholder": "Search…",
+    "noResults": "No results",
+    "sections": {
+      "highPriority": "High priority",
+      "scheduled": "Scheduled",
+      "unassigned": "Unassigned"
+    }
+  },
+  "event": {
+    "new": "New event",
+    "edit": "Edit event",
+    "delete": "Delete event",
+    "complete": "Mark as completed",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Event name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "category": "Category",
+      "categoryNone": "No category",
+      "startAt": "Start",
+      "endAt": "End",
+      "allDay": "All day",
+      "colorOverride": "Custom color",
+      "enableDnd": "Do not disturb",
+      "reminderMinutes": "Reminder",
+      "reminderNone": "No reminder",
+      "reminderOptions": {
+        "5": "5 minutes before",
+        "10": "10 minutes before",
+        "15": "15 minutes before",
+        "30": "30 minutes before",
+        "60": "1 hour before",
+        "120": "2 hours before",
+        "1440": "1 day before"
+      },
+      "reminder": "Reminder"
+    },
+    "confirmDelete": "Delete this event?",
+    "deleteWarning": "This action cannot be undone.",
+    "save": "Save changes",
+    "create": "Create event"
+  },
+  "routines": {
+    "title": "Routines",
+    "subtitle": "Recurring events with custom patterns",
+    "new": "New routine",
+    "edit": "Edit routine",
+    "delete": "Delete routine",
+    "empty": "No routines yet",
+    "emptyHint": "Create a routine for events that repeat regularly",
+    "weekPreview": "Weekly view",
+    "list": "List",
+    "active": "Active",
+    "inactive": "Inactive",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Routine name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "category": "Category",
+      "categoryNone": "No category",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "validFrom": "From",
+      "validUntil": "Until",
+      "validUntilNone": "No end date",
+      "enableDnd": "Do not disturb",
+      "reminderMinutes": "Reminder",
+      "rrule": "Recurrence",
+      "frequency": "Frequency",
+      "frequencies": {
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly"
+      },
+      "days": {
+        "MO": "M",
+        "TU": "T",
+        "WE": "W",
+        "TH": "T",
+        "FR": "F",
+        "SA": "S",
+        "SU": "S"
+      },
+      "daysLabel": "Days"
+    },
+    "confirmDelete": "Delete this routine?",
+    "deleteWarning": "All associated exceptions will also be deleted.",
+    "save": "Save",
+    "create": "Create routine"
+  },
+  "categories": {
+    "manage": "Manage categories",
+    "new": "New category",
+    "edit": "Edit category",
+    "delete": "Delete category",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "Category name",
+      "color": "Color",
+      "icon": "Icon",
+      "defaultDnd": "Do not disturb by default",
+      "defaultReminder": "Default reminder",
+      "iconOptional": "Icon (optional)"
+    },
+    "title": "Categories",
+    "subtitle": "Organize events and reminders by color and icon",
+    "empty": "No categories yet",
+    "emptyHint": "Create one to organize your events.",
+    "loading": "Loading…",
+    "autoColor": "Automatic palette color",
+    "autoColorHint": "— ✦ let the server assign it automatically",
+    "namePlaceholder": "e.g. Work, Gym, Personal…",
+    "newTitle": "New category",
+    "editTitle": "Edit category",
+    "confirmDelete": "Delete?",
+    "confirmYes": "Yes",
+    "confirmNo": "No",
+    "preview": "Automatic color",
+    "filter": {
+      "title": "Categories",
+      "show": "Show in calendar",
+      "hide": "Hide from calendar"
+    },
+    "actions": {
+      "save": "Save",
+      "create": "Create",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    }
+  },
+  "status": {
+    "loading": "Loading calendar…",
+    "error": "Error loading calendar",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "deleting": "Deleting…"
+  },
+  "errors": {
+    "loadEvents": "Could not load events",
+    "loadReminders": "Could not load reminders",
+    "loadRoutines": "Could not load routines",
+    "saveEvent": "Could not save event",
+    "deleteEvent": "Could not delete event",
+    "saveRoutine": "Could not save routine",
+    "deleteRoutine": "Could not delete routine",
+    "scheduleReminder": "Could not schedule reminder"
+  },
+  "eventBlock": {
+    "routine": "Routine",
+    "dnd": "Do not disturb"
+  },
+  "modal": {
+    "cancel": "Cancel"
+  }
+}
