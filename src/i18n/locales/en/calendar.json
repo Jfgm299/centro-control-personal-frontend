@@ -3,7 +3,8 @@
   "subtitle": "Your events, routines and reminders",
   "tabs": {
     "calendar": "Calendar",
-    "routines": "Routines"
+    "routines": "Routines",
+    "categories": "Categories"
   },
   "views": {
     "month": "Month",
@@ -115,7 +116,10 @@
     "confirmDelete": "Delete this routine?",
     "deleteWarning": "All associated exceptions will also be deleted.",
     "save": "Save",
-    "create": "Create routine"
+    "create": "Create routine",
+    "filter": {
+      "title": "Routines"
+    }
   },
   "categories": {
     "manage": "Manage categories",

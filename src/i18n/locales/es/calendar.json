@@ -3,7 +3,8 @@
   "subtitle": "Tus eventos, rutinas y recordatorios",
   "tabs": {
     "calendar": "Calendario",
-    "routines": "Rutinas"
+    "routines": "Rutinas",
+    "categories": "Categorías"
   },
   "views": {
     "month": "Mes",
@@ -115,7 +116,10 @@
     "confirmDelete": "¿Eliminar esta rutina?",
     "deleteWarning": "Se eliminarán también todas las excepciones asociadas.",
     "save": "Guardar",
-    "create": "Crear rutina"
+    "create": "Crear rutina",
+    "filter": {
+      "title": "Rutinas"
+    }
   },
   "categories": {
     "manage": "Gestionar categorías",

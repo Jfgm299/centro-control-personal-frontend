@@ -8,14 +8,15 @@ import ReminderPanel     from './components/reminders/ReminderPanel'
 import RoutinesList      from './components/routines/RoutinesList'
 import CategoriesManager from './components/categories/CategoriesManager'
 
-const TABS = [
-  { key: 'calendar',   label: '📅 Calendario' },
-  { key: 'routines',   label: '🔁 Rutinas'    },
-  { key: 'categories', label: '🏷️ Categorías' },
-]
-
 export default function CalendarPageDesktop() {
+  const { t } = useTranslation('calendar')
   const [tab, setTab] = useState('calendar')
+
+  const TABS = [
+    { key: 'calendar',   label: `📅 ${t('tabs.calendar')}`   },
+    { key: 'routines',   label: `🔁 ${t('tabs.routines')}`   },
+    { key: 'categories', label: `🏷️ ${t('tabs.categories')}` },
+  ]
 
   const { eventModalOpen, eventModalData, openEventModal, closeEventModal } = useCalendarStore()
   const { schedule } = useReminderMutations()
@@ -28,13 +29,13 @@ export default function CalendarPageDesktop() {
     openEventModal(event)
   }, [openEventModal])
 
-  const handleDrop = useCallback(async (e) => {
-    e.preventDefault()
-    const id = e.dataTransfer.getData('reminderId')
-    if (!id) return
-    const now = new Date(); now.setMinutes(0, 0, 0)
-    const end = new Date(now.getTime() + 3600000)
-    await schedule.mutateAsync({ id: Number(id), start_at: now.toISOString(), end_at: end.toISOString() })
+  // Recibe los params exactos de FullCalendar: hora del slot donde se soltó
+  const handleExternalDrop = useCallback(async (reminderId, start, end, allDay) => {
+    await schedule.mutateAsync({
+      id:       reminderId,
+      start_at: start.toISOString(),
+      end_at:   end.toISOString(),
+    })
   }, [schedule])
 
   return (
@@ -75,10 +76,8 @@ export default function CalendarPageDesktop() {
             <ReminderPanel />
             <div
               style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '12px 16px 0' }}
-              onDragOver={e => e.preventDefault()}
-              onDrop={handleDrop}
             >
-              <CalendarView onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} />
+              <CalendarView onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} onExternalDrop={handleExternalDrop} />
             </div>
           </>
         )}
