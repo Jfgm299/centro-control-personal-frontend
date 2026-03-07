@@ -1,0 +1,222 @@
+{
+  "title": "Calendario",
+  "subtitle": "Tus eventos, rutinas y recordatorios",
+  "tabs": {
+    "calendar": "Calendario",
+    "routines": "Rutinas",
+    "categories": "Categorías",
+    "integrations": "Conexiones"
+  },
+  "views": {
+    "month": "Mes",
+    "week": "Semana",
+    "day": "Día",
+    "today": "Hoy"
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "empty": "Sin recordatorios pendientes",
+    "emptyCategory": "Sin recordatorios en esta categoría",
+    "uncategorized": "Sin categoría",
+    "addToCategory": "Añadir recordatorio",
+    "dragHint": "Arrastra al calendario para asignar",
+    "priority": {
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja",
+      "label": "Prioridad"
+    },
+    "add": "Añadir",
+    "searchPlaceholder": "Buscar…",
+    "noResults": "Sin resultados",
+    "sections": {
+      "highPriority": "Prioridad alta",
+      "scheduled": "Asignados al calendario",
+      "unassigned": "Sin asignar"
+    }
+  },
+  "event": {
+    "new": "Nuevo evento",
+    "edit": "Editar evento",
+    "delete": "Eliminar evento",
+    "complete": "Marcar como completado",
+    "fields": {
+      "title": "Título",
+      "titlePlaceholder": "Nombre del evento",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional",
+      "category": "Categoría",
+      "categoryNone": "Sin categoría",
+      "startAt": "Inicio",
+      "endAt": "Fin",
+      "allDay": "Todo el día",
+      "colorOverride": "Color personalizado",
+      "enableDnd": "No molestar",
+      "reminderMinutes": "Recordatorio",
+      "reminderNone": "Sin recordatorio",
+      "reminderOptions": {
+        "5": "5 minutos antes",
+        "10": "10 minutos antes",
+        "15": "15 minutos antes",
+        "30": "30 minutos antes",
+        "60": "1 hora antes",
+        "120": "2 horas antes",
+        "1440": "1 día antes"
+      },
+      "reminder": "Recordatorio"
+    },
+    "confirmDelete": "¿Eliminar este evento?",
+    "deleteWarning": "Esta acción no se puede deshacer.",
+    "save": "Guardar cambios",
+    "create": "Crear evento"
+  },
+  "routines": {
+    "title": "Rutinas",
+    "subtitle": "Eventos recurrentes con patrón personalizable",
+    "new": "Nueva rutina",
+    "edit": "Editar rutina",
+    "delete": "Eliminar rutina",
+    "empty": "No tienes rutinas todavía",
+    "emptyHint": "Crea una rutina para eventos que se repiten regularmente",
+    "weekPreview": "Vista semanal",
+    "list": "Lista",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "fields": {
+      "title": "Título",
+      "titlePlaceholder": "Nombre de la rutina",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional",
+      "category": "Categoría",
+      "categoryNone": "Sin categoría",
+      "startTime": "Hora de inicio",
+      "endTime": "Hora de fin",
+      "validFrom": "Desde",
+      "validUntil": "Hasta",
+      "validUntilNone": "Sin fecha de fin",
+      "enableDnd": "No molestar",
+      "reminderMinutes": "Recordatorio",
+      "rrule": "Recurrencia",
+      "frequency": "Frecuencia",
+      "frequencies": {
+        "DAILY": "Diario",
+        "WEEKLY": "Semanal",
+        "MONTHLY": "Mensual"
+      },
+      "days": {
+        "MO": "L",
+        "TU": "M",
+        "WE": "X",
+        "TH": "J",
+        "FR": "V",
+        "SA": "S",
+        "SU": "D"
+      },
+      "daysLabel": "Días"
+    },
+    "confirmDelete": "¿Eliminar esta rutina?",
+    "deleteWarning": "Se eliminarán también todas las excepciones asociadas.",
+    "save": "Guardar",
+    "create": "Crear rutina",
+    "filter": {
+      "title": "Rutinas"
+    },
+    "readonlyNote": "Eliminar este evento no eliminará la rutina. Para eliminar la rutina, ve a la pestaña de Rutinas.",
+    "cancelOccurrence": "Eliminar ocurrencia"
+  },
+  "categories": {
+    "manage": "Gestionar categorías",
+    "new": "Nueva categoría",
+    "edit": "Editar categoría",
+    "delete": "Eliminar categoría",
+    "fields": {
+      "name": "Nombre",
+      "namePlaceholder": "Nombre de la categoría",
+      "color": "Color",
+      "icon": "Icono",
+      "defaultDnd": "No molestar por defecto",
+      "defaultReminder": "Recordatorio por defecto",
+      "iconOptional": "Icono (opcional)"
+    },
+    "title": "Categorías",
+    "subtitle": "Organiza eventos y recordatorios por color e icono",
+    "empty": "Aún no tienes categorías.",
+    "emptyHint": "Crea una para organizar tus eventos.",
+    "loading": "Cargando…",
+    "autoColor": "Color automático de la paleta",
+    "autoColorHint": "— ✦ deja que el servidor lo asigne automáticamente",
+    "namePlaceholder": "Ej: Trabajo, Gym, Personal…",
+    "newTitle": "Nueva categoría",
+    "editTitle": "Editar categoría",
+    "confirmDelete": "¿Eliminar?",
+    "confirmYes": "Sí",
+    "confirmNo": "No",
+    "preview": "Color automático",
+    "filter": {
+      "title": "Categorías",
+      "show": "Mostrar en calendario",
+      "hide": "Ocultar en calendario"
+    },
+    "actions": {
+      "save": "Guardar",
+      "create": "Crear",
+      "saving": "Guardando…",
+      "cancel": "Cancelar"
+    }
+  },
+  "status": {
+    "loading": "Cargando calendario…",
+    "error": "Error al cargar el calendario",
+    "saving": "Guardando…",
+    "saved": "Guardado",
+    "deleting": "Eliminando…"
+  },
+  "errors": {
+    "loadEvents": "No se pudieron cargar los eventos",
+    "loadReminders": "No se pudieron cargar los recordatorios",
+    "loadRoutines": "No se pudieron cargar las rutinas",
+    "saveEvent": "No se pudo guardar el evento",
+    "deleteEvent": "No se pudo eliminar el evento",
+    "saveRoutine": "No se pudo guardar la rutina",
+    "deleteRoutine": "No se pudo eliminar la rutina",
+    "scheduleReminder": "No se pudo asignar el recordatorio",
+    "loadConnections": "No se pudieron cargar las conexiones"
+  },
+  "eventBlock": {
+    "routine": "Rutina",
+    "dnd": "No molestar"
+  },
+  "modal": {
+    "cancel": "Cancelar"
+  },
+  "integrations": {
+    "title": "Conexiones de calendario",
+    "subtitle": "Sincroniza tus eventos y rutinas con Google Calendar y Apple Calendar",
+    "connected": "Conectado",
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "syncNow": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "lastSync": "Última sync:",
+    "neverSynced": "Nunca sincronizado",
+    "showLogs": "Ver historial",
+    "hideLogs": "Ocultar historial",
+    "noLogs": "Sin historial de sync todavía",
+    "syncInfo": "La sincronización bidireccional se ejecuta automáticamente cada 10 minutos. Se incluyen eventos y rutinas de los últimos 30 días y los próximos 30 días.",
+    "google": {
+      "name": "Google Calendar",
+      "description": "Conecta vía OAuth — serás redirigido a Google para autorizar el acceso"
+    },
+    "apple": {
+      "name": "Apple Calendar",
+      "description": "Conecta vía CalDAV con tu Apple ID y una contraseña específica de app",
+      "appleid": "Apple ID (email)",
+      "appPassword": "Contraseña de app",
+      "appPasswordHint": "Genera una en"
+    },
+    "sync": {
+      "sync_events": "Eventos",
+      "sync_routines": "Rutinas"
+    }
+  }
+}
