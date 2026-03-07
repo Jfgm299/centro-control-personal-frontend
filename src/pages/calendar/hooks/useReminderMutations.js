@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { remindersService } from '../services/calendarService'
 import { REMINDERS_KEY } from './useReminders'
-import { EVENTS_KEY } from './useCalendarEvents'
+
 
 export function useReminderMutations() {
   const qc = useQueryClient()
 
   const invalidateReminders = () => qc.invalidateQueries({ queryKey: [REMINDERS_KEY] })
-  const invalidateEvents    = () => qc.invalidateQueries({ queryKey: [EVENTS_KEY] })
+  const invalidateEvents    = () => qc.invalidateQueries({ queryKey: ['calendar', 'events'] })
 
   const create = useMutation({
     mutationFn: (payload) => remindersService.create(payload),

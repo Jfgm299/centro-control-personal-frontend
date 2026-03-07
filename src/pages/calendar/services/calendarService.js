@@ -104,6 +104,51 @@ export const routinesService = {
   },
 }
 
+// ── Integrations / Sync ───────────────────────────────────────────────────────
+
+export const syncService = {
+  /** Lista conexiones activas del usuario */
+  async getConnections() {
+    const { data } = await api.get(`${BASE}/integrations/`)
+    return data
+  },
+
+  /** Inicia OAuth de Google — devuelve { auth_url } */
+  async googleConnect() {
+    const { data } = await api.post(`${BASE}/integrations/google/connect`)
+    return data
+  },
+
+  /** Conecta Apple CalDAV con credenciales */
+  async appleCalendars(payload) {
+    const { data } = await api.post(`${BASE}/integrations/apple/calendars`, payload)
+    return data
+  },
+
+  async appleConnect(payload) {
+    const { data } = await api.post(`${BASE}/integrations/apple/connect`, payload)
+    return data
+  },
+
+  /** Desconecta un proveedor */
+  async disconnect(provider) {
+    const { data } = await api.delete(`${BASE}/integrations/${provider}/disconnect`)
+    return data
+  },
+
+  /** Sync manual de un proveedor */
+  async sync(provider) {
+    const { data } = await api.post(`${BASE}/integrations/${provider}/sync`)
+    return data
+  },
+
+  /** Historial de syncs de un proveedor */
+  async getLogs(provider) {
+    const { data } = await api.get(`${BASE}/integrations/${provider}/logs`)
+    return data
+  },
+}
+
 // ── Categories ────────────────────────────────────────────────────────────────
 
 export const categoriesService = {

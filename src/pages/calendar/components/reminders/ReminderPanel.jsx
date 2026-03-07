@@ -20,7 +20,7 @@ function SectionTitle({ children }) {
 /* ─── Reminder item (draggable) ────────────────────────────────────────────── */
 const PRIORITY_COLOR = { high: '#ef4444', medium: '#f59e0b', low: '#6b7280' }
 
-function ReminderItem({ reminder, categoryColor }) {
+function ReminderItem({ reminder, categoryColor, onTap }) {
   const dotColor = categoryColor ?? PRIORITY_COLOR[reminder.priority] ?? '#9ca3af'
   return (
     <div
@@ -30,6 +30,7 @@ function ReminderItem({ reminder, categoryColor }) {
       style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 6, margin: '0 4px', cursor: 'grab' }}
       onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+      onClick={() => onTap?.(reminder)}
     >
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
       <span style={{ fontSize: 12.5, color: '#374151', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -82,14 +83,14 @@ function ScheduledCategoryGroup({ category, items }) {
 
       {/* Items */}
       {open && items.map(r => (
-        <ReminderItem key={r.id} reminder={r} categoryColor={color} />
+        <ReminderItem key={r.id} reminder={r} categoryColor={color} onTap={onReminderTap} />
       ))}
     </div>
   )
 }
 
 /* ─── ReminderPanel ────────────────────────────────────────────────────────── */
-export default function ReminderPanel() {
+export default function ReminderPanel({ onReminderTap }) {
   const { t } = useTranslation('calendar')
   const { data: reminders  = [] }                    = useReminders()
   const { data: categories = [] }                    = useCategories()
@@ -177,7 +178,7 @@ export default function ReminderPanel() {
             ? <div style={{ padding: '20px 12px', fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>{t('reminders.noResults')}</div>
             : filtered.map(r => {
                 const cat = categories.find(c => c.id === r.category_id)
-                return <ReminderItem key={r.id} reminder={r} categoryColor={cat?.color} />
+                return <ReminderItem key={r.id} reminder={r} categoryColor={cat?.color} onTap={onReminderTap} />
               })
         ) : (
           <>
@@ -194,6 +195,7 @@ export default function ReminderPanel() {
                     style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 6, margin: '0 4px', cursor: 'grab' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#fef2f2'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    onClick={() => onReminderTap?.(r)}
                   >
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', minWidth: 14 }}>{i + 1}</span>
                     <span style={{ fontSize: 14 }}>🚩</span>
@@ -235,7 +237,7 @@ export default function ReminderPanel() {
                           </span>
                         </div>
                       )}
-                      {items.map(r => <ReminderItem key={r.id} reminder={r} categoryColor={color} />)}
+                      {items.map(r => <ReminderItem key={r.id} reminder={r} categoryColor={color} onTap={onReminderTap} />)}
                     </div>
                   )
                 })}

@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { routinesService } from '../services/calendarService'
 import { ROUTINES_KEY } from './useRoutines'
-import { EVENTS_KEY } from './useCalendarEvents'
 
 export function useRoutineMutations() {
   const qc = useQueryClient()
 
   const invalidateRoutines = () => qc.invalidateQueries({ queryKey: [ROUTINES_KEY] })
-  const invalidateEvents   = () => qc.invalidateQueries({ queryKey: [EVENTS_KEY] })
+  const invalidateEvents   = () => qc.invalidateQueries({ queryKey: ['calendar', 'events'] })
 
   const invalidateBoth = () => {
     invalidateRoutines()

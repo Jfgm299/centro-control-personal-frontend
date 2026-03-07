@@ -4,7 +4,8 @@
   "tabs": {
     "calendar": "Calendar",
     "routines": "Routines",
-    "categories": "Categories"
+    "categories": "Categories",
+    "integrations": "Connections"
   },
   "views": {
     "month": "Month",
@@ -119,7 +120,9 @@
     "create": "Create routine",
     "filter": {
       "title": "Routines"
-    }
+    },
+    "readonlyNote": "Deleting this event will not delete the routine. To delete the routine, go to the Routines tab.",
+    "cancelOccurrence": "Delete occurrence"
   },
   "categories": {
     "manage": "Manage categories",
@@ -176,7 +179,8 @@
     "deleteEvent": "Could not delete event",
     "saveRoutine": "Could not save routine",
     "deleteRoutine": "Could not delete routine",
-    "scheduleReminder": "Could not schedule reminder"
+    "scheduleReminder": "Could not schedule reminder",
+    "loadConnections": "Could not load connections"
   },
   "eventBlock": {
     "routine": "Routine",
@@ -184,5 +188,35 @@
   },
   "modal": {
     "cancel": "Cancel"
+  },
+  "integrations": {
+    "title": "Calendar connections",
+    "subtitle": "Sync your events and routines with Google Calendar and Apple Calendar",
+    "connected": "Connected",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "syncNow": "Sync now",
+    "syncing": "Syncing…",
+    "lastSync": "Last sync:",
+    "neverSynced": "Never synced",
+    "showLogs": "View history",
+    "hideLogs": "Hide history",
+    "noLogs": "No sync history yet",
+    "syncInfo": "Bidirectional sync runs automatically every 10 minutes. Events and routines from the last 30 days and next 30 days are included.",
+    "google": {
+      "name": "Google Calendar",
+      "description": "Connect via OAuth — you will be redirected to Google to authorize access"
+    },
+    "apple": {
+      "name": "Apple Calendar",
+      "description": "Connect via CalDAV with your Apple ID and an app-specific password",
+      "appleid": "Apple ID (email)",
+      "appPassword": "App-specific password",
+      "appPasswordHint": "Generate one at"
+    },
+    "sync": {
+      "sync_events": "Events",
+      "sync_routines": "Routines"
+    }
   }
 }

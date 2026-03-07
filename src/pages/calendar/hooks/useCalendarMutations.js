@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { eventsService } from '../services/calendarService'
-import { EVENTS_KEY } from './useCalendarEvents'
+
+const EVENTS_QK = ['calendar', 'events']
 
 export function useCalendarMutations() {
   const qc = useQueryClient()
-  const invalidate = () => qc.invalidateQueries({ queryKey: [EVENTS_KEY] })
+  const invalidate = () => qc.invalidateQueries({ queryKey: EVENTS_QK })
 
   const create = useMutation({
     mutationFn: (payload) => eventsService.create(payload),
@@ -28,9 +29,7 @@ export function useCalendarMutations() {
 
   /**
    * Mueve un evento (drag & drop / resize).
-   * Usa optimistic update: actualiza el cache inmediatamente para que
-   * FullCalendar NO haga el "snap back" al refetch.
-   * Si la API falla, revierte el cache y llama a revert() de FullCalendar.
+   * Optimistic update para que FullCalendar no haga snap back.
    */
   const move = useMutation({
     mutationFn: ({ id, start, end, allDay }) =>
@@ -41,14 +40,9 @@ export function useCalendarMutations() {
       }),
 
     onMutate: async ({ id, start, end, allDay }) => {
-      // Cancela cualquier refetch en curso para que no sobreescriba el optimistic update
-      await qc.cancelQueries({ queryKey: [EVENTS_KEY] })
-
-      // Snapshot de todos los caches de eventos
-      const previousQueries = qc.getQueriesData({ queryKey: [EVENTS_KEY] })
-
-      // Actualiza optimistamente todos los caches que contienen este evento
-      qc.setQueriesData({ queryKey: [EVENTS_KEY] }, (old) => {
+      await qc.cancelQueries({ queryKey: EVENTS_QK })
+      const previousQueries = qc.getQueriesData({ queryKey: EVENTS_QK })
+      qc.setQueriesData({ queryKey: EVENTS_QK }, (old) => {
         if (!Array.isArray(old)) return old
         return old.map(ev =>
           ev.id === id
@@ -56,13 +50,10 @@ export function useCalendarMutations() {
             : ev
         )
       })
-
-      // Devuelve el snapshot para poder revertir en onError
       return { previousQueries }
     },
 
     onError: (_err, _vars, context) => {
-      // Restaura el cache anterior
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, data]) => {
           qc.setQueryData(queryKey, data)
@@ -70,7 +61,6 @@ export function useCalendarMutations() {
       }
     },
 
-    // Siempre sincroniza con el servidor al terminar
     onSettled: invalidate,
   })
 

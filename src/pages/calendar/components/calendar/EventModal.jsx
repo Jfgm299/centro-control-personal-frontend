@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCategories } from '../../hooks/useCategories'
 import { useCalendarMutations } from '../../hooks/useCalendarMutations'
+import { useRoutineMutations } from '../../hooks/useRoutineMutations'
 
 const REMINDER_OPTIONS = [5, 10, 15, 30, 60, 120, 1440]
 
-/* ── Helpers de fecha ──────────────────────────────────────────────────────── */
 function toDatetimeLocal(date) {
   if (!date) return ''
   const d = date instanceof Date ? date : new Date(date)
@@ -20,14 +20,12 @@ function toDateOnly(date) {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`
 }
 
-// Convierte el valor del input a ISO según si es all_day o no
 function inputToISO(value, allDay) {
   if (!value) return ''
   if (allDay) return new Date(value + 'T00:00:00').toISOString()
   return new Date(value).toISOString()
 }
 
-/* ── Clases base reutilizables (paleta slate/gris del ExpenseModal) ─────────── */
 const inputCls = 'w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-800 placeholder-gray-400'
 const selectCls = 'w-full px-3 py-2.5 h-[42px] text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-700'
 const labelCls = 'text-xs font-medium text-gray-500 mb-1 block'
@@ -36,8 +34,10 @@ export default function EventModal({ isOpen, onClose, initialData }) {
   const { t } = useTranslation('calendar')
   const { data: categories = [] } = useCategories()
   const { create, update, remove } = useCalendarMutations()
+  const { addException } = useRoutineMutations()
 
-  const isEditing = !!initialData?.id
+  const isRoutine = !!initialData?.routine_id
+  const isEditing = !!initialData?.id && !isRoutine
 
   const [form, setForm] = useState({
     title: '', description: '', category_id: '',
@@ -80,21 +80,12 @@ export default function EventModal({ isOpen, onClose, initialData }) {
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }))
 
-  // Al cambiar all_day, convertir los valores ya ingresados
   const handleAllDayChange = (checked) => {
     setForm(f => ({
       ...f,
       all_day: checked,
-      start_at: f.start_at
-        ? checked
-          ? f.start_at.slice(0, 10)                         // datetime → date
-          : f.start_at + 'T00:00'                            // date → datetime
-        : '',
-      end_at: f.end_at
-        ? checked
-          ? f.end_at.slice(0, 10)
-          : f.end_at + 'T00:00'
-        : '',
+      start_at: f.start_at ? (checked ? f.start_at.slice(0, 10) : f.start_at + 'T00:00') : '',
+      end_at:   f.end_at   ? (checked ? f.end_at.slice(0, 10)   : f.end_at   + 'T00:00') : '',
     }))
   }
 
@@ -113,6 +104,8 @@ export default function EventModal({ isOpen, onClose, initialData }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
+    // Las instancias de rutina son de solo lectura — el submit no debería ocurrir
+    if (isRoutine) return
     try {
       if (isEditing) {
         await update.mutateAsync({ id: initialData.id, ...buildPayload() })
@@ -130,8 +123,143 @@ export default function EventModal({ isOpen, onClose, initialData }) {
     catch { setError(t('errors.deleteEvent')) }
   }
 
+  // Cancela solo esta ocurrencia de la rutina (crea una RoutineException)
+  const handleCancelOccurrence = async () => {
+    try {
+      const originalDate = new Date(initialData.start_at).toISOString().slice(0, 10)
+      await addException.mutateAsync({
+        routineId:     initialData.routine_id,
+        original_date: originalDate,
+        action:        'cancelled',
+      })
+      onClose()
+    } catch {
+      setError(t('errors.deleteEvent'))
+    }
+  }
+
   const isPending = create.isPending || update.isPending
 
+  // ── Vista de solo lectura para instancias de rutina ──────────────────────
+  if (isRoutine) {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      >
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+
+          {/* Header — igual que el modal de evento */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h2 className="text-base font-semibold text-gray-800">
+              🔁 {t('routines.title')}
+            </h2>
+            <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="px-6 py-5 flex flex-col gap-4">
+
+            {/* Título — readonly */}
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>{t('event.fields.title')}</label>
+              <input
+                readOnly
+                value={form.title}
+                className={inputCls + ' bg-gray-50 cursor-default'}
+              />
+            </div>
+
+            {/* Descripción — readonly */}
+            {form.description && (
+              <div className="flex flex-col gap-1.5">
+                <label className={labelCls}>{t('event.fields.description')}</label>
+                <textarea
+                  readOnly
+                  value={form.description}
+                  rows={2}
+                  className={`${inputCls} resize-none bg-gray-50 cursor-default`}
+                />
+              </div>
+            )}
+
+            {/* Fechas — readonly */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1.5">
+                <label className={labelCls}>{t('event.fields.startAt')}</label>
+                <input
+                  readOnly
+                  type="datetime-local"
+                  value={form.start_at}
+                  className={inputCls + ' h-[42px] bg-gray-50 cursor-default'}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className={labelCls}>{t('event.fields.endAt')}</label>
+                <input
+                  readOnly
+                  type="datetime-local"
+                  value={form.end_at}
+                  className={inputCls + ' h-[42px] bg-gray-50 cursor-default'}
+                />
+              </div>
+            </div>
+
+            {/* Nota readonly */}
+            <p className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
+              {t('routines.readonlyNote')}
+            </p>
+
+            {error && (
+              <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+            )}
+
+            {/* Acciones — misma estructura que el modal de evento */}
+            <div className="flex items-center justify-between pt-1">
+              {!confirmDelete ? (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="text-xs text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors px-3 py-1.5 rounded-lg"
+                >
+                  {t('routines.cancelOccurrence')}
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-red-500">{t('event.confirmDelete')}</span>
+                  <button
+                    type="button"
+                    onClick={handleCancelOccurrence}
+                    disabled={addException.isPending}
+                    className="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-50 transition-colors px-3 py-1.5 rounded-lg"
+                  >
+                    {t('routines.cancelOccurrence')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                  >✕</button>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 max-w-[140px] py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 transition-all"
+              >
+                {t('common:actions.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Vista normal para eventos ─────────────────────────────────────────────
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
@@ -153,7 +281,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
 
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
 
-          {/* Título */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.title')}</label>
             <input
@@ -165,7 +292,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             />
           </div>
 
-          {/* Descripción */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.description')}</label>
             <textarea
@@ -177,7 +303,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             />
           </div>
 
-          {/* Categoría */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.category')}</label>
             <select
@@ -192,7 +317,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             </select>
           </div>
 
-          {/* Fechas — date-only si all_day, datetime-local si no */}
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('event.fields.startAt')}</label>
@@ -216,7 +340,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             </div>
           </div>
 
-          {/* Recordatorio */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.reminder')}</label>
             <select
@@ -231,7 +354,6 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             </select>
           </div>
 
-          {/* Checkboxes — más grandes, mismo estilo */}
           <div className="flex gap-6">
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <input
@@ -257,11 +379,10 @@ export default function EventModal({ isOpen, onClose, initialData }) {
             <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
           )}
 
-          {/* Acciones */}
           <div className="flex items-center justify-between pt-1">
             {isEditing && !confirmDelete && (
               <button type="button" onClick={() => setConfirmDelete(true)}
-                className="text-xs text-red-400 hover:text-red-600 transition-colors">
+                className="text-xs text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors px-3 py-1.5 rounded-lg">
                 {t('event.delete')}
               </button>
             )}
@@ -269,14 +390,14 @@ export default function EventModal({ isOpen, onClose, initialData }) {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-red-500">{t('event.confirmDelete')}</span>
                 <button type="button" onClick={handleDelete}
-                  className="text-xs font-semibold text-red-600 hover:text-red-800 transition-colors">
+                  className="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors px-3 py-1.5 rounded-lg">
                   {t('event.delete')}
                 </button>
                 <button type="button" onClick={() => setConfirmDelete(false)}
                   className="text-xs text-gray-400 hover:text-gray-600 transition-colors">✕</button>
               </div>
             )}
-            {!confirmDelete && <span />}
+            {!confirmDelete && !isEditing && <span />}
             <button
               type="submit"
               disabled={isPending}

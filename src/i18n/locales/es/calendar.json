@@ -4,7 +4,8 @@
   "tabs": {
     "calendar": "Calendario",
     "routines": "Rutinas",
-    "categories": "Categorías"
+    "categories": "Categorías",
+    "integrations": "Conexiones"
   },
   "views": {
     "month": "Mes",
@@ -119,7 +120,9 @@
     "create": "Crear rutina",
     "filter": {
       "title": "Rutinas"
-    }
+    },
+    "readonlyNote": "Eliminar este evento no eliminará la rutina. Para eliminar la rutina, ve a la pestaña de Rutinas.",
+    "cancelOccurrence": "Eliminar ocurrencia"
   },
   "categories": {
     "manage": "Gestionar categorías",
@@ -176,7 +179,8 @@
     "deleteEvent": "No se pudo eliminar el evento",
     "saveRoutine": "No se pudo guardar la rutina",
     "deleteRoutine": "No se pudo eliminar la rutina",
-    "scheduleReminder": "No se pudo asignar el recordatorio"
+    "scheduleReminder": "No se pudo asignar el recordatorio",
+    "loadConnections": "No se pudieron cargar las conexiones"
   },
   "eventBlock": {
     "routine": "Rutina",
@@ -184,5 +188,35 @@
   },
   "modal": {
     "cancel": "Cancelar"
+  },
+  "integrations": {
+    "title": "Conexiones de calendario",
+    "subtitle": "Sincroniza tus eventos y rutinas con Google Calendar y Apple Calendar",
+    "connected": "Conectado",
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "syncNow": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "lastSync": "Última sync:",
+    "neverSynced": "Nunca sincronizado",
+    "showLogs": "Ver historial",
+    "hideLogs": "Ocultar historial",
+    "noLogs": "Sin historial de sync todavía",
+    "syncInfo": "La sincronización bidireccional se ejecuta automáticamente cada 10 minutos. Se incluyen eventos y rutinas de los últimos 30 días y los próximos 30 días.",
+    "google": {
+      "name": "Google Calendar",
+      "description": "Conecta vía OAuth — serás redirigido a Google para autorizar el acceso"
+    },
+    "apple": {
+      "name": "Apple Calendar",
+      "description": "Conecta vía CalDAV con tu Apple ID y una contraseña específica de app",
+      "appleid": "Apple ID (email)",
+      "appPassword": "Contraseña de app",
+      "appPasswordHint": "Genera una en"
+    },
+    "sync": {
+      "sync_events": "Eventos",
+      "sync_routines": "Rutinas"
+    }
   }
 }
