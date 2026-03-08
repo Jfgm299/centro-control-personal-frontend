@@ -1,0 +1,221 @@
+{
+  "title": "Automatizaciones",
+  "subtitle": "Crea y gestiona tus flujos de trabajo automatizados",
+
+  "list": {
+    "empty": "Todavía no tienes automatizaciones",
+    "emptyAction": "Crea tu primera automatización",
+    "create": "Nueva automatización",
+    "import": "Importar",
+    "lastRun": "Última ejecución",
+    "never": "Nunca",
+    "runs": "{{count}} ejecución",
+    "runs_other": "{{count}} ejecuciones",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "duplicating": "Duplicando...",
+    "deleting": "Eliminando..."
+  },
+
+  "card": {
+    "edit": "Editar",
+    "duplicate": "Duplicar",
+    "export": "Exportar JSON",
+    "delete": "Eliminar",
+    "confirmDelete": "Confirmar eliminación",
+    "triggerType": {
+      "manual": "Manual",
+      "schedule_once": "Programada una vez",
+      "schedule_interval": "Cada {{value}} {{unit}}",
+      "webhook_inbound": "Webhook",
+      "module_event": "Evento de módulo"
+    }
+  },
+
+  "modal": {
+    "createTitle": "Nueva automatización",
+    "name": "Nombre",
+    "namePlaceholder": "Ej: Notificar al iniciar un evento",
+    "description": "Descripción (opcional)",
+    "descriptionPlaceholder": "¿Qué hace esta automatización?",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "creating": "Creando..."
+  },
+
+  "editor": {
+    "unsavedChanges": "Cambios sin guardar",
+    "saved": "Guardado",
+    "saving": "Guardando...",
+    "save": "Guardar",
+    "run": "Ejecutar",
+    "running": "Ejecutando...",
+    "back": "Volver",
+    "backConfirm": "Tienes cambios sin guardar. ¿Salir sin guardar?",
+    "backConfirmYes": "Salir",
+    "backConfirmNo": "Quedarme",
+    "mobileWarning": "El editor de automatizaciones solo está disponible en escritorio.",
+    "mobileWarningDesc": "Abre esta página desde un ordenador para editar tus flujos.",
+    "executionSuccess": "Completada en {{ms}}ms",
+    "executionFailed": "Falló en el nodo: {{node}}",
+    "historyTitle": "Historial de ejecuciones",
+    "noHistory": "Sin ejecuciones todavía"
+  },
+
+  "sidebar": {
+    "search": "Buscar nodos...",
+    "triggers": "Triggers",
+    "actions": "Acciones",
+    "flowControl": "Control de flujo",
+    "noResults": "Sin resultados para \"{{query}}\""
+  },
+
+  "nodes": {
+    "trigger":           "Trigger",
+    "action":            "Acción",
+    "condition":         "Condición",
+    "delay":             "Espera",
+    "webhookInbound":    "Webhook (entrante)",
+    "webhookOutbound":   "Webhook (saliente)",
+    "automationCall":    "Llamar automatización",
+    "stop":              "Detener",
+
+    "system": {
+      "manual":           "Manual",
+      "scheduleOnce":     "A una hora exacta",
+      "scheduleInterval": "Cada X tiempo",
+      "webhookInbound":   "Webhook entrante"
+    },
+
+    "config": {
+      "continueOnError":  "Continuar si hay error",
+      "delete":           "Eliminar nodo",
+      "confirmDelete":    "Confirmar eliminación",
+      "noNodeSelected":   "Selecciona un nodo para configurarlo"
+    }
+  },
+
+  "condition": {
+    "field":     "Campo",
+    "operator":  "Operador",
+    "value":     "Valor",
+    "operators": {
+      "eq":         "igual a",
+      "neq":        "distinto de",
+      "gt":         "mayor que",
+      "lt":         "menor que",
+      "contains":   "contiene",
+      "exists":     "existe",
+      "not_exists": "no existe"
+    },
+    "true":  "verdadero",
+    "false": "falso"
+  },
+
+  "delay": {
+    "label":   "Esperar",
+    "minutes": "minutos",
+    "hours":   "horas",
+    "days":    "días",
+    "seconds": "segundos"
+  },
+
+  "schedule": {
+    "runAt":        "Ejecutar a las",
+    "every":        "Cada",
+    "activeFrom":   "Activo desde",
+    "activeUntil":  "Hasta",
+    "activeDays":   "Días activos",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    },
+    "units": {
+      "minutes": "minutos",
+      "hours":   "horas",
+      "days":    "días"
+    }
+  },
+
+  "webhook": {
+    "urlLabel":      "URL del webhook",
+    "copy":          "Copiar",
+    "copied":        "¡Copiado!",
+    "sendTest":      "Enviar prueba",
+    "sending":       "Enviando...",
+    "testSuccess":   "✅ {{status}} — {{ms}}ms",
+    "testFailed":    "❌ Error: {{error}}",
+    "outboundUrl":   "URL de destino",
+    "method":        "Método",
+    "headers":       "Cabeceras",
+    "addHeader":     "Añadir cabecera",
+    "body":          "Plantilla de cuerpo",
+    "bodyHint":      "Usa {{variable}} para insertar valores del contexto"
+  },
+
+  "variablePicker": {
+    "title":         "Insertar variable",
+    "search":        "Buscar variables...",
+    "payload":       "Payload del trigger",
+    "vars":          "Salidas de nodos",
+    "noResults":     "No hay variables disponibles"
+  },
+
+  "testPayload": {
+    "title":         "Ejecutar automatización",
+    "description":   "Edita el payload que recibirá el trigger",
+    "runNow":        "Ejecutar ahora",
+    "runAt":         "Ejecutar a las...",
+    "running":       "Ejecutando...",
+    "invalid":       "JSON inválido"
+  },
+
+  "execution": {
+    "status": {
+      "running":   "Ejecutando",
+      "ok":        "OK",
+      "error":     "Error",
+      "skipped":   "Saltado",
+      "completed": "Completada",
+      "failed":    "Fallida"
+    },
+    "duration": "{{ms}}ms",
+    "columns": {
+      "date":       "Fecha",
+      "trigger":    "Trigger",
+      "duration":   "Duración",
+      "status":     "Estado",
+      "failedNode": "Nodo fallido"
+    }
+  },
+
+  "error": {
+    "loadFailed":   "No se pudieron cargar las automatizaciones",
+    "saveFailed":   "No se pudo guardar. Inténtalo de nuevo.",
+    "runFailed":    "No se pudo iniciar la ejecución",
+    "webhookError": "El endpoint de webhook puede no estar disponible todavía"
+  },
+
+  "apiKeys": {
+    "title":          "API Keys",
+    "description":    "Gestiona las claves para acceder a la API desde aplicaciones externas",
+    "create":         "Nueva API Key",
+    "createTitle":    "Nueva API Key",
+    "namePlaceholder":"Ej: Shortcut iOS, Script backup...",
+    "scopes":         "Permisos",
+    "scopeRequired":  "Selecciona al menos un permiso",
+    "empty":          "No tienes API Keys creadas todavía",
+    "revoke":         "Revocar",
+    "confirmRevoke":  "¿Confirmar revocación?",
+    "revoked":        "Revocada",
+    "lastUsed":       "Último uso",
+    "expires":        "Expira",
+    "tokenOnce":      "Copia tu token ahora — no se volverá a mostrar",
+    "dismissToken":   "He copiado el token"
+  }
+}
