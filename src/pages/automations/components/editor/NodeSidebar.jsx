@@ -69,6 +69,7 @@ export default function NodeSidebar({ onDragStart }) {
                 label={group.label}
                 items={items}
                 onDragStart={onDragStart}
+                nodeCategory="trigger"
               />
             )
           })
@@ -100,6 +101,7 @@ export default function NodeSidebar({ onDragStart }) {
                 label={group.label}
                 items={items}
                 onDragStart={onDragStart}
+                nodeCategory="action"
               />
             )
           })

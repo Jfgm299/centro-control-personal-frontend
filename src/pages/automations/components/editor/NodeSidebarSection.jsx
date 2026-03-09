@@ -1,7 +1,7 @@
 import { useAutomationsStore } from '../../store/editorStore'
 import NodeSidebarItem from './NodeSidebarItem'
 
-export default function NodeSidebarSection({ sectionKey, icon, label, items, onDragStart }) {
+export default function NodeSidebarSection({ sectionKey, icon, label, items, onDragStart, nodeCategory }) {
   const toggleSection    = useAutomationsStore((s) => s.toggleSection)
   const collapsedSections = useAutomationsStore((s) => s.collapsedSections)
   const isCollapsed      = collapsedSections.has(sectionKey)
@@ -38,7 +38,7 @@ export default function NodeSidebarSection({ sectionKey, icon, label, items, onD
       {!isCollapsed && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '2px 4px 4px' }}>
           {items.map((item) => (
-            <NodeSidebarItem key={item.ref_id ?? item.label} item={item} onDragStart={onDragStart} />
+            <NodeSidebarItem key={item.ref_id ?? item.label} item={item} onDragStart={onDragStart} nodeCategory={nodeCategory} />
           ))}
         </div>
       )}
