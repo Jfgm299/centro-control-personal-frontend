@@ -1,9 +1,9 @@
 import api from './api'
 
-const BASE        = '/api/v1/automations'
-const REGISTRY    = '/api/v1/automations/registry'
-const EXECUTIONS  = '/api/v1/automations/executions'
-const WEBHOOKS    = '/api/v1/automations/webhooks'
+const BASE        = '/api/v1/automations/'
+const REGISTRY    = '/api/v1/automations/registry/'
+const EXECUTIONS  = '/api/v1/automations/executions/'
+const WEBHOOKS    = '/api/v1/automations/webhooks/'
 
 // ── Automations ───────────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ export const automationsService = {
   },
 
   async getById(id) {
-    const { data } = await api.get(`${BASE}/${id}`)
+    const { data } = await api.get(`${BASE}${id}`)
     return data
   },
 
@@ -25,33 +25,33 @@ export const automationsService = {
 
   /** Actualiza metadatos: nombre, descripción, is_active */
   async updateMeta(id, payload) {
-    const { data } = await api.patch(`${BASE}/${id}`, payload)
+    const { data } = await api.patch(`${BASE}${id}`, payload)
     return data
   },
 
   /** Actualiza el flujo completo (nodes + edges + trigger) */
   async updateFlow(id, payload) {
-    const { data } = await api.put(`${BASE}/${id}/flow`, payload)
+    const { data } = await api.put(`${BASE}${id}/flow`, payload)
     return data
   },
 
   async remove(id) {
-    await api.delete(`${BASE}/${id}`)
+    await api.delete(`${BASE}${id}`)
   },
 
   async duplicate(id) {
-    const { data } = await api.post(`${BASE}/${id}/duplicate`)
+    const { data } = await api.post(`${BASE}${id}/duplicate`)
     return data
   },
 
   /** Trigger manual — payload es el JSON del sandbox */
   async trigger(id, payload = {}) {
-    const { data } = await api.post(`${BASE}/${id}/trigger`, { payload })
+    const { data } = await api.post(`${BASE}${id}/trigger`, { payload })
     return data
   },
 
   async getExecutions(automationId) {
-    const { data } = await api.get(`${BASE}/${automationId}/executions`)
+    const { data } = await api.get(`${BASE}${automationId}/executions`)
     return data
   },
 }
@@ -61,7 +61,7 @@ export const automationsService = {
 export const executionsService = {
   /** Polling de una ejecución en curso */
   async getById(executionId) {
-    const { data } = await api.get(`${EXECUTIONS}/${executionId}`)
+    const { data } = await api.get(`${EXECUTIONS}${executionId}`)
     return data
   },
 }
@@ -70,12 +70,12 @@ export const executionsService = {
 
 export const registryService = {
   async getTriggers() {
-    const { data } = await api.get(`${REGISTRY}/triggers`)
+    const { data } = await api.get(`${REGISTRY}triggers`)
     return data
   },
 
   async getActions() {
-    const { data } = await api.get(`${REGISTRY}/actions`)
+    const { data } = await api.get(`${REGISTRY}actions`)
     return data
   },
 }
@@ -90,7 +90,7 @@ export const webhooksService = {
 
   /** Envía POST de prueba al endpoint público — usado por el botón "Send Test" */
   async sendTest(token) {
-    const { data } = await api.post(`${WEBHOOKS}/in/${token}`, {
+    const { data } = await api.post(`${WEBHOOKS}in/${token}`, {
       source: 'frontend_test',
       data:   {},
     })
