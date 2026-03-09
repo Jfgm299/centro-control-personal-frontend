@@ -31,7 +31,7 @@ export default function AppShellDesktop() {
     <>
       <DotBackground />
       {!user && <LoginPopup />}
-      <UserMenu />
+      {user && <UserMenu />}
       <TabBar />
       <ModuleContainer>
         {modulesLoaded ? (
