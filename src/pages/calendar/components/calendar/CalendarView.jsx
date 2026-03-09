@@ -332,8 +332,8 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
             dayMaxEvents={2}
             nowIndicator
             height="100%"
-            slotMinTime="05:00:00"
-            slotMaxTime="23:00:00"
+            slotMinTime="00:00:00"
+            slotMaxTime="24:00:00"
             allDaySlot
             slotLabelFormat={{ hour: 'numeric', minute: '2-digit', meridiem: 'short' }}
             eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
