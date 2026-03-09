@@ -68,7 +68,7 @@ export default function FlightsPageDesktop() {
       <div className="flex-1 overflow-hidden">
         {tab === 'upcoming' ? (
           <div className="p-8 h-full overflow-y-auto">
-            <UpcomingFlights flights={upcoming} />
+            <UpcomingFlights flights={upcoming} onAdd={() => setShowAdd(true)} />
           </div>
         ) : (
           <div className="h-full overflow-y-auto">

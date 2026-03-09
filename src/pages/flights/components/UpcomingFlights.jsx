@@ -1,11 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import FlightCard from './FlightCard'
-import AddFlightModal from './AddFlightModal'
 
-export default function UpcomingFlights({ flights }) {
+export default function UpcomingFlights({ flights, onAdd }) {
   const { t } = useTranslation('flights')
-  const [showAdd, setShowAdd] = useState(false)
 
   // Orden cronológico
   const sortedFlights = useMemo(() => {
@@ -27,13 +25,6 @@ export default function UpcomingFlights({ flights }) {
         <h2 className="text-lg font-semibold text-gray-700">
           {sortedFlights.length} upcoming
         </h2>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors shadow-sm"
-        >
-          <span>+</span>
-          {t('upcoming.addFlight')}
-        </button>
       </div>
 
       {sortedFlights.length === 0 ? (
@@ -42,7 +33,7 @@ export default function UpcomingFlights({ flights }) {
           <p className="text-gray-500 font-medium">{t('upcoming.empty')}</p>
           <p className="text-gray-400 text-sm">{t('upcoming.emptyHint')}</p>
           <button
-            onClick={() => setShowAdd(true)}
+            onClick={onAdd}
             className="mt-2 px-5 py-2 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors"
           >
             {t('upcoming.addFlight')}
@@ -55,8 +46,6 @@ export default function UpcomingFlights({ flights }) {
           ))}
         </div>
       )}
-
-      {showAdd && <AddFlightModal onClose={() => setShowAdd(false)} />}
     </>
   )
 }

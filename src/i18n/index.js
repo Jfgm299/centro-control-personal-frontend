@@ -10,6 +10,7 @@ import esFlights from './locales/es/flights.json'
 import esMacro from './locales/es/macro.json'
 import esTrip from './locales/es/travels.json'
 import esCalendar from './locales/es/calendar.json'
+import esAutomations from './locales/es/automations.json'
 
 import enCommon from './locales/en/common.json'
 import enHome from './locales/en/home.json'
@@ -19,6 +20,7 @@ import enFlights from './locales/en/flights.json'
 import enMacro from './locales/en/macro.json'
 import enTrip from './locales/en/travels.json'
 import enCalendar from './locales/en/calendar.json'
+import enAutomations from './locales/en/automations.json'
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -31,6 +33,7 @@ i18n.use(initReactI18next).init({
       macro:    esMacro,
       travels:  esTrip,
       calendar: esCalendar,
+      automations: esAutomations,
     },
     en: {
       common:   enCommon,
@@ -41,6 +44,7 @@ i18n.use(initReactI18next).init({
       macro:    enMacro,
       travels:  enTrip,
       calendar: enCalendar,
+      automations: enAutomations,
     },
   },
   lng: localStorage.getItem('language') || 'es',

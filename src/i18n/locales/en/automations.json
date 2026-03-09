@@ -1,0 +1,221 @@
+{
+  "title": "Automations",
+  "subtitle": "Build and manage your automated workflows",
+
+  "list": {
+    "empty": "No automations yet",
+    "emptyAction": "Create your first automation",
+    "create": "New automation",
+    "import": "Import",
+    "lastRun": "Last run",
+    "never": "Never",
+    "runs": "{{count}} run",
+    "runs_other": "{{count}} runs",
+    "active": "Active",
+    "inactive": "Inactive",
+    "duplicating": "Duplicating...",
+    "deleting": "Deleting..."
+  },
+
+  "card": {
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "export": "Export JSON",
+    "delete": "Delete",
+    "confirmDelete": "Confirm delete",
+    "triggerType": {
+      "manual": "Manual",
+      "schedule_once": "Scheduled once",
+      "schedule_interval": "Every {{value}} {{unit}}",
+      "webhook_inbound": "Webhook",
+      "module_event": "Module event"
+    }
+  },
+
+  "modal": {
+    "createTitle": "New automation",
+    "name": "Name",
+    "namePlaceholder": "e.g. Notify when event starts",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "What does this automation do?",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating..."
+  },
+
+  "editor": {
+    "unsavedChanges": "Unsaved changes",
+    "saved": "Saved",
+    "saving": "Saving...",
+    "save": "Save",
+    "run": "Run",
+    "running": "Running...",
+    "back": "Back",
+    "backConfirm": "You have unsaved changes. Leave without saving?",
+    "backConfirmYes": "Leave",
+    "backConfirmNo": "Stay",
+    "mobileWarning": "The automation editor is only available on desktop.",
+    "mobileWarningDesc": "Open this page from a computer to edit your workflows.",
+    "executionSuccess": "Completed in {{ms}}ms",
+    "executionFailed": "Failed at node: {{node}}",
+    "historyTitle": "Execution history",
+    "noHistory": "No executions yet"
+  },
+
+  "sidebar": {
+    "search": "Search nodes...",
+    "triggers": "Triggers",
+    "actions": "Actions",
+    "flowControl": "Flow control",
+    "noResults": "No results for \"{{query}}\""
+  },
+
+  "nodes": {
+    "trigger":            "Trigger",
+    "action":             "Action",
+    "condition":          "Condition",
+    "delay":              "Delay",
+    "webhookInbound":     "Webhook (inbound)",
+    "webhookOutbound":    "Webhook (outbound)",
+    "automationCall":     "Call automation",
+    "stop":               "Stop",
+
+    "system": {
+      "manual":            "Manual",
+      "scheduleOnce":      "At a specific time",
+      "scheduleInterval":  "Every X time",
+      "webhookInbound":    "Incoming webhook"
+    },
+
+    "config": {
+      "continueOnError":   "Continue on error",
+      "delete":            "Delete node",
+      "confirmDelete":     "Confirm delete",
+      "noNodeSelected":    "Select a node to configure it"
+    }
+  },
+
+  "condition": {
+    "field":     "Field",
+    "operator":  "Operator",
+    "value":     "Value",
+    "operators": {
+      "eq":         "equals",
+      "neq":        "not equals",
+      "gt":         "greater than",
+      "lt":         "less than",
+      "contains":   "contains",
+      "exists":     "exists",
+      "not_exists": "does not exist"
+    },
+    "true":  "true",
+    "false": "false"
+  },
+
+  "delay": {
+    "label":   "Wait",
+    "minutes": "minutes",
+    "hours":   "hours",
+    "days":    "days",
+    "seconds": "seconds"
+  },
+
+  "schedule": {
+    "runAt":        "Run at",
+    "every":        "Every",
+    "activeFrom":   "Active from",
+    "activeUntil":  "Until",
+    "activeDays":   "Active days",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "units": {
+      "minutes": "minutes",
+      "hours":   "hours",
+      "days":    "days"
+    }
+  },
+
+  "webhook": {
+    "urlLabel":      "Webhook URL",
+    "copy":          "Copy",
+    "copied":        "Copied!",
+    "sendTest":      "Send Test",
+    "sending":       "Sending...",
+    "testSuccess":   "✅ {{status}} — {{ms}}ms",
+    "testFailed":    "❌ Error: {{error}}",
+    "outboundUrl":   "Target URL",
+    "method":        "Method",
+    "headers":       "Headers",
+    "addHeader":     "Add header",
+    "body":          "Body template",
+    "bodyHint":      "Use {{variable}} to insert context values"
+  },
+
+  "variablePicker": {
+    "title":         "Insert variable",
+    "search":        "Search variables...",
+    "payload":       "Trigger payload",
+    "vars":          "Node outputs",
+    "noResults":     "No variables available"
+  },
+
+  "testPayload": {
+    "title":         "Run automation",
+    "description":   "Edit the payload that the trigger will receive",
+    "runNow":        "Run now",
+    "runAt":         "Run at...",
+    "running":       "Running...",
+    "invalid":       "Invalid JSON"
+  },
+
+  "execution": {
+    "status": {
+      "running":   "Running",
+      "ok":        "OK",
+      "error":     "Error",
+      "skipped":   "Skipped",
+      "completed": "Completed",
+      "failed":    "Failed"
+    },
+    "duration": "{{ms}}ms",
+    "columns": {
+      "date":       "Date",
+      "trigger":    "Trigger",
+      "duration":   "Duration",
+      "status":     "Status",
+      "failedNode": "Failed node"
+    }
+  },
+
+  "error": {
+    "loadFailed":   "Could not load automations",
+    "saveFailed":   "Could not save. Please try again.",
+    "runFailed":    "Could not start execution",
+    "webhookError": "Webhook endpoint may not be available yet"
+  },
+
+  "apiKeys": {
+    "title":          "API Keys",
+    "description":    "Manage keys for accessing the API from external applications",
+    "create":         "New API Key",
+    "createTitle":    "New API Key",
+    "namePlaceholder":"e.g. iOS Shortcut, backup script...",
+    "scopes":         "Permissions",
+    "scopeRequired":  "Select at least one permission",
+    "empty":          "No API Keys yet",
+    "revoke":         "Revoke",
+    "confirmRevoke":  "Confirm revoke?",
+    "revoked":        "Revoked",
+    "lastUsed":       "Last used",
+    "expires":        "Expires",
+    "tokenOnce":      "Copy your token now — it won't be shown again",
+    "dismissToken":   "I've copied the token"
+  }
+}
