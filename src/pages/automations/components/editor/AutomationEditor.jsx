@@ -219,7 +219,7 @@ export default function AutomationEditor({ automationId, onClose }) {
     let item
     try { item = JSON.parse(raw) } catch (err) { return }
     const position = screenToFlowPosition({ x: e.clientX, y: e.clientY })
-    const nodeType = item.type ?? refIdToNodeType(item.ref_id, item.module_id !== 'system')
+    const nodeType = item.type ?? refIdToNodeType(item.ref_id, item.nodeCategory === 'action')
     addNodeAtPosition(nodeType, {
       label:         item.label,
       ref_id:        item.ref_id,
