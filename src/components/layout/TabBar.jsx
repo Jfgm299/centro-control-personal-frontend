@@ -31,8 +31,8 @@ export default function TabBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-40 flex items-end gap-1 px-4 pointer-events-none"
-      style={{ height: '52px' }}
+      className="fixed top-0 left-0 right-0 z-40 flex items-center gap-2 px-4 pointer-events-none overflow-x-auto no-scrollbar"
+      style={{ height: '64px' }}
     >
       {openTabs.map((tab) => {
         const isActive = activeTabId === tab.id
@@ -40,17 +40,17 @@ export default function TabBar() {
         return (
           <div
             key={tab.id}
-            className="relative pointer-events-auto"
-            style={{ marginBottom: isActive ? '-1px' : '0', zIndex: isActive ? 10 : 5 }}
+            className="relative pointer-events-auto flex-shrink-0"
+            style={{ zIndex: isActive ? 10 : 5 }}
           >
             <button
               onClick={() => handleTabClick(tab)}
               className={clsx(
-                'relative flex items-center gap-2 px-4 pt-1.5 pb-2.5 text-sm font-medium',
-                'transition-all duration-150 select-none rounded-t-xl',
+                'relative flex items-center gap-2 px-4 py-2 text-sm font-medium',
+                'transition-all duration-150 select-none rounded-xl border',
                 isActive
-                  ? 'text-gray-800'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-white/30',
+                  ? 'text-gray-800 border-white/80 shadow-sm'
+                  : 'text-gray-500 border-transparent hover:text-gray-700 hover:bg-white/40',
               )}
               style={isActive ? {
                 background: 'rgba(255,255,255,0.85)',
@@ -72,10 +72,10 @@ export default function TabBar() {
                   ✕
                 </span>
               )}
-
+              
               {isActive && (
                 <span
-                  className="absolute top-0 left-4 right-4 h-0.5 rounded-full"
+                  className="absolute bottom-1.5 left-4 right-4 h-0.5 rounded-full"
                   style={{ backgroundColor: tab.color }}
                 />
               )}

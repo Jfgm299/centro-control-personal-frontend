@@ -3,12 +3,12 @@ export default function ModuleContainer({ children }) {
     <div
       className="fixed left-0 right-0 px-4 pb-4"
       style={{
-        top: '52px',
+        top: '64px',
         bottom: '0',
       }}
     >
       <div
-        className="h-full rounded-b-2xl rounded-tr-2xl shadow-sm border border-white/80 overflow-hidden"
+        className="h-full rounded-2xl shadow-sm border border-white/80 overflow-hidden"
         style={{
           background: 'rgba(255,255,255,0.85)',
           backdropFilter: 'blur(16px)',
