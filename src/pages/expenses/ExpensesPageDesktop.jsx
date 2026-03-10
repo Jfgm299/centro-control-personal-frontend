@@ -8,6 +8,7 @@ import FilterBar from './components/FilterBar'
 import SpendingChart from './components/SpendingChart'
 import AccountBreakdown from './components/AccountBreakdown'
 import RecentExpenses from './components/RecentExpenses'
+import ExpenseModal from './components/ExpenseModal'
 import SubscriptionsTab from './components/SubscriptionsTab'
 
 const fmt = (v) => `€${Number(v).toFixed(2)}`
@@ -21,6 +22,7 @@ export default function ExpensesPageDesktop() {
   const [tab, setTab] = useState('expenses')
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [drilldownWeek, setDrilldownWeek] = useState(null)
+  const [modalExpense, setModalExpense] = useState(undefined) // undefined=closed, null=create
 
   const analytics = useMemo(() => aggregateExpenses(expenses), [expenses])
 
@@ -60,15 +62,29 @@ export default function ExpensesPageDesktop() {
         <p className="text-slate-400 mt-1">{t('subtitle')}</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
-        {TABS.map(tabKey => (
-          <button key={tabKey} onClick={() => setTab(tabKey)}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors
-              ${tab === tabKey ? 'bg-white text-slate-900 shadow-sm' : 'text-gray-400 hover:text-gray-700'}`}>
-            {tabKey === 'expenses' ? '💸 ' + t('tabs.expenses') : '🔄 ' + t('tabs.subscriptions')}
+      {/* Acciones principales (Tabs + Añadir) */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+          {TABS.map(tabKey => (
+            <button key={tabKey} onClick={() => setTab(tabKey)}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors
+                ${tab === tabKey ? 'bg-white text-slate-900 shadow-sm' : 'text-gray-400 hover:text-gray-700'}`}>
+              {tabKey === 'expenses' ? '💸 ' + t('tabs.expenses') : '🔄 ' + t('tabs.subscriptions')}
+            </button>
+          ))}
+        </div>
+        
+        {tab === 'expenses' && (
+          <button 
+            onClick={() => setModalExpense(null)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+            </svg>
+            {t('list.create')}
           </button>
-        ))}
+        )}
       </div>
 
       {/* Tab: Gastos */}
@@ -119,6 +135,16 @@ export default function ExpensesPageDesktop() {
 
       {/* Tab: Suscripciones */}
       {tab === 'subscriptions' && <SubscriptionsTab />}
+
+      {/* Modal create / edit */}
+      {modalExpense !== undefined && (
+        <ExpenseModal
+          expense={modalExpense}
+          onClose={() => setModalExpense(undefined)}
+          onCreate={create.mutateAsync}
+          onUpdate={update.mutateAsync}
+        />
+      )}
     </div>
   )
 }
@@ -130,6 +156,7 @@ function LoadingState() {
         <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
         <span className="text-sm">Loading expenses…</span>
       </div>
+
     </div>
   )
 }
@@ -139,6 +166,7 @@ function ErrorState({ message, t }) {
     <div className="rounded-2xl bg-red-50 border border-red-100 p-6 text-red-700">
       <p className="font-semibold">{t('error.title')}</p>
       <p className="text-sm mt-1 text-red-500">{message}</p>
+
     </div>
   )
 }
