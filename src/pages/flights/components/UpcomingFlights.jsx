@@ -34,7 +34,7 @@ export default function UpcomingFlights({ flights, onAdd }) {
           <p className="text-gray-400 text-sm">{t('upcoming.emptyHint')}</p>
           <button
             onClick={onAdd}
-            className="mt-2 px-5 py-2 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors"
+            className="mt-2 px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
           >
             {t('upcoming.addFlight')}
           </button>

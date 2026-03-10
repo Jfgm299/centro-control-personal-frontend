@@ -15,7 +15,7 @@ export default function FlightsPageMobile() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-400">
-        <div className="w-8 h-8 border-2 border-gray-200 border-t-sky-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-gray-200 border-t-slate-900 rounded-full animate-spin" />
       </div>
     )
   }
@@ -34,7 +34,7 @@ export default function FlightsPageMobile() {
                 onClick={() => setTab(tabId)}
                 className={clsx(
                   'px-4 py-2 text-sm font-medium rounded-xl transition-all',
-                  tab === tabId ? 'bg-sky-500 text-white' : 'text-gray-500'
+                  tab === tabId ? 'bg-slate-900 text-white' : 'text-gray-500'
                 )}
               >
                 {t(`tabs.${tabId}`)}
@@ -50,7 +50,7 @@ export default function FlightsPageMobile() {
           {tab === 'upcoming' && (
             <button
               onClick={() => setShowAdd(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 text-white text-sm font-medium rounded-xl mb-1"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-sm font-medium rounded-xl mb-1"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

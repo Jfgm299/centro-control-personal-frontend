@@ -53,7 +53,7 @@ export default function FlightCardMobile({ flight }) {
           {flight.origin_city} → {flight.destination_city}
         </p>
         {flight.notes && !editingNotes && (
-          <p className="text-xs text-sky-600 mt-0.5 truncate">{flight.notes}</p>
+          <p className="text-xs text-slate-600 mt-0.5 truncate">{flight.notes}</p>
         )}
         {editingNotes && (
           <div className="mt-1.5 flex gap-1.5" onClick={e => e.stopPropagation()}>
@@ -61,13 +61,13 @@ export default function FlightCardMobile({ flight }) {
               autoFocus
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              className="flex-1 text-xs px-2 py-1 rounded-lg border border-sky-300 focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="flex-1 text-xs px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-400"
               placeholder="Add notes..."
             />
             <button
               onClick={handleSaveNotes}
               disabled={saving}
-              className="text-xs px-2 py-1 bg-sky-500 text-white rounded-lg disabled:opacity-50"
+              className="text-xs px-2 py-1 bg-slate-900 text-white rounded-lg disabled:opacity-50"
             >
               {saving ? '…' : '✓'}
             </button>
@@ -94,7 +94,7 @@ export default function FlightCardMobile({ flight }) {
         <div className="flex gap-1 mt-0.5">
           <button
             onClick={() => setEditingNotes(v => !v)}
-            className="w-6 h-6 flex items-center justify-center rounded-lg text-gray-400 hover:text-sky-600 hover:bg-sky-50"
+            className="w-6 h-6 flex items-center justify-center rounded-lg text-gray-400 hover:text-slate-600 hover:bg-slate-50"
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

@@ -69,7 +69,7 @@ export default function FlightCard({ flight }) {
           </p>
 
           {flight.notes && !editingNotes && (
-            <p className="text-xs text-sky-600 mt-1 truncate">{flight.notes}</p>
+            <p className="text-xs text-slate-600 mt-1 truncate">{flight.notes}</p>
           )}
 
           {editingNotes && (
@@ -78,13 +78,13 @@ export default function FlightCard({ flight }) {
                 autoFocus
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                className="flex-1 text-xs px-2 py-1 rounded-lg border border-sky-300 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                className="flex-1 text-xs px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-400"
                 placeholder="Add notes..."
               />
               <button
                 onClick={handleSaveNotes}
                 disabled={saving}
-                className="text-xs px-2 py-1 bg-sky-500 text-white rounded-lg hover:bg-sky-600 disabled:opacity-50"
+                className="text-xs px-2 py-1 bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50"
               >
                 {saving ? '…' : '✓'}
               </button>
@@ -123,7 +123,7 @@ export default function FlightCard({ flight }) {
           {/* Edit */}
           <button
             onClick={() => setEditingNotes(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-md border border-gray-100 text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-all"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-md border border-gray-100 text-gray-400 hover:text-slate-600 hover:bg-slate-50 transition-all"
             title="Edit notes"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
