@@ -50,7 +50,7 @@ export default function DockIcon({
 
       {/* Icon — only height/fontSize animate, width stays at BASE_SIZE via CSS */}
       <motion.button
-        className={`dock-icon${isBouncing ? ' dock-icon--bounce' : ''}`}
+        className={`dock-icon${module.iconType === 'image' ? ' dock-icon-transparent' : ''}${isBouncing ? ' dock-icon--bounce' : ''}`}
         onClick={onClick}
         aria-label={module.label}
         whileTap={{ scale: 0.9 }}
@@ -59,7 +59,7 @@ export default function DockIcon({
           height:       size,
           borderRadius: radius,
           fontSize:     font,
-          ...(isActive && {
+          ...(isActive && module.iconType !== 'image' && {
             background: `linear-gradient(148deg, ${module.color}dd 0%, ${module.color}88 100%)`,
             boxShadow: [
               `0 6px 20px ${module.color}44`,
@@ -69,7 +69,11 @@ export default function DockIcon({
           }),
         }}
       >
-        <span className="dock-icon-emoji">{module.icon}</span>
+        {module.iconType === 'image' ? (
+          <img src={module.icon} alt={module.labelKey} className="dock-icon-img" draggable={false} />
+        ) : (
+          <span className="dock-icon-emoji">{module.icon}</span>
+        )}
       </motion.button>
 
       {/* Open-app dot */}

@@ -32,7 +32,13 @@ export default function HomePage() {
               className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
               style={{ backgroundColor: `${module.color}18` }}
             >
-              {module.icon}
+              {module.iconType === 'image' ? (
+                <div className="w-full h-full overflow-hidden rounded-xl">
+                  <img src={module.icon} alt="icon" className="w-full h-full object-cover pointer-events-none drop-shadow-sm" />
+                </div>
+              ) : (
+                module.icon
+              )}
             </div>
             <div>
               <p className="font-semibold text-gray-800 group-hover:text-gray-900">

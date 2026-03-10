@@ -57,7 +57,13 @@ export default function TabBar() {
                 backdropFilter: 'blur(16px)',
               } : {}}
             >
-              <span className="text-base">{tab.icon}</span>
+              {tab.iconType === 'image' ? (
+                <div className="w-10 h-10 -my-1 -ml-1 flex items-center justify-center overflow-hidden">
+                  <img src={tab.icon} alt="icon" className="w-[180%] h-[180%] max-w-none object-contain pointer-events-none drop-shadow-sm" />
+                </div>
+              ) : (
+                <span className="text-base">{tab.icon}</span>
+              )}
               <span>{t(tab.labelKey)}</span>
 
               {!tab.permanent && (

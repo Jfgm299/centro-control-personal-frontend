@@ -11,7 +11,7 @@ export function loadAllModules() {
       continue
     }
 
-    const { id, labelKey, icon, path: modulePath, color, component } = moduleExport
+    const { id, labelKey, icon, iconType, path: modulePath, color, component } = moduleExport
 
     if (!id || !labelKey || !modulePath || !component) {
       console.warn(`[moduleLoader] ${path} le faltan propiedades requeridas (id, labelKey, path, component)`)
@@ -22,6 +22,7 @@ export function loadAllModules() {
       id,
       labelKey,
       icon: icon || '📦',
+      iconType: iconType || 'emoji',
       path: modulePath,
       color: color || '#94a3b8',
       component,
