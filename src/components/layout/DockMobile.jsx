@@ -5,6 +5,7 @@ import { useModuleStore } from '../../store/moduleStore'
 import { useDockStore } from '../../store/dockStore'
 import { useDragStore, setDockBounds } from '../../store/dragStore'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { hexToRgba } from '../../lib/colorUtils'
 
 const LONG_PRESS_MS = 500
 
@@ -169,8 +170,8 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
       >
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm"
           style={{
-            backgroundColor: isActive ? mod.color : `${mod.color}22`,
-            boxShadow: isActive ? `0 4px 14px ${mod.color}55` : undefined,
+            backgroundColor: isActive ? hexToRgba(mod.color, 0.6) : hexToRgba(mod.color, 0.2),
+            boxShadow: isActive ? `0 4px 14px ${hexToRgba(mod.color, 0.3)}` : undefined,
             outline: showRemove ? '2px solid rgba(239,68,68,0.6)' : 'none',
           }}>
           {typeof mod.icon === 'string' ? (
@@ -178,7 +179,7 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
           ) : (
             <mod.icon
               size={28}
-              color={isActive ? mod.color : 'rgb(100 116 139)'}
+              color={isActive ? hexToRgba(mod.color, 0.8) : 'rgb(100 116 139)'}
               strokeWidth={2.2}
               style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
             />

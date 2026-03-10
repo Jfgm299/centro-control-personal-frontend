@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useModuleStore } from '../../store/moduleStore'
 import { useAuth } from '../../context/AuthContext'
 import { useDragStore } from '../../store/dragStore'
+import { hexToRgba } from '../../lib/colorUtils'
 import DotBackground from './DotBackground'
 import UserMenu from './UserMenu'
 import DockMobile from './DockMobile'
@@ -17,14 +18,23 @@ function DragGhost() {
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
         style={{
-          background: `linear-gradient(145deg, ${draggingModule.color}cc, ${draggingModule.color})`,
-          boxShadow: `0 8px 32px ${draggingModule.color}88`,
+          background: `linear-gradient(145deg, ${hexToRgba(draggingModule.color, 0.6)}, ${hexToRgba(draggingModule.color, 0.8)})`,
+          boxShadow: `0 8px 32px ${hexToRgba(draggingModule.color, 0.5)}`,
           transform: overDock ? 'scale(0.85)' : 'scale(1.12)',
           transition: 'transform 0.15s ease',
           opacity: 0.96,
         }}
       >
-        {draggingModule.icon}
+        {typeof draggingModule.icon === 'string' ? (
+          <span className="dock-icon-emoji" style={{ fontSize: '32px' }}>{draggingModule.icon}</span>
+        ) : (
+          <draggingModule.icon
+            size={32}
+            color={hexToRgba(draggingModule.color, 0.9)}
+            strokeWidth={2.2}
+            style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
+          />
+        )}
       </div>
     </div>
   )
