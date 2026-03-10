@@ -124,19 +124,21 @@ export default function AutomationCard({ automation, onEdit, onImportFile, isMob
       </div>
 
       {/* Toggle activo */}
-      <div onClick={handleToggle} style={{ flexShrink: 0 }}>
+      <div onClick={handleToggle} className="group/toggle" style={{ flexShrink: 0 }}>
         <div style={{
           width: 36, height: 20, borderRadius: 10,
           background: automation.is_active ? '#22c55e' : '#d1d5db',
-          position: 'relative', cursor: 'pointer', transition: 'background 0.2s',
+          position: 'relative', cursor: 'pointer', transition: 'all 0.2s',
+          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
         }}>
           <div style={{
             position: 'absolute', top: 2,
             left: automation.is_active ? 18 : 2,
             width: 16, height: 16, borderRadius: '50%',
-            background: '#fff', transition: 'left 0.2s',
+            background: '#fff', transition: 'all 0.2s',
             boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-          }} />
+          }}
+          className="group-hover/toggle:scale-105" />
         </div>
       </div>
 
@@ -144,14 +146,12 @@ export default function AutomationCard({ automation, onEdit, onImportFile, isMob
       <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
         <button
           onClick={() => { setMenuOpen(v => !v); setConfirmDelete(false) }}
-          style={{
-            width: 28, height: 28, borderRadius: 8, border: 'none',
-            background: menuOpen ? '#f3f4f6' : 'transparent',
-            cursor: 'pointer', fontSize: 16, color: '#6b7280',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
+          className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${menuOpen ? 'bg-slate-100 text-slate-800' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}`}
+          style={{ border: 'none', cursor: 'pointer', display: 'flex' }}
         >
-          ···
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+          </svg>
         </button>
 
         {menuOpen && (
@@ -161,12 +161,12 @@ export default function AutomationCard({ automation, onEdit, onImportFile, isMob
             boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
             border: '1px solid #f0f0f0', minWidth: 160,
           }}>
-            <MenuItem icon="✏️" label={t('card.edit')}      onClick={() => { setMenuOpen(false); onEdit(automation) }} />
-            <MenuItem icon="📋" label={t('card.duplicate')} onClick={handleDuplicate} loading={duplicate.isPending} />
-            <MenuItem icon="⬇️" label={t('card.export')}    onClick={handleExport} />
+            <MenuItem icon={"<svg className=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z\" /></svg>"} label={t('card.edit')}      onClick={() => { setMenuOpen(false); onEdit(automation) }} />
+            <MenuItem icon={"<svg className=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\" /></svg>"} label={t('card.duplicate')} onClick={handleDuplicate} loading={duplicate.isPending} />
+            <MenuItem icon={"<svg className=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4\" /></svg>"} label={t('card.export')}    onClick={handleExport} />
             <div style={{ height: 1, background: '#f0f0f0', margin: '4px 0' }} />
             <MenuItem
-              icon="🗑️"
+              icon={"<svg className=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16\" /></svg>"}
               label={confirmDelete ? t('card.confirmDelete') : t('card.delete')}
               onClick={handleDelete}
               danger
@@ -184,18 +184,10 @@ function MenuItem({ icon, label, onClick, danger = false, loading = false }) {
     <button
       onClick={onClick}
       disabled={loading}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        width: '100%', padding: '8px 14px',
-        border: 'none', background: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-        fontSize: 13, fontWeight: 500,
-        color: danger ? '#ef4444' : '#374151',
-        textAlign: 'left',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.background = danger ? '#fef2f2' : '#f9fafb' }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+      className={`flex items-center gap-2 w-full px-3.5 py-2 text-sm font-medium transition-colors ${danger ? 'text-red-500 hover:bg-red-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'} ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      style={{ border: 'none', background: 'none', textAlign: 'left' }}
     >
-      <span>{icon}</span>
+      <span dangerouslySetInnerHTML={{ __html: icon }} />
       <span>{loading ? '...' : label}</span>
     </button>
   )
