@@ -1,9 +1,11 @@
+import { Briefcase } from 'lucide-react'
 import TravelsPage from './TravelsPage'
 
 export default {
   id: 'travels_tracker',
   labelKey: 'nav.travels',
-  icon: '🧳',
+  icon: Briefcase,
+  iconType: 'lucide',
   path: '/travels',
   color: '#f472b6',
   component: TravelsPage,

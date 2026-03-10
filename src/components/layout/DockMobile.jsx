@@ -173,7 +173,16 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
             boxShadow: isActive ? `0 4px 14px ${mod.color}55` : undefined,
             outline: showRemove ? '2px solid rgba(239,68,68,0.6)' : 'none',
           }}>
-          {mod.icon}
+          {typeof mod.icon === 'string' ? (
+            <span className="dock-icon-emoji" style={{ fontSize: '28px' }}>{mod.icon}</span>
+          ) : (
+            <mod.icon
+              size={28}
+              color={isActive ? mod.color : 'rgb(100 116 139)'}
+              strokeWidth={2.2}
+              style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
+            />
+          )}
         </div>
         <div className="w-1 h-1 rounded-full"
           style={{ backgroundColor: isActive ? mod.color : 'transparent' }} />

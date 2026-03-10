@@ -32,12 +32,14 @@ export default function HomePage() {
               className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
               style={{ backgroundColor: `${module.color}18` }}
             >
-              {module.iconType === 'image' ? (
-                <div className="w-full h-full overflow-hidden rounded-xl">
-                  <img src={module.icon} alt="icon" className="w-full h-full object-cover pointer-events-none drop-shadow-sm" />
-                </div>
+              {typeof module.icon === 'string' ? (
+                <span className="text-3xl">{module.icon}</span> // Render emoji as text
               ) : (
-                module.icon
+                <module.icon
+                  size={32} // Adjust size as needed for home page desktop
+                  color="rgb(51 65 85)" // slate-700
+                  strokeWidth={2} // Adjust stroke width
+                />
               )}
             </div>
             <div>

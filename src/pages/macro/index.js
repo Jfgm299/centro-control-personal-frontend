@@ -1,9 +1,11 @@
+import { BarChart2 } from 'lucide-react'
 import MacroPage from './MacroPage'
 
 export default {
   id: 'macro_tracker',
   labelKey: 'nav.macro',
-  icon: '📊',
+  icon: BarChart2,
+  iconType: 'lucide',
   path: '/macro',
   color: '#8b5cf6',
   component: MacroPage,

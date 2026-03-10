@@ -211,13 +211,15 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
             : `0 4px 14px ${module.color}44`,
         }}
       >
-        {module.iconType === 'image' ? (
-              <div className="w-full h-full overflow-hidden rounded-[inherit]">
-                <img src={module.icon} alt="icon" className="w-full h-full object-cover pointer-events-none drop-shadow-sm" />
-              </div>
-            ) : (
-              module.icon
-            )}
+        {typeof module.icon === 'string' ? (
+          <span className="text-3xl">{module.icon}</span> // Render emoji as text
+        ) : (
+          <module.icon
+            size={32} // Adjust size as needed for home page mobile
+            color="rgb(51 65 85)" // slate-700
+            strokeWidth={2} // Adjust stroke width
+          />
+        )}
         {inDock && (
           <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-white border border-gray-200 flex items-center justify-center">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />

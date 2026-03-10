@@ -22,7 +22,8 @@ export function loadAllModules() {
       id,
       labelKey,
       icon: icon || '📦',
-      iconType: iconType || 'emoji',
+      iconType: iconType || (typeof icon === 'string' ? 'emoji' : 'lucide'),
+
       path: modulePath,
       color: color || '#94a3b8',
       component,

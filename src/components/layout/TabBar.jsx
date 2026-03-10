@@ -57,12 +57,14 @@ export default function TabBar() {
                 backdropFilter: 'blur(16px)',
               } : {}}
             >
-              {tab.iconType === 'image' ? (
-                <div className="w-10 h-10 -my-1 -ml-1 flex items-center justify-center overflow-hidden">
-                  <img src={tab.icon} alt="icon" className="w-[180%] h-[180%] max-w-none object-contain pointer-events-none drop-shadow-sm" />
-                </div>
-              ) : (
+              {tab.iconType === 'emoji' ? (
                 <span className="text-base">{tab.icon}</span>
+              ) : (
+                <tab.icon
+                  size={20} // Adjust size as needed for tabs
+                  color={isActive ? tab.color : 'rgb(100 116 139)'} // Use tab.color for active state
+                  strokeWidth={2.2} // Adjust stroke width for visual weight
+                />
               )}
               <span>{t(tab.labelKey)}</span>
 
