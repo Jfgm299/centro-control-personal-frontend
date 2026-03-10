@@ -12,6 +12,8 @@ export default function HomePage() {
     navigate(module.path)
   }
 
+  const filteredModules = modules.filter(m => m.id !== 'home')
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -20,7 +22,7 @@ export default function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {modules.map((module) => (
+        {filteredModules.map((module) => (
           <button
             key={module.id}
             onClick={() => handleOpen(module)}
