@@ -71,6 +71,10 @@ closeTab('gym_tracker')     // cierra tab (home no se puede cerrar)
 const { addToDock, removeFromDock, dockIds } = useDockStore()
 ```
 
+### `useHomeStore` — orden de iconos
+
+Expone `setOrder(ids[])` y `moveModule` (deprecated internamente — el componente usa `setOrder` directamente calculando el nuevo orden desde `orderedModules`). Esto garantiza que funciona aunque `order` en localStorage tenga IDs obsoletos o le falten módulos nuevos.
+
 ---
 
 ## Zustand — Stores Locales de Módulo

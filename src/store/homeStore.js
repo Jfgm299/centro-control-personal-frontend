@@ -16,8 +16,11 @@ export const useHomeStore = create(
         if (get().order.length === 0) set({ order: moduleIds })
       },
 
-      moveModule: (fromIdx, toIdx) => {
+      moveModule: (fromId, toId) => {
         const next = [...get().order]
+        const fromIdx = next.indexOf(fromId)
+        const toIdx   = next.indexOf(toId)
+        if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return
         const [item] = next.splice(fromIdx, 1)
         next.splice(toIdx, 0, item)
         set({ order: next })
