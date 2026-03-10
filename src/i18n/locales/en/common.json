@@ -6,7 +6,8 @@
     "flights": "Flights",
     "macro": "Macro",
     "travels": "Travels",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "automations": "Automations"
   },
   "actions": {
     "close": "Close",
@@ -34,5 +35,5 @@
     "full": "Dock full · max 4 apps",
     "hint": "Hold an app to add it to the dock",
     "dropHint": "Release to add to dock"
-}
+  }
 }
