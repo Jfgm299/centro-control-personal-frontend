@@ -30,6 +30,12 @@ home/
 - `home` es `permanent: true` — no aparece en `closeTab()` ni se puede eliminar.
 - El orden de iconos se persiste en localStorage (`home-order-store`).
 
+### Drag-to-reorder (mobile)
+
+- Al inicio del drag (long press), se captura un **snapshot** de los `getBoundingClientRect()` de todas las celdas (`[data-cell]`). Durante el arrastre se usan esas coordenadas fijas — no se consulta el DOM en tiempo real, lo que evita el loop inestable que causaba saltos en `hoverIdx`.
+- El ref `dragFromIdxRef` guarda el **ID** del módulo arrastrado (no el índice), y `orderedModulesRef` se sincroniza en cada render para que `onUp` siempre tenga el array de módulos actualizado sin stale closures.
+- Al soltar, se calcula el nuevo orden completo desde `orderedModulesRef.current` y se guarda con `setOrder(newOrder)`. Esto es robusto frente a IDs obsoletos en `order` (localStorage de sesiones anteriores) y a módulos recién añadidos que aún no tienen entrada en `order`.
+
 ## Dock Mobile
 
 4 slots: `[0] [1] HOME [2] [3]`. Home siempre en el centro. `dockBounds` se actualiza en cada render del `DockMobile` para detectar si el ghost está sobre él durante el drag.

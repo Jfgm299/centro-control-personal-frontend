@@ -6,6 +6,7 @@ import { useModuleStore } from '../../store/moduleStore'
 import { useDockStore } from '../../store/dockStore'
 import { useDragStore } from '../../store/dragStore'
 import { useHomeStore } from '../../store/homeStore'
+import { hexToRgba } from '../../lib/colorUtils'
 
 const LONG_PRESS_MS = 500
 
@@ -17,14 +18,20 @@ export default function HomePageMobile() {
   const { t } = useTranslation(['home', 'common'])
   const { modules, openModule } = useModuleStore()
   const { addToDock, isFull, dockIds } = useDockStore()
-  const { isDragging, draggingModule, ghostX, ghostY, overDock,
+  const { isDragging, draggingModule, overDock,
           startDrag, updateGhost, endDrag } = useDragStore()
-  const { order, initOrder, moveModule } = useHomeStore()
+  const { order, initOrder, setOrder } = useHomeStore()
   const navigate = useNavigate()
 
-  const gridRef       = useRef(null)
+  const gridRef = useRef(null)
+  // ✅ Refs para los event handlers — nunca stale, sin depender del ciclo del efecto
+  const dragFromIdxRef    = useRef(null) // guarda el ID del módulo arrastrado
+  const hoverIdxRef       = useRef(null) // guarda el índice snapshot del hover
+  const cellRectsRef      = useRef([])
+  const orderedModulesRef = useRef([])
+  // State solo para el render visual
   const [dragFromIdx, setDragFromIdx] = useState(null)
-  const [hoverIdx, setHoverIdx]       = useState(null)
+  const [hoverIdx,    setHoverIdx]    = useState(null)
 
   const appModules = modules.filter((m) => m.id !== 'home')
 
@@ -37,14 +44,14 @@ export default function HomePageMobile() {
     .map((id) => moduleMap[id])
     .filter(Boolean)
     .concat(appModules.filter((m) => !order.includes(m.id)))
+  orderedModulesRef.current = orderedModules
 
   const getHoverIndex = useCallback((x, y) => {
-    if (!gridRef.current) return null
-    const cells = gridRef.current.querySelectorAll('[data-cell]')
+    const rects = cellRectsRef.current
+    if (!rects.length) return null
     let closest = null
     let minDist  = Infinity
-    cells.forEach((cell, i) => {
-      const rect = cell.getBoundingClientRect()
+    rects.forEach((rect, i) => {
       const cx = rect.left + rect.width / 2
       const cy = rect.top  + rect.height / 2
       const d  = Math.hypot(x - cx, y - cy)
@@ -60,30 +67,41 @@ export default function HomePageMobile() {
       const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0
       const y = e.clientY ?? e.touches?.[0]?.clientY ?? 0
       updateGhost(x, y)
-      if (dragFromIdx !== null) setHoverIdx(getHoverIndex(x, y))
+      // ✅ dragFromIdxRef nunca es stale
+      if (dragFromIdxRef.current !== null) {
+        const idx = getHoverIndex(x, y)
+        hoverIdxRef.current = idx
+        setHoverIdx(idx)
+      }
     }
 
-    const onUp = async (e) => {
-      const x = e.clientX ?? e.changedTouches?.[0]?.clientX ?? 0
-      const y = e.clientY ?? e.changedTouches?.[0]?.clientY ?? 0
-      updateGhost(x, y)
-
+    const onUp = async () => {
+      // ✅ Todo via refs o store — cero stale closures
       const store = useDragStore.getState()
 
-      if (store.overDock && draggingModule) {
-        const added = addToDock(draggingModule.id)
+      if (store.overDock && store.draggingModule) {
+        const added = addToDock(store.draggingModule.id)
         await haptic(added ? ImpactStyle.Heavy : ImpactStyle.Light)
-      } else if (dragFromIdx !== null) {
-        const toIdx = getHoverIndex(x, y)
-        if (toIdx !== null && toIdx !== dragFromIdx) {
-          moveModule(dragFromIdx, toIdx)
+      } else {
+        const fromId  = dragFromIdxRef.current
+        const toIdx   = hoverIdxRef.current
+        const modules = orderedModulesRef.current
+        const fromIdx = modules.findIndex(m => m.id === fromId)
+        if (fromIdx !== -1 && toIdx !== null && fromIdx !== toIdx) {
+          const newOrder = modules.map(m => m.id)
+          const [item] = newOrder.splice(fromIdx, 1)
+          newOrder.splice(toIdx, 0, item)
+          setOrder(newOrder)
           await haptic(ImpactStyle.Light)
         }
       }
 
+      endDrag()
+      dragFromIdxRef.current = null
+      hoverIdxRef.current    = null
+      cellRectsRef.current   = []
       setDragFromIdx(null)
       setHoverIdx(null)
-      endDrag()
     }
 
     window.addEventListener('pointermove', onMove)
@@ -92,8 +110,8 @@ export default function HomePageMobile() {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup',   onUp)
     }
-  }, [isDragging, draggingModule, dragFromIdx, updateGhost, endDrag,
-      addToDock, moveModule, getHoverIndex])
+  // Solo isDragging como dependencia — handlers leen todo vía refs o store
+  }, [isDragging, updateGhost, endDrag, addToDock, setOrder, getHoverIndex])
 
   const handleOpen = async (module) => {
     await haptic()
@@ -109,18 +127,16 @@ export default function HomePageMobile() {
 
   return (
     <div className="flex flex-col min-h-full px-4 pt-4 pb-8 select-none">
-      {/* Greeting */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800">{t('home:welcome.title')}</h1>
         <p className="text-sm text-gray-400 mt-0.5">{t('home:welcome.subtitle')}</p>
       </div>
 
-      {/* App grid */}
       <div ref={gridRef} className="grid grid-cols-4 gap-x-4 gap-y-6">
         {displayModules.map((module, idx) => {
-          const originalIdx     = orderedModules.indexOf(module)
-          const isDraggingThis  = isDragging && draggingModule?.id === module.id
-          const isInsertTarget  = isDragging && hoverIdx === idx && dragFromIdx !== idx
+          const originalIdx    = orderedModules.indexOf(module)
+          const isDraggingThis = isDragging && draggingModule?.id === module.id
+          const isInsertTarget = isDragging && hoverIdx === idx && dragFromIdx !== idx
 
           return (
             <AppIcon
@@ -132,6 +148,13 @@ export default function HomePageMobile() {
               isInsertTarget={isInsertTarget}
               onTap={() => !isDragging && handleOpen(module)}
               onLongPress={(x, y) => {
+                // Snapshot de posiciones ANTES de que el DOM cambie
+                if (gridRef.current) {
+                  cellRectsRef.current = Array.from(
+                    gridRef.current.querySelectorAll('[data-cell]')
+                  ).map(cell => cell.getBoundingClientRect())
+                }
+                dragFromIdxRef.current = module.id  // ID, no índice — inmune a stale order
                 setDragFromIdx(originalIdx)
                 startDrag(module, x, y)
                 haptic(ImpactStyle.Heavy)
@@ -147,7 +170,6 @@ export default function HomePageMobile() {
         </p>
       )}
 
-      {/* Dock full toast */}
       {isDragging && isFull() && overDock && (
         <div
           className="fixed bottom-36 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs px-4 py-2 rounded-full pointer-events-none"
@@ -170,7 +192,7 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
     didDrag.current  = false
     startPos.current = { x: e.clientX, y: e.clientY }
     timerRef.current = setTimeout(() => {
-      onLongPress(e.clientX, e.clientY)
+      if (!didDrag.current) { onLongPress(e.clientX, e.clientY) }
     }, LONG_PRESS_MS)
   }, [onLongPress])
 
@@ -193,8 +215,8 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
       data-cell
       className="flex flex-col items-center gap-1.5 cursor-pointer"
       style={{
-        opacity:   isDraggingThis ? 0.25 : 1,
-        transform: isInsertTarget ? 'scale(0.92)' : 'scale(1)',
+        opacity:    isDraggingThis ? 0.25 : 1,
+        transform:  isInsertTarget ? 'scale(0.92)' : 'scale(1)',
         transition: 'opacity 0.2s, transform 0.15s',
       }}
       onPointerDown={handlePointerDown}
@@ -212,12 +234,12 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
         }}
       >
         {typeof module.icon === 'string' ? (
-          <span className="text-3xl">{module.icon}</span> // Render emoji as text
+          <span className="text-3xl">{module.icon}</span>
         ) : (
           <module.icon
-            size={32} // Adjust size as needed for home page mobile
-            color="rgb(51 65 85)" // slate-700
-            strokeWidth={2} // Adjust stroke width
+            size={32}
+            color={hexToRgba(module.color, 0.8)}
+            strokeWidth={2}
           />
         )}
         {inDock && (
