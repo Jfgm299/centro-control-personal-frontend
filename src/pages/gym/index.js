@@ -7,7 +7,7 @@ export default {
   icon: Dumbbell,
   iconType: 'lucide',
   path: '/gym',
-  color: '#6366f1',
+  color: '#ef4444',
   component: GymPage,
   permanent: false,
   descriptionKey: 'home:modules.gym.description',
