@@ -7,7 +7,7 @@ export default {
   icon: CreditCard,
   iconType: 'lucide',
   path: '/expenses',
-  color: '#22c55e',
+    color: '#f472b6',
   component: ExpensesPage,
   permanent: false,
   descriptionKey: 'home:modules.expenses.description',

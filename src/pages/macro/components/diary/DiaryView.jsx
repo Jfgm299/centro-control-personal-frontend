@@ -1,16 +1,25 @@
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useDailySummary }  from '../../hooks/useDailySummary'
+
 import { useMacroGoals }    from '../../hooks/useMacroGoals'
 import MealSection           from './MealSection'
 import { MEAL_TYPES }        from '../../constants'
 
 function formatDate(dateStr) {
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString(undefined, {
-    weekday: 'long', day: 'numeric', month: 'long',
+  const date = new Date(dateStr + 'T00:00:00')
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  if (date.toDateString() === today.toDateString()) return 'Today'
+  if (date.toDateString() === yesterday.toDateString()) return 'Yesterday'
+
+  return date.toLocaleDateString(undefined, {
+    weekday: 'long', day: 'numeric', month: 'short',
   })
 }
 
-// Devuelve YYYY-MM-DD en hora local (evita bug de zona horaria con toISOString)
 function toLocalISO(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
@@ -23,38 +32,78 @@ function addDays(dateStr, n) {
 
 function DailyProgress({ totals, goals }) {
   if (!goals) return null
+
   const items = [
-    { key: 'energy_kcal',     label: 'kcal', color: '#f59e0b', goal: goals.energy_kcal,     current: totals.energy_kcal,     unit: ''  },
-    { key: 'proteins_g',      label: 'P',    color: '#3b82f6', goal: goals.proteins_g,      current: totals.proteins_g,      unit: 'g' },
-    { key: 'carbohydrates_g', label: 'C',    color: '#10b981', goal: goals.carbohydrates_g, current: totals.carbohydrates_g, unit: 'g' },
-    { key: 'fat_g',           label: 'G',    color: '#f43f5e', goal: goals.fat_g,           current: totals.fat_g,           unit: 'g' },
+    { key: 'proteins_g',      label: 'Proteins', color: '#38bdf8', goal: goals.proteins_g,      current: totals.proteins_g },
+    { key: 'carbohydrates_g', label: 'Carbs',    color: '#2dd4bf', goal: goals.carbohydrates_g, current: totals.carbohydrates_g },
+    { key: 'fat_g',           label: 'Fats',     color: '#fb7185', goal: goals.fat_g,           current: totals.fat_g },
   ]
+
+  const calPct = goals.energy_kcal > 0 ? (totals.energy_kcal / goals.energy_kcal) * 100 : 0
+  const calColor = '#facc15'
+
   return (
-    <div className="grid grid-cols-4 gap-2">
-      {items.map(({ key, label, color, goal, current, unit }) => {
-        const pct = goal > 0 ? Math.min((current / goal) * 100, 100) : 0
-        const over = goal > 0 && current > goal
-        return (
-          <div key={key} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
-            <div className="flex justify-between items-baseline mb-1.5">
-              <span className="text-xs font-bold" style={{ color }}>{label}</span>
-              <span className={`text-xs font-semibold ${over ? 'text-red-500' : 'text-gray-600'}`}>
-                {Math.round(current)}{unit}
-              </span>
-            </div>
-            <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${pct}%`,
-                  background: over ? '#ef4444' : color,
-                }}
-              />
-            </div>
-            <p className="text-gray-400 text-xs mt-1 text-right">{Math.round(goal)}{unit}</p>
+    <div className="relative rounded-2xl p-4 md:p-6 backdrop-blur-xl backdrop-saturate-150 bg-white/5 border border-white/10 shadow-xl shadow-black/5">
+      <div className="flex items-center justify-between">
+        {/* Calories */}
+        <div className="relative w-24 h-24 md:w-32 md:h-32">
+          <svg className="w-full h-full" viewBox="0 0 36 36" transform="rotate(-90)">
+            <path
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.1)"
+              strokeWidth="3"
+            />
+            <motion.path
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+              fill="none"
+              stroke={calColor}
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray={`${calPct}, 100`}
+              initial={{ strokeDasharray: '0, 100' }}
+              animate={{ strokeDasharray: `${calPct}, 100` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <motion.p
+              className="text-xl md:text-3xl font-bold text-white"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+            >
+              {Math.round(totals.energy_kcal)}
+            </motion.p>
+            <p className="text-xs text-white/50">KCAL</p>
           </div>
-        )
-      })}
+        </div>
+
+        {/* Macros */}
+        <div className="flex-1 grid grid-cols-3 gap-2 ml-4">
+          {items.map(({ key, label, color, goal, current }) => {
+            const pct = goal > 0 ? Math.min((current / goal) * 100, 100) : 0
+            return (
+              <div key={key} className="text-center">
+                <p className="font-bold text-xl" style={{ color }}>{Math.round(current)}<span className="text-sm text-white/50">g</span></p>
+                <div className="h-1.5 rounded-full bg-white/10 overflow-hidden my-1">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: color }}
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
+                  />
+                </div>
+                <p className="text-xs text-white/60">{label}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
@@ -65,7 +114,7 @@ export default function DiaryView({ date, onDateChange }) {
   const { data: summary, isLoading } = useDailySummary(date)
   const { data: goals }              = useMacroGoals()
 
-  const today   = toLocalISO(new Date())   // ← hora local, no UTC
+  const today   = toLocalISO(new Date())
   const isToday  = date === today
   const isFuture = date > today
 
@@ -77,25 +126,29 @@ export default function DiaryView({ date, onDateChange }) {
   return (
     <div className="space-y-4">
       {/* Date navigation */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3 p-1 rounded-full bg-black/10">
         <button
           onClick={() => onDateChange(addDays(date, -1))}
-          className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors flex items-center justify-center"
+                    className="
+            w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/80
+            transition-colors flex items-center justify-center
+          "
         >
           ‹
         </button>
 
         <div className="flex-1 text-center">
-          <p className="text-gray-800 text-sm font-semibold capitalize">{formatDate(date)}</p>
-          {isToday && (
-            <span className="text-xs font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{t('diary.today')}</span>
-          )}
+          <p className="text-white text-sm font-semibold capitalize">{formatDate(date)}</p>
         </div>
 
         <button
           onClick={() => onDateChange(addDays(date, 1))}
-          disabled={isToday || isFuture}
-          className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          disabled={isFuture}
+                    className="
+            w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/80
+            disabled:opacity-30 disabled:cursor-not-allowed transition-colors
+            flex items-center justify-center
+          "
         >
           ›
         </button>
@@ -103,7 +156,10 @@ export default function DiaryView({ date, onDateChange }) {
         {!isToday && (
           <button
             onClick={() => onDateChange(today)}
-            className="text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition-colors"
+                      className="
+            hidden md:block text-xs font-medium text-white/80 hover:text-white
+            bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full transition-colors
+          "
           >
             {t('diary.today')}
           </button>
@@ -111,17 +167,25 @@ export default function DiaryView({ date, onDateChange }) {
       </div>
 
       {/* Daily progress bars */}
-      {summary?.totals && (
-        <DailyProgress totals={summary.totals} goals={goals} />
-      )}
+      <AnimatePresence>
+        {summary?.totals && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <DailyProgress totals={summary.totals} goals={goals} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Meal sections */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="text-gray-400 text-sm">{t('common.loading')}</div>
+          <div className="text-white/60 text-sm">{t('common.loading')}</div>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {MEAL_TYPES.map((m) => (
             <MealSection
               key={m.key}

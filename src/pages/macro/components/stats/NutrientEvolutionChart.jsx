@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
@@ -76,12 +77,12 @@ export default function NutrientEvolutionChart() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null
     return (
-      <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-lg text-xs space-y-1">
-        <p className="text-gray-400 mb-2">{formatDateShort(label)}</p>
+      <div className="bg-black/40 border border-white/20 rounded-xl p-3 shadow-lg text-xs space-y-1 backdrop-blur-sm">
+        <p className="text-white/60 mb-2">{formatDateShort(label)}</p>
         {payload.map((p) => (
           <div key={p.dataKey} className="flex justify-between gap-4">
             <span style={{ color: p.color }}>{t(`nutrients.${p.dataKey}`)}</span>
-            <span className="text-gray-700 font-semibold">
+            <span className="text-white font-semibold">
               {Math.round(p.value)} {NUTRIENT_UNITS[p.dataKey]}
             </span>
           </div>
@@ -94,19 +95,21 @@ export default function NutrientEvolutionChart() {
     <div className="space-y-4">
       {/* Header + period picker */}
       <div className="flex items-center justify-between">
-        <h3 className="text-gray-600 text-sm font-semibold">{t('stats.evolution')}</h3>
-        <div className="flex gap-1">
+        <h3 className="text-white/80 text-sm font-semibold">{t('stats.evolution')}</h3>
+        <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm">
           {PERIOD_OPTIONS.map((d) => (
             <button
               key={d}
               onClick={() => setDays(d)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                days === d
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
-              }`}
+              className="relative px-3 py-1 rounded-full text-xs font-semibold transition-colors text-white/60 hover:text-white"
             >
-              {d}d
+              {days === d && (
+                <motion.div
+                  layoutId="evolution-period-indicator"
+                  className="absolute inset-0 bg-white/10 rounded-full shadow-md"
+                />
+              )}
+              <span className="relative z-10">{d}d</span>
             </button>
           ))}
         </div>
@@ -120,12 +123,12 @@ export default function NutrientEvolutionChart() {
             <button
               key={key}
               onClick={() => toggleNutrient(key)}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300 ${
                 active
                   ? 'border-transparent text-black'
-                  : 'border-gray-200 text-gray-400 bg-transparent hover:border-gray-300'
+                  : 'border-white/20 text-white/60 bg-transparent hover:border-white/40'
               }`}
-              style={active ? { background: NUTRIENT_COLORS[key] } : {}}
+              style={active ? { background: NUTRIENT_COLORS[key], color: 'black' } : {}}
             >
               {t(`nutrients.${key}`)}
             </button>
@@ -135,27 +138,27 @@ export default function NutrientEvolutionChart() {
 
       {/* Chart */}
       {isLoading ? (
-        <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+        <div className="flex items-center justify-center h-48 text-white/60 text-sm">
           {t('common.loading')}
         </div>
       ) : chartData.length === 0 ? (
-        <div className="flex items-center justify-center h-48 text-gray-300 text-sm">
+        <div className="flex items-center justify-center h-48 text-white/40 text-sm">
           {t('stats.noData')}
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-            <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+            <CartesianGrid stroke="rgba(255,255,255,0.1)" vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={formatDateShort}
-              tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
+              tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
+              tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
             />
@@ -166,9 +169,9 @@ export default function NutrientEvolutionChart() {
                 type="monotone"
                 dataKey={key}
                 stroke={NUTRIENT_COLORS[key]}
-                strokeWidth={2}
+                strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 0 }}
+                activeDot={{ r: 5, strokeWidth: 0, fill: NUTRIENT_COLORS[key] }}
               />
             ))}
           </LineChart>

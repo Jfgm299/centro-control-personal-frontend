@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useExpenses, aggregateExpenses } from './hooks/useExpenses'
 import { useExpenseMutations } from './hooks/useExpenseMutations'
 import KPICard from './components/KPICard'
@@ -8,12 +9,14 @@ import SpendingChart from './components/SpendingChart'
 import AccountBreakdown from './components/AccountBreakdown'
 import RecentExpensesMobile from './components/RecentExpensesMobile'
 import SubscriptionsTabMobile from './components/SubscriptionsTabMobile'
+import { useAuth } from '../../context/AuthContext'
 
 const fmt = (v) => `€${Number(v).toFixed(2)}`
 const TABS = ['expenses', 'subscriptions']
 
 export default function ExpensesPageMobile() {
   const { t } = useTranslation('expenses')
+  const { user } = useAuth()
   const { expenses, isLoading, error } = useExpenses()
   const { create, update, remove } = useExpenseMutations()
 
@@ -53,74 +56,93 @@ export default function ExpensesPageMobile() {
   if (error) return <ErrorState message={error} t={t} />
 
   return (
-    <div className="flex flex-col gap-3 px-4 pt-4 pb-32">
+    <div className="min-h-full text-white">
+      <div className="p-4 md:p-6 pb-20 max-w-3xl mx-auto space-y-4">
 
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">{t('title')}</h1>
-        <p className="text-sm text-slate-400 mt-0.5">{t('subtitle')}</p>
-      </div>
+        <header className="pt-4">
+          <h1 className="text-3xl font-bold text-white">
+            {t('title')}
+          </h1>
+          <p className="text-white/60 text-sm mt-0.5">
+            {t('subtitle')} {user?.name}
+          </p>
+        </header>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-        {TABS.map(tabKey => (
-          <button key={tabKey} onClick={() => setTab(tabKey)}
-            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors
-              ${tab === tabKey ? 'bg-slate-900 text-white shadow-sm' : 'text-gray-400'}`}>
-            {tabKey === 'expenses' ? '💸 ' + t('tabs.expenses') : '🔄 ' + t('tabs.subscriptions')}
-          </button>
-        ))}
-      </div>
+        {/* Tabs */}
+        <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm">
+          {TABS.map((tabKey) => (
+            <button
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
+              className="relative flex-1 py-2 rounded-full text-sm font-semibold transition-colors text-white/80 hover:text-white"
+            >
+              {tab === tabKey && (
+                <motion.div
+                  layoutId="active-tab-indicator-expenses-mobile"
+                  className="absolute inset-0 bg-white/10 rounded-full shadow-md"
+                />
+              )}
+              <span className="relative z-10">{t(`tabs.${tabKey}`)}</span>
+            </button>
+          ))}
+        </div>
 
-      {/* Tab: Gastos */}
-      {tab === 'expenses' && (
-        <>
-          <div className="grid grid-cols-2 gap-2">
-            <KPICard compact label={t('kpi.totalSpend')} value={fmt(kpiSource.total)}
-              sub={selectedMonth ? selectedMonthData?.label : t('kpi.allTime')} accent />
-            <KPICard compact label={t('kpi.avgPerDay')} value={fmt(kpiSource.avgPerDay ?? 0)}
-              sub={t('kpi.avgPerDaySub')} />
-            <KPICard compact label={t('kpi.transactions')} value={kpiSource.count}
-              sub={t('kpi.transactionsSub')} />
-            <KPICard compact label={t('kpi.topAccount')}
-              value={Object.entries(kpiSource.byAccount ?? {}).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'}
-              sub={t('kpi.topAccountSub')} />
-          </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Tab: Gastos */}
+            {tab === 'expenses' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-2">
+                  <KPICard compact label={t('kpi.totalSpend')} value={fmt(kpiSource.total)}
+                    sub={selectedMonth ? selectedMonthData?.label : t('kpi.allTime')} />
+                  <KPICard compact label={t('kpi.avgPerDay')} value={fmt(kpiSource.avgPerDay ?? 0)}
+                    sub={t('kpi.avgPerDaySub')} />
+                  <KPICard compact label={t('kpi.transactions')} value={kpiSource.count}
+                    sub={t('kpi.transactionsSub')} />
+                  <KPICard compact label={t('kpi.topAccount')}
+                    value={Object.entries(kpiSource.byAccount ?? {}).sort(([, a], [, b]) => b - a)[0]?.[0] ?? '—'}
+                    sub={t('kpi.topAccountSub')} />
+                </div>
 
-          <RecentExpensesMobile expenses={filteredExpenses}
-            onCreate={create.mutateAsync}
-            onUpdate={update.mutateAsync}
-            onRemove={remove.mutateAsync} />
+                <RecentExpensesMobile expenses={filteredExpenses}
+                  onCreate={create.mutateAsync}
+                  onUpdate={update.mutateAsync}
+                  onRemove={remove.mutateAsync} />
 
-          {analytics && (
-            <FilterBar months={analytics.monthlyData} selectedMonth={selectedMonth}
-              drilldownWeek={drilldownWeek} onSelectMonth={handleSelectMonth}
-              onClearDrilldown={() => setDrilldownWeek(null)} />
-          )}
+                {analytics && (
+                  <FilterBar months={analytics.monthlyData} selectedMonth={selectedMonth}
+                    drilldownWeek={drilldownWeek} onSelectMonth={handleSelectMonth}
+                    onClearDrilldown={() => setDrilldownWeek(null)} />
+                )}
 
-          {analytics && (
-            <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
-              <div style={{ height: 280 }}>
-                <SpendingChart monthlyData={analytics.monthlyData}
-                  selectedMonthData={drilldownWeek ? null : selectedMonthData}
-                  drilldownWeek={drilldownWeek}
-                  onDrilldown={(key) => setSelectedMonth(key)}
-                  accounts={analytics.accounts} />
+                {analytics && (
+                  <div style={{ height: 280 }}>
+                    <SpendingChart monthlyData={analytics.monthlyData}
+                      selectedMonthData={drilldownWeek ? null : selectedMonthData}
+                      drilldownWeek={drilldownWeek}
+                      onDrilldown={(key) => setSelectedMonth(key)}
+                      accounts={analytics.accounts} />
+                  </div>
+                )}
+
+                {analytics && (
+                  <AccountBreakdown byAccount={kpiSource.byAccount}
+                    title={selectedMonth ? t('chart.accountBreakdownMonth') : t('chart.accountBreakdown')} />
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {analytics && (
-            <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-4">
-              <AccountBreakdown byAccount={kpiSource.byAccount}
-                title={selectedMonth ? t('chart.accountBreakdownMonth') : t('chart.accountBreakdown')} />
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Tab: Suscripciones */}
-      {tab === 'subscriptions' && <SubscriptionsTabMobile />}
+            {/* Tab: Suscripciones */}
+            {tab === 'subscriptions' && <SubscriptionsTabMobile />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
@@ -138,9 +160,9 @@ function LoadingState() {
 
 function ErrorState({ message, t }) {
   return (
-    <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-red-700">
+    <div className="rounded-2xl bg-red-50/10 border border-red-500/20 p-4 text-red-400">
       <p className="font-semibold">{t('error.title')}</p>
-      <p className="text-sm mt-1 text-red-500">{message}</p>
+      <p className="text-sm mt-1 text-red-400/80">{message}</p>
     </div>
   )
 }

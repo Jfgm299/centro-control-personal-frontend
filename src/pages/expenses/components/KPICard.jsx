@@ -6,22 +6,22 @@ export default function KPICard({ label, value, sub, accent = false, compact = f
   return (
     <div
       className={`
-        rounded-2xl border flex flex-col
+        relative overflow-hidden rounded-2xl
+        backdrop-blur-xl backdrop-saturate-150
+        bg-white/5 border border-white/10
+        shadow-lg shadow-black/20
+        flex flex-col
         ${compact ? 'px-4 py-3 gap-0.5' : 'px-6 py-5 gap-1'}
-        ${accent
-          ? 'bg-slate-900 text-white border-slate-800'
-          : 'bg-white text-slate-800 border-slate-100 shadow-sm'
-        }
       `}
     >
-      <span className={`font-semibold uppercase tracking-widest text-slate-400 ${compact ? 'text-[10px]' : 'text-xs'}`}>
+      <span className={`font-semibold uppercase tracking-widest text-white/50 ${compact ? 'text-[10px]' : 'text-xs'}`}>
         {label}
       </span>
-      <span className={`font-bold font-mono tabular-nums ${accent ? 'text-white' : 'text-slate-900'} ${compact ? 'text-xl' : 'text-3xl'}`}>
+      <span className={`font-bold font-mono tabular-nums text-white ${compact ? 'text-xl' : 'text-3xl'}`}>
         {value}
       </span>
       {sub && (
-        <span className={`text-slate-400 ${compact ? 'text-[10px]' : 'text-xs'}`}>{sub}</span>
+        <span className={`text-white/50 ${compact ? 'text-[10px]' : 'text-xs'}`}>{sub}</span>
       )}
     </div>
   )
