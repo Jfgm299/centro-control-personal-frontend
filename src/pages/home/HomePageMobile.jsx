@@ -126,10 +126,10 @@ export default function HomePageMobile() {
   }
 
   return (
-    <div className="flex flex-col min-h-full px-4 pt-4 pb-8 select-none">
+    <div className="flex flex-col min-h-full px-4 pt-4 pb-8 select-none text-white">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">{t('home:welcome.title')}</h1>
-        <p className="text-sm text-gray-400 mt-0.5">{t('home:welcome.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-white">{t('home:welcome.title')}</h1>
+        <p className="text-white/60 mt-0.5">{t('home:welcome.subtitle')}</p>
       </div>
 
       <div ref={gridRef} className="grid grid-cols-4 gap-x-4 gap-y-6">
@@ -225,12 +225,12 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
       onPointerCancel={() => clearTimeout(timerRef.current)}
     >
       <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md relative"
+        className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md relative backdrop-blur-md bg-white/10 border border-white/20"
         style={{
-          backgroundColor: hexToRgba(module.color, 0.2),
+          backgroundColor: hexToRgba(module.color, 0.3),
           boxShadow: isInsertTarget
             ? `0 0 0 3px white, 0 0 0 5px ${module.color}`
-            : 'none',
+            : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}
       >
         {typeof module.icon === 'string' ? (
@@ -238,7 +238,7 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
         ) : (
           <module.icon
             size={32}
-            color="rgb(100 116 139)"
+            color="white"
             strokeWidth={2}
           />
         )}
@@ -248,7 +248,7 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
           </div>
         )}
       </div>
-      <span className="text-xs text-gray-700 font-medium leading-tight text-center line-clamp-1 w-full">
+      <span className="text-xs text-white/90 font-medium leading-tight text-center line-clamp-1 w-full drop-shadow-md">
         {label}
       </span>
     </div>
