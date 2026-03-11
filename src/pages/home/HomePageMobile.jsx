@@ -227,10 +227,10 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md relative"
         style={{
-          background: `linear-gradient(145deg, ${module.color}cc, ${module.color})`,
+          backgroundColor: hexToRgba(module.color, 0.2),
           boxShadow: isInsertTarget
             ? `0 0 0 3px white, 0 0 0 5px ${module.color}`
-            : `0 4px 14px ${module.color}44`,
+            : 'none',
         }}
       >
         {typeof module.icon === 'string' ? (
@@ -238,7 +238,7 @@ function AppIcon({ module, label, inDock, isDraggingThis, isInsertTarget, onTap,
         ) : (
           <module.icon
             size={32}
-            color={hexToRgba(module.color, 0.8)}
+            color="rgb(100 116 139)"
             strokeWidth={2}
           />
         )}

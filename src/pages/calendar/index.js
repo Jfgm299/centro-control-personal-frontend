@@ -7,7 +7,7 @@ export default {
   icon:           CalendarDays,
   iconType:       'lucide',
   path:           '/calendar',
-  color:          '#6366f1',
+  color:          '#06b6d4',
   component:      CalendarPage,
   permanent:      false,
   descriptionKey: 'home:modules.calendar.description',

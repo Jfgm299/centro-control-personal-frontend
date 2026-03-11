@@ -7,7 +7,7 @@ export default {
   icon:           Zap,
   iconType:       'lucide',
   path:           '/automations',
-  color:          '#8b5cf6',
+  color:          '#f97316',
   component:      AutomationsPage,
   permanent:      false,
   descriptionKey: 'home:modules.automations.description',
