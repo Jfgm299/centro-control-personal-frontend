@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation }      from 'react-i18next'
 import { useCategories }       from '../../hooks/useCategories'
 import { useRoutineMutations } from '../../hooks/useRoutineMutations'
+import clsx from 'clsx'
+import CategorySelect from '../categories/CategorySelect'
+import SelectInput from '../../../../components/ui/SelectInput'
 
-const DAYS    = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
-const FREQS   = ['DAILY', 'WEEKLY', 'MONTHLY']
-const REMINDER_OPTIONS = [5, 10, 15, 30, 60, 120, 1440]
-
-const inputCls  = 'w-full px-3 py-2.5 h-[42px] text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-800 placeholder-gray-400'
-const selectCls = 'w-full px-3 py-2.5 h-[42px] text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-700'
-const labelCls  = 'text-xs font-medium text-gray-500 mb-1 block'
+const inputCls = 'w-full px-4 py-2.5 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all shadow-inner'
+const selectCls = 'w-full px-4 py-2.5 h-[42px] text-sm bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all shadow-inner appearance-none'
+const labelCls = 'text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1.5 block'
 
 function buildRRule(freq, days) {
   if (freq === 'WEEKLY' && days.length > 0) return `FREQ=WEEKLY;BYDAY=${days.join(',')}`
@@ -109,26 +109,34 @@ export default function RoutineModal({ isOpen, onClose, initialData }) {
 
   const isPending = create.isPending || update.isPending
 
-  return (
+  const reminderOptions = useMemo(() => [
+    { value: '', label: t('event.fields.reminderNone') },
+    ...REMINDER_OPTIONS.map(m => ({
+      value: m,
+      label: t(`event.fields.reminderOptions.${m}`),
+    }))
+  ], [t])
+
+  const modalBody = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-base font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 flex-shrink-0">
+          <h2 className="text-lg font-bold text-white">
             {isEditing ? t('routines.edit') : t('routines.new')}
           </h2>
-          <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
+          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="px-6 py-6 flex flex-col gap-5 overflow-y-auto flex-1">
 
           {/* Título */}
           <div className="flex flex-col gap-1.5">
@@ -148,47 +156,62 @@ export default function RoutineModal({ isOpen, onClose, initialData }) {
           {/* Categoría */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('routines.fields.category')}</label>
-            <select value={form.category_id} onChange={(e) => set('category_id', e.target.value ? Number(e.target.value) : '')}
-              className={selectCls}>
-              <option value="">{t('routines.fields.categoryNone')}</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.icon ? `${c.icon} ` : ''}{c.name}</option>)}
-            </select>
+            <CategorySelect
+              categories={categories}
+              value={form.category_id}
+              onChange={(val) => set('category_id', val)}
+            />
           </div>
 
           {/* Horas */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('routines.fields.startTime')}</label>
-              <input required type="time" value={form.start_time} onChange={(e) => set('start_time', e.target.value)} className={inputCls} />
+              <input required type="time" value={form.start_time} onChange={(e) => set('start_time', e.target.value)} 
+                className={clsx(inputCls, 'h-[42px]')}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('routines.fields.endTime')}</label>
-              <input required type="time" value={form.end_time} onChange={(e) => set('end_time', e.target.value)} className={inputCls} />
+              <input required type="time" value={form.end_time} onChange={(e) => set('end_time', e.target.value)} 
+                className={clsx(inputCls, 'h-[42px]')}
+              />
             </div>
           </div>
 
           {/* Fechas validez */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('routines.fields.validFrom')}</label>
-              <input required type="date" value={form.valid_from} onChange={(e) => set('valid_from', e.target.value)} className={inputCls} />
+              <input
+                type="date"
+                value={form.valid_from}
+                onChange={(e) => set('valid_from', e.target.value)}
+                className={inputCls}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('routines.fields.validUntil')}</label>
-              <input type="date" value={form.valid_until} onChange={(e) => set('valid_until', e.target.value)} className={inputCls} />
+              <input
+                type="date"
+                value={form.valid_until}
+                onChange={(e) => set('valid_until', e.target.value)}
+                placeholder="Fecha de fin de validez (opcional)"
+                className={inputCls}
+              />
             </div>
           </div>
 
           {/* Frecuencia */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('routines.fields.frequency')}</label>
-            <div className="flex gap-1">
+            <div className="flex gap-2 bg-black/20 p-1 rounded-xl border border-white/5">
               {FREQS.map((f) => (
                 <button key={f} type="button" onClick={() => setFreq(f)}
-                  className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all
-                    ${freq === f
-                      ? 'bg-gray-900/10 text-gray-900 border-gray-900/20'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
+                  className={clsx(
+                    "flex-1 py-2.5 rounded-lg text-[11px] font-bold transition-all border",
+                    freq === f ? "bg-white/20 text-white border-white/30 shadow-sm" : "border-transparent text-white/50 hover:text-white hover:bg-white/5"
+                  )}>
                   {t(`routines.fields.frequencies.${f}`)}
                 </button>
               ))}
@@ -199,13 +222,15 @@ export default function RoutineModal({ isOpen, onClose, initialData }) {
           {freq === 'WEEKLY' && (
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('routines.fields.daysLabel')}</label>
-              <div className="flex gap-1">
+              <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                 {DAYS.map((day) => (
                   <button key={day} type="button" onClick={() => toggleDay(day)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all
-                      ${days.includes(day)
-                        ? 'bg-gray-900/10 text-gray-900 border-gray-900/20'
-                        : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
+                    className={clsx(
+                      "flex-1 min-w-[40px] py-2 rounded-lg text-[11px] font-black border transition-all shadow-sm",
+                      days.includes(day) 
+                        ? "bg-white text-slate-900 border-white" 
+                        : "bg-black/20 border-white/5 text-white/40 hover:text-white"
+                    )}>
                     {t(`routines.fields.days.${day}`)}
                   </button>
                 ))}
@@ -216,44 +241,61 @@ export default function RoutineModal({ isOpen, onClose, initialData }) {
           {/* Recordatorio */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.reminder')}</label>
-            <select value={form.reminder_minutes} onChange={(e) => set('reminder_minutes', e.target.value ? Number(e.target.value) : '')}
-              className={selectCls}>
-              <option value="">{t('event.fields.reminderNone')}</option>
-              {REMINDER_OPTIONS.map((m) => <option key={m} value={m}>{t(`event.fields.reminderOptions.${m}`)}</option>)}
-            </select>
+            <SelectInput
+              options={reminderOptions}
+              value={form.reminder_minutes}
+              onChange={(val) => set('reminder_minutes', val)}
+              placeholder={t('event.fields.reminderNone')}
+              labelKey="label"
+            />
           </div>
 
           {/* DND */}
-          <label className="flex items-center gap-3 cursor-pointer select-none">
-            <input type="checkbox" checked={form.enable_dnd} onChange={(e) => set('enable_dnd', e.target.checked)}
-              className="w-5 h-5 rounded border-gray-300 accent-slate-900 cursor-pointer" />
-            <span className="text-sm text-slate-600">{t('routines.fields.enableDnd')}</span>
-          </label>
+          <div className="py-2">
+            <label className="flex items-center gap-3 cursor-pointer select-none group">
+              <div className="relative flex items-center">
+                <input
+                  type="checkbox"
+                  checked={form.enable_dnd}
+                  onChange={(e) => set('enable_dnd', e.target.checked)}
+                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-white/20 bg-white/5 transition-all checked:bg-white/20 checked:border-white/40 focus:outline-none"
+                />
+                <svg className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{t('routines.fields.enableDnd')}</span>
+            </label>
+          </div>
 
-          {error && <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+          {error && (
+            <p className="text-xs font-bold text-red-200 bg-red-500/20 border border-red-500/30 px-4 py-3 rounded-xl shadow-lg">{error}</p>
+          )}
 
-          {/* Acciones */}
-          <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
             {isEditing && !confirmDelete && (
               <button type="button" onClick={() => setConfirmDelete(true)}
-                className="text-xs text-red-400 hover:text-red-600 transition-colors">
+                className="px-4 py-2.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all">
                 {t('routines.delete')}
               </button>
             )}
             {confirmDelete && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-red-500">{t('routines.confirmDelete')}</span>
-                <button type="button" onClick={handleDelete}
-                  className="text-xs font-semibold text-red-600 hover:text-red-800 transition-colors">
-                  {t('routines.delete')}
-                </button>
-                <button type="button" onClick={() => setConfirmDelete(false)}
-                  className="text-xs text-gray-400 hover:text-gray-600 transition-colors">✕</button>
+              <div className="flex items-center gap-3 bg-red-500/10 p-2 rounded-2xl border border-red-500/20 shadow-inner">
+                <span className="text-[10px] font-black uppercase text-red-300 ml-2">{t('routines.confirmDelete')}</span>
+                <div className="flex gap-1">
+                  <button type="button" onClick={handleDelete}
+                    disabled={isPending}
+                    className="px-3 py-1.5 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all shadow-md">
+                    {t('common:actions.confirm', { defaultValue: 'Si' })}
+                  </button>
+                  <button type="button" onClick={() => setConfirmDelete(false)}
+                    className="px-3 py-1.5 text-xs font-bold text-white/50 hover:text-white transition-all">✕</button>
+                </div>
               </div>
             )}
-            {!confirmDelete && <span />}
+            {!confirmDelete && !isEditing && <span />}
             <button type="submit" disabled={isPending}
-              className="flex-1 max-w-[140px] py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              className="flex-1 max-w-[160px] py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all border border-white/20 shadow-lg drop-shadow-sm ml-auto">
               {isPending ? t('status.saving') : isEditing ? t('routines.save') : t('routines.create')}
             </button>
           </div>
@@ -262,4 +304,6 @@ export default function RoutineModal({ isOpen, onClose, initialData }) {
       </div>
     </div>
   )
+
+  return createPortal(modalBody, document.getElementById('modal-root'))
 }

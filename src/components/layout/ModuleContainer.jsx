@@ -6,12 +6,12 @@ export default function ModuleContainer({ children }) {
 
   return (
     <div
-      className="fixed left-0 right-0 pb-4"
+      className="fixed left-0 right-0 pb-0"
       style={containerStyle}
     >
       <div className="h-full overflow-hidden bg-transparent">
         <div className="h-full overflow-y-auto relative">
-          <div className="p-0">
+          <div className="h-full p-0">
             {children}
           </div>
         </div>

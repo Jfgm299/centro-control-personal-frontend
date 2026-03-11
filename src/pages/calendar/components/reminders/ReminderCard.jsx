@@ -1,24 +1,12 @@
 import { useRef, useState } from 'react'
 import { useReminderMutations } from '../../hooks/useReminderMutations'
+import clsx from 'clsx'
 
 const PRIORITY_COLOR = {
-  urgent: '#7c3aed',
-  high:   '#ef4444',
-  medium: '#f59e0b',
-  low:    '#94a3b8',
-}
-
-/* ─── Estilos compartidos del mini-form ──────────────────────────────────── */
-const inputSt = {
-  width: '100%', boxSizing: 'border-box',
-  padding: '5px 8px', borderRadius: 6,
-  border: '1px solid #e5e7eb', background: '#f9fafb',
-  fontSize: 11.5, color: '#374151', outline: 'none',
-  fontFamily: 'inherit',
-}
-const btnBase = {
-  flex: 1, padding: '5px 0', borderRadius: 6, border: 'none',
-  fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+  urgent: '#f472b6', // pink-400
+  high:   '#ef4444', // red-500
+  medium: '#fbbf24', // amber-400
+  low:    '#94a3b8', // slate-400
 }
 
 /* ─── EditForm ───────────────────────────────────────────────────────────── */
@@ -48,63 +36,53 @@ function EditForm({ reminder, onCancel, onSaved }) {
   }
 
   return (
-    <div
-      style={{
-        margin: '2px 4px', borderRadius: '0 8px 8px 0',
-        borderLeft: '3px solid #94a3b8',
-        background: 'white',
-        padding: '8px 10px',
-        boxShadow: '0 2px 10px rgba(0,0,0,.07)',
-        display: 'flex', flexDirection: 'column', gap: 6,
-      }}
-    >
-      {/* Título */}
+    <div className="mx-2 my-1.5 rounded-2xl bg-black/40 border border-white/10 p-4 shadow-2xl flex flex-col gap-3 backdrop-blur-md">
       <input
         autoFocus
         value={form.title}
         onChange={set('title')}
         placeholder="Título"
-        style={inputSt}
+        className="w-full px-3 py-2 text-sm bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-white/30"
       />
 
-      {/* Descripción */}
       <textarea
         value={form.description}
         onChange={set('description')}
         placeholder="Descripción (opcional)"
         rows={2}
-        style={{ ...inputSt, resize: 'none', lineHeight: 1.4 }}
+        className="w-full px-3 py-2 text-sm bg-black/30 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-white/30 resize-none leading-relaxed"
       />
 
-      {/* Prioridad */}
-      <select value={form.priority} onChange={set('priority')} style={inputSt}>
-        <option value="low">🟢 Baja</option>
-        <option value="medium">🟡 Media</option>
-        <option value="high">🔴 Alta</option>
-        <option value="urgent">🟣 Urgente</option>
-      </select>
+      <div className="relative">
+        <select value={form.priority} onChange={set('priority')} 
+          className="w-full px-3 py-2 text-xs bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 appearance-none">
+          <option value="low" className="bg-slate-900">🟢 Baja</option>
+          <option value="medium" className="bg-slate-900">🟡 Media</option>
+          <option value="high" className="bg-slate-900">🔴 Alta</option>
+          <option value="urgent" className="bg-slate-900">🟣 Urgente</option>
+        </select>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
 
-      {/* Fecha límite */}
       <input
         type="date"
         value={form.due_date}
         onChange={set('due_date')}
-        style={inputSt}
+        className="w-full px-3 py-2 text-xs bg-black/30 border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30"
       />
 
-      {/* Acciones */}
-      <div style={{ display: 'flex', gap: 5, marginTop: 2 }}>
-        <button onClick={onCancel} style={{ ...btnBase, background: '#f3f4f6', color: '#6b7280' }}>
+      <div className="flex gap-2 mt-1">
+        <button onClick={onCancel} className="flex-1 py-2 rounded-xl text-xs font-bold text-white/50 hover:bg-white/5 transition-all">
           Cancelar
         </button>
         <button
           onClick={handleSave}
           disabled={update.isPending || !form.title.trim()}
-          style={{
-            ...btnBase,
-            background: update.isPending || !form.title.trim() ? '#e5e7eb' : '#111827',
-            color: update.isPending || !form.title.trim() ? '#9ca3af' : 'white',
-          }}
+          className="flex-1 py-2 rounded-xl text-xs font-bold bg-white/10 text-white border border-white/20 hover:bg-white/20 disabled:opacity-30 transition-all shadow-md"
         >
           {update.isPending ? '...' : 'Guardar'}
         </button>
@@ -122,7 +100,6 @@ export default function ReminderCard({ reminder, color, onDragStart, onTap }) {
 
   const borderColor = color ?? PRIORITY_COLOR[reminder.priority] ?? '#94a3b8'
 
-  /* ── D&D — PRESERVADO ÍNTEGRO ── */
   const handleDragStart = (e) => {
     e.dataTransfer.setData('reminderId', String(reminder.id))
     e.dataTransfer.setData('reminderTitle', reminder.title)
@@ -141,7 +118,6 @@ export default function ReminderCard({ reminder, color, onDragStart, onTap }) {
     setEditing(true)
   }
 
-  /* ── Modo edición ── */
   if (editing) {
     return (
       <EditForm
@@ -152,88 +128,54 @@ export default function ReminderCard({ reminder, color, onDragStart, onTap }) {
     )
   }
 
-  /* ── Vista normal ── */
   return (
     <div
       ref={ref}
       draggable
-      data-reminder-id={String(reminder.id)}   /* ← requerido por CalendarView.handleExternalDrop */
+      data-reminder-id={String(reminder.id)}
       onDragStart={handleDragStart}
       onClick={() => onTap?.(reminder)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        display:    'flex',
-        alignItems: 'stretch',
-        borderRadius: '0 7px 7px 0',
-        borderLeft: `3px solid ${borderColor}`,
-        background: hovered ? 'rgba(148,163,184,0.18)' : 'rgba(148,163,184,0.09)',
-        margin: '2px 4px',
-        cursor: 'grab',
-        overflow: 'hidden',
-        transition: 'background .12s',
-        minHeight: 30,
-        userSelect: 'none',
-      }}
+      className={clsx(
+        "flex items-stretch rounded-xl border border-transparent transition-all cursor-grab group select-none overflow-hidden mx-1.5 my-0.5",
+        hovered ? "bg-white/10 border-white/10 shadow-lg translate-x-1" : "bg-white/5"
+      )}
+      style={{ borderLeft: `4px solid ${borderColor}` }}
     >
-      {/* Contenido */}
-      <div style={{ flex: 1, minWidth: 0, padding: '5px 7px' }}>
-        <p style={{
-          fontSize: 12, fontWeight: 500, color: '#374151', margin: 0,
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          lineHeight: 1.45,
-        }}>
+      <div className="flex-1 min-w-0 px-3 py-2">
+        <p className="text-xs font-bold text-white/90 truncate leading-relaxed group-hover:text-white transition-colors">
           {reminder.title}
         </p>
         {reminder.due_date && (
-          <p style={{ fontSize: 10, color: '#9ca3af', margin: '1px 0 0', lineHeight: 1 }}>
-            {reminder.due_date}
-          </p>
+          <div className="flex items-center gap-1 mt-0.5">
+             <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">{reminder.due_date}</span>
+          </div>
         )}
       </div>
 
-      {/* Botones de acción — visibles solo en hover */}
-      {hovered && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 1, paddingRight: 5, flexShrink: 0 }}>
-          {/* Editar */}
-          <button
-            onClick={handleEditClick}
-            title="Editar"
-            style={{
-              width: 20, height: 20, borderRadius: 4, border: 'none',
-              background: 'transparent', cursor: 'pointer', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#6b7280',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,.07)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          >
-            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </button>
+      <div className={clsx(
+        "flex items-center gap-1 pr-2 transition-all duration-200",
+        hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2 pointer-events-none"
+      )}>
+        <button
+          onClick={handleEditClick}
+          className="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
 
-          {/* Eliminar */}
-          <button
-            onClick={handleDelete}
-            title="Eliminar"
-            style={{
-              width: 20, height: 20, borderRadius: 4, border: 'none',
-              background: 'transparent', cursor: 'pointer', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: remove.isPending ? '#fca5a5' : '#ef4444',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,.1)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          >
-            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-        </div>
-      )}
+        <button
+          onClick={handleDelete}
+          className="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
     </div>
   )
 }

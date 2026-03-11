@@ -1,23 +1,10 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConnections, useSyncLogs, useSyncMutations } from '../../hooks/useSync'
+import clsx from 'clsx'
 
-/* ── Design tokens ─────────────────────────────────────────────────────────── */
-const inputCls  = 'w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-800 placeholder-gray-400'
-const labelCls  = 'text-xs font-medium text-gray-500 mb-1 block'
-const btnPrimary = {
-  padding: '8px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
-  background: '#111827', color: 'white', fontSize: 13, fontWeight: 600,
-  transition: 'background .15s',
-}
-const btnSecondary = {
-  padding: '7px 14px', borderRadius: 10, cursor: 'pointer', fontSize: 13,
-  fontWeight: 500, background: 'white', color: '#374151',
-  border: '1px solid #e5e7eb', transition: 'background .15s',
-}
-const btnDanger = {
-  ...btnSecondary, color: '#dc2626', borderColor: '#fecaca',
-}
+const inputCls = 'w-full px-4 py-2.5 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all shadow-inner'
+const labelCls = 'text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1.5 block'
 
 /* ── SVG Icons ─────────────────────────────────────────────────────────────── */
 function GoogleIcon() {
@@ -33,8 +20,8 @@ function GoogleIcon() {
 
 function AppleIcon() {
   return (
-    <svg width="18" height="20" viewBox="0 0 814 1000">
-      <path fill="#1d1d1f" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663.6 0 541.8c0-207.9 135.4-318.1 268.6-318.1 70.6 0 129.5 46.4 173.5 46.4 42 0 108.2-49.2 188.8-49.2 31.3 0 112.7 3.9 170.3 71.9zm-252.4-186.7c-14.1 64.4-53 125-98.2 162.5-3.2.6-57.5.6-57.5.6 13.5-59.5 49.5-117.7 97.4-154.3 2.6-1.9 54-33.6 58.3-8.8z"/>
+    <svg width="18" height="20" viewBox="0 0 814 1000" className="fill-white">
+      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663.6 0 541.8c0-207.9 135.4-318.1 268.6-318.1 70.6 0 129.5 46.4 173.5 46.4 42 0 108.2-49.2 188.8-49.2 31.3 0 112.7 3.9 170.3 71.9zm-252.4-186.7c-14.1 64.4-53 125-98.2 162.5-3.2.6-57.5.6-57.5.6 13.5-59.5 49.5-117.7 97.4-154.3 2.6-1.9 54-33.6 58.3-8.8z"/>
     </svg>
   )
 }
@@ -50,7 +37,7 @@ function CheckIcon() {
 function SyncIcon({ spinning }) {
   return (
     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-      style={{ animation: spinning ? 'spin 1s linear infinite' : 'none' }}>
+      className={clsx(spinning && "animate-spin")}>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
     </svg>
@@ -63,37 +50,35 @@ function SyncLogs({ provider }) {
   const { data: logs = [], isLoading } = useSyncLogs(provider)
 
   if (isLoading) return (
-    <p style={{ fontSize: 12, color: '#9ca3af', padding: '8px 0' }}>{t('status.loading')}</p>
+    <p className="text-xs text-white/30 py-2 italic">{t('status.loading')}</p>
   )
   if (!logs.length) return (
-    <p style={{ fontSize: 12, color: '#9ca3af', padding: '8px 0' }}>{t('integrations.noLogs')}</p>
+    <p className="text-xs text-white/30 py-2 italic">{t('integrations.noLogs')}</p>
   )
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 180, overflowY: 'auto' }}>
+    <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto no-scrollbar pt-2 border-t border-white/5">
       {logs.slice(0, 10).map(log => (
-        <div key={log.id} style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '6px 10px', borderRadius: 8,
-          background: log.error ? '#fef2f2' : '#f9fafb',
-          border: `1px solid ${log.error ? '#fecaca' : '#f3f4f6'}`,
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <span style={{ fontSize: 11.5, color: log.error ? '#dc2626' : '#374151', fontWeight: 500 }}>
+        <div key={log.id} className={clsx(
+          "flex items-center justify-between px-3 py-2 rounded-xl border backdrop-blur-sm shadow-inner",
+          log.error ? "bg-red-500/10 border-red-500/20" : "bg-white/5 border-white/5"
+        )}>
+          <div className="flex flex-col gap-0.5">
+            <span className={clsx(
+              "text-xs font-bold",
+              log.error ? "text-red-300" : "text-white/80"
+            )}>
               {log.error
                 ? `⚠ ${log.error.slice(0, 60)}`
                 : `+${log.events_created} / ~${log.events_updated}`
               }
             </span>
-            <span style={{ fontSize: 10.5, color: '#9ca3af' }}>
+            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
               {new Date(log.synced_at).toLocaleString()}
             </span>
           </div>
           {!log.error && (
-            <span style={{
-              fontSize: 10, fontWeight: 600, color: '#059669',
-              background: '#d1fae5', borderRadius: 5, padding: '1px 6px',
-            }}>OK</span>
+            <span className="text-[9px] font-black uppercase text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded-md border border-green-400/20 shadow-sm">OK</span>
           )}
         </div>
       ))}
@@ -105,7 +90,7 @@ function SyncLogs({ provider }) {
 function AppleConnectForm({ onSubmit, isLoading, onCancel }) {
   const { t } = useTranslation('calendar')
   const [form, setForm]         = useState({ username: '', password: '', sync_events: true, sync_routines: true, calendar_id: '' })
-  const [calendars, setCalendars] = useState(null)   // null = no cargado, [] = sin calendarios
+  const [calendars, setCalendars] = useState(null)
   const [loadingCals, setLoadingCals] = useState(false)
   const [calError, setCalError]   = useState(null)
 
@@ -129,7 +114,7 @@ function AppleConnectForm({ onSubmit, isLoading, onCancel }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '16px 0 4px' }}>
+    <div className="flex flex-col gap-5 py-4">
       <div>
         <label className={labelCls}>{t('integrations.apple.appleid')}</label>
         <input
@@ -149,53 +134,75 @@ function AppleConnectForm({ onSubmit, isLoading, onCancel }) {
           value={form.password}
           onChange={e => { set('password', e.target.value); setCalendars(null) }}
         />
-        <p style={{ fontSize: 11, color: '#6b7280', marginTop: 4 }}>
+        <p className="text-[10px] text-white/40 mt-2 font-medium leading-relaxed italic">
           {t('integrations.apple.appPasswordHint')}{' '}
           <a href="https://appleid.apple.com/account/manage" target="_blank" rel="noreferrer"
-            style={{ color: '#374151', fontWeight: 600 }}>appleid.apple.com</a>
+            className="text-blue-400 hover:text-blue-300 font-black decoration-dotted underline">appleid.apple.com</a>
         </p>
       </div>
 
       {/* Paso 2: elegir calendario */}
       {calendars === null ? (
         <button
-          style={{ ...btnSecondary, alignSelf: 'flex-start', opacity: (!form.username || !form.password || loadingCals) ? 0.5 : 1 }}
+          className={clsx(
+            "self-start px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            (!form.username || !form.password || loadingCals) ? "opacity-30" : "hover:bg-white/10 text-white"
+          )}
           disabled={!form.username || !form.password || loadingCals}
           onClick={loadCalendars}
         >
           {loadingCals ? '⏳ ' + t('status.loading') : '📂 ' + t('integrations.apple.loadCalendars')}
         </button>
       ) : (
-        <div>
+        <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-left-2 duration-300">
           <label className={labelCls}>{t('integrations.apple.chooseCalendar')}</label>
-          <select
-            className={inputCls}
-            value={form.calendar_id}
-            onChange={e => set('calendar_id', e.target.value)}
-          >
-            {calendars.filter(c => c.writable).map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-          {calError && <p style={{ fontSize: 11, color: '#dc2626', marginTop: 4 }}>{calError}</p>}
+          <div className="relative">
+            <select
+              className={inputCls}
+              value={form.calendar_id}
+              onChange={e => set('calendar_id', e.target.value)}
+            >
+              {calendars.filter(c => c.writable).map(c => (
+                <option key={c.id} value={c.id} className="bg-slate-900">{c.name}</option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          {calError && <p className="text-xs font-bold text-red-400 mt-1">{calError}</p>}
         </div>
       )}
 
       {/* Toggles */}
-      <div style={{ display: 'flex', gap: 20 }}>
+      <div className="flex gap-6">
         {['sync_events', 'sync_routines'].map(key => (
-          <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 13, color: '#374151' }}>
-            <input type="checkbox" checked={form[key]} onChange={e => set(key, e.target.checked)}
-              style={{ width: 16, height: 16, accentColor: '#111827', cursor: 'pointer' }} />
-            {t(`integrations.sync.${key}`)}
+          <label key={key} className="flex items-center gap-3 cursor-pointer select-none group">
+            <div className="relative flex items-center">
+              <input
+                type="checkbox"
+                checked={form[key]}
+                onChange={e => set(key, e.target.checked)}
+                className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-white/20 bg-white/5 transition-all checked:bg-white/20 checked:border-white/40 focus:outline-none"
+              />
+              <svg className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{t(`integrations.sync.${key}`)}</span>
           </label>
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', paddingTop: 4 }}>
-        <button style={btnSecondary} onClick={onCancel}>{t('modal.cancel')}</button>
+      <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+        <button className="px-5 py-2 text-sm font-bold text-white/50 hover:text-white transition-all" onClick={onCancel}>{t('modal.cancel')}</button>
         <button
-          style={{ ...btnPrimary, opacity: (!form.username || !form.password || !calendars || isLoading) ? 0.6 : 1 }}
+          className={clsx(
+            "px-6 py-2 bg-white/10 text-white text-sm font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all shadow-lg",
+            (!form.username || !form.password || !calendars || isLoading) && "opacity-40 cursor-not-allowed"
+          )}
           disabled={!form.username || !form.password || !calendars || isLoading}
           onClick={() => onSubmit(form)}
         >
@@ -218,8 +225,6 @@ function ProviderCard({ provider, connection, onConnect, onDisconnect, onSync })
   const isGoogle    = provider === 'google'
   const isConnected = !!connection
 
-  const accentColor = isGoogle ? '#4285F4' : '#1d1d1f'
-
   const handleSync = async () => {
     setSyncing(true)
     try { await onSync(provider) } finally { setSyncing(false) }
@@ -236,41 +241,33 @@ function ProviderCard({ provider, connection, onConnect, onDisconnect, onSync })
   }
 
   return (
-    <div style={{
-      border: `1.5px solid ${isConnected ? accentColor + '33' : '#e5e7eb'}`,
-      borderRadius: 14,
-      background: isConnected ? accentColor + '05' : 'white',
-      overflow: 'hidden',
-      transition: 'border-color .2s',
-    }}>
+    <div className={clsx(
+      "rounded-3xl border transition-all duration-300 overflow-hidden",
+      isConnected 
+        ? "bg-white/10 border-white/20 shadow-xl" 
+        : "bg-black/20 border-white/5 hover:border-white/10 hover:bg-black/30 shadow-inner"
+    )}>
       {/* Header */}
-      <div style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 38, height: 38, borderRadius: 10,
-            background: isConnected ? 'white' : '#f9fafb',
-            border: `1px solid ${isConnected ? accentColor + '40' : '#e5e7eb'}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: isConnected ? '0 1px 4px rgba(0,0,0,.07)' : 'none',
-          }}>
+      <div className="p-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className={clsx(
+            "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border transition-transform group-hover:scale-105",
+            isConnected ? "bg-white border-white/30" : "bg-black/20 border-white/10"
+          )}>
             {isGoogle ? <GoogleIcon /> : <AppleIcon />}
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: 14.5, fontWeight: 700, color: '#111827' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-black text-white leading-none">
                 {t(`integrations.${provider}.name`)}
               </span>
               {isConnected && (
-                <span style={{
-                  fontSize: 10.5, fontWeight: 600, color: '#059669',
-                  background: '#d1fae5', borderRadius: 20, padding: '1px 7px',
-                  display: 'flex', alignItems: 'center', gap: 3,
-                }}>
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-400/20 text-green-300 text-[10px] font-black uppercase border border-green-400/20 shadow-sm">
                   <CheckIcon /> {t('integrations.connected')}
                 </span>
               )}
             </div>
-            <p style={{ fontSize: 12, color: '#6b7280', marginTop: 1 }}>
+            <p className="text-xs font-bold text-white/40 mt-1 uppercase tracking-tight">
               {isConnected
                 ? connection.last_synced_at
                   ? `${t('integrations.lastSync')} ${new Date(connection.last_synced_at).toLocaleString()}`
@@ -282,24 +279,28 @@ function ProviderCard({ provider, connection, onConnect, onDisconnect, onSync })
         </div>
 
         {/* Actions */}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        <div className="flex gap-2 items-center">
           {isConnected ? (
             <>
               <button
-                style={{ ...btnSecondary, display: 'flex', alignItems: 'center', gap: 5 }}
+                className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition-all border border-white/10"
                 onClick={handleSync}
                 disabled={syncing}
               >
                 <SyncIcon spinning={syncing} />
                 {syncing ? t('integrations.syncing') : t('integrations.syncNow')}
               </button>
-              <button style={btnDanger} onClick={handleDisconnect} disabled={disconnecting}>
+              <button 
+                className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-bold rounded-xl transition-all border border-red-500/20"
+                onClick={handleDisconnect} 
+                disabled={disconnecting}
+              >
                 {disconnecting ? '…' : t('integrations.disconnect')}
               </button>
             </>
           ) : (
             <button
-              style={{ ...btnPrimary, display: 'flex', alignItems: 'center', gap: 7 }}
+              className="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-sm font-black uppercase tracking-wider rounded-xl transition-all border border-white/20 shadow-lg"
               onClick={() => isGoogle ? onConnect() : setShowForm(f => !f)}
             >
               {isGoogle ? <GoogleIcon /> : <AppleIcon />}
@@ -311,7 +312,7 @@ function ProviderCard({ provider, connection, onConnect, onDisconnect, onSync })
 
       {/* Apple form */}
       {!isGoogle && !isConnected && showForm && (
-        <div style={{ padding: '0 18px 16px', borderTop: '1px solid #f3f4f6' }}>
+        <div className="px-5 pb-5 border-t border-white/5 animate-in slide-in-from-top-2 duration-300">
           <AppleConnectForm
             onSubmit={handleAppleSubmit}
             isLoading={appleConnect.isPending}
@@ -322,33 +323,30 @@ function ProviderCard({ provider, connection, onConnect, onDisconnect, onSync })
 
       {/* Connected details */}
       {isConnected && (
-        <div style={{ borderTop: '1px solid #f3f4f6', padding: '12px 18px' }}>
+        <div className="px-5 py-4 bg-black/20 border-t border-white/10 flex flex-col gap-4">
           {/* Sync toggles info */}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+          <div className="flex flex-wrap gap-2">
             {['sync_events', 'sync_routines'].map(key => (
-              <span key={key} style={{
-                fontSize: 11.5, fontWeight: 500,
-                color: connection[key] ? '#374151' : '#9ca3af',
-                background: connection[key] ? '#f3f4f6' : 'transparent',
-                border: '1px solid #e5e7eb',
-                borderRadius: 6, padding: '2px 8px',
-                display: 'flex', alignItems: 'center', gap: 4,
-              }}>
+              <span key={key} className={clsx(
+                "px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border shadow-sm",
+                connection[key] ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/30" : "bg-white/5 text-white/20 border-white/5"
+              )}>
                 {connection[key] ? '✓' : '○'} {t(`integrations.sync.${key}`)}
               </span>
             ))}
           </div>
 
-          {/* Logs toggle */}
-          <button
-            onClick={() => setShowLogs(v => !v)}
-            style={{ ...btnSecondary, fontSize: 12, padding: '5px 10px' }}
-          >
-            {showLogs ? t('integrations.hideLogs') : t('integrations.showLogs')}
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setShowLogs(v => !v)}
+              className="px-4 py-1.5 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all border border-white/5"
+            >
+              {showLogs ? t('integrations.hideLogs') : t('integrations.showLogs')}
+            </button>
+          </div>
 
           {showLogs && (
-            <div style={{ marginTop: 10 }}>
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
               <SyncLogs provider={provider} />
             </div>
           )}
@@ -371,27 +369,31 @@ export default function IntegrationsManager() {
   }
 
   if (isLoading) return (
-    <div style={{ padding: 24, color: '#6b7280', fontSize: 14 }}>{t('status.loading')}</div>
+    <div className="flex items-center justify-center py-20 text-white/30">
+      <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+    </div>
   )
 
   if (error) return (
-    <div style={{ padding: 24, color: '#dc2626', fontSize: 14 }}>{t('errors.loadConnections')}</div>
+    <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-3xl text-center">
+      <p className="text-sm font-bold text-red-300">{t('errors.loadConnections')}</p>
+    </div>
   )
 
   return (
-    <div style={{ maxWidth: 660, padding: '8px 0' }}>
+    <div className="max-w-3xl mx-auto flex flex-col gap-8">
       {/* Header */}
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: 0 }}>
+      <div>
+        <h2 className="text-2xl font-black text-white drop-shadow-md">
           {t('integrations.title')}
         </h2>
-        <p style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
+        <p className="text-sm font-medium text-white/40 mt-1 italic">
           {t('integrations.subtitle')}
         </p>
       </div>
 
       {/* Provider cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="flex flex-col gap-4">
         <ProviderCard
           provider="google"
           connection={getConnection('google')}
@@ -409,16 +411,12 @@ export default function IntegrationsManager() {
       </div>
 
       {/* Info box */}
-      <div style={{
-        marginTop: 16, padding: '12px 14px', borderRadius: 10,
-        background: '#f8fafc', border: '1px solid #e2e8f0',
-        fontSize: 12.5, color: '#64748b', lineHeight: 1.6,
-      }}>
-        ℹ️ {t('integrations.syncInfo')}
+      <div className="p-6 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 backdrop-blur-sm shadow-xl flex gap-4">
+        <span className="text-2xl drop-shadow-md">ℹ️</span>
+        <p className="text-xs font-bold text-indigo-200/70 leading-relaxed uppercase tracking-tight">
+          {t('integrations.syncInfo')}
+        </p>
       </div>
-
-      {/* Spin animation */}
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 }

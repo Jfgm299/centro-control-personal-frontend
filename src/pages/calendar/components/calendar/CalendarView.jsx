@@ -9,41 +9,42 @@ import { useCalendarMutations } from '../../hooks/useCalendarMutations'
 import { useCategories }        from '../../hooks/useCategories'
 import { useCalendarEvents }    from '../../hooks/useCalendarEvents'
 import { useCalendarStore }     from '../../store/calendarStore'
+import clsx from 'clsx'
 
 /* ─── CSS inyectado ─────────────────────────────────────────────────────────── */
 const CALENDAR_CSS = `
-  .fc-planner { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100%; }
-  .fc-planner .fc { height: 100%; background: white; }
+  .fc-planner { font-family: inherit; height: 100%; border-radius: 24px; overflow: hidden; }
+  .fc-planner .fc { height: 100%; background: transparent; }
 
-  /* Grid lines sutiles */
+  /* Grid lines sutiles blancas */
   .fc-planner .fc-theme-standard td,
-  .fc-planner .fc-theme-standard th { border-color: #f0f0f0; }
+  .fc-planner .fc-theme-standard th { border-color: rgba(255, 255, 255, 0.08); }
   .fc-planner .fc-scrollgrid { border: none; }
   .fc-planner .fc-scrollgrid-section > td { border: none; }
 
   /* Header columnas */
-  .fc-planner .fc-col-header { background: white; }
-  .fc-planner .fc-col-header-cell { border: none !important; background: white; }
+  .fc-planner .fc-col-header { background: transparent; }
+  .fc-planner .fc-col-header-cell { border: none !important; background: transparent; }
   .fc-planner .fc-col-header-cell-cushion {
     text-decoration: none !important;
-    padding: 8px 0 10px;
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 12px 0 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
   }
 
   /* Slots */
-  .fc-planner .fc-timegrid-slot { height: 28px !important; }
+  .fc-planner .fc-timegrid-slot { height: 32px !important; }
   .fc-planner .fc-timegrid-slot-minor { border-top-style: none !important; }
-  .fc-planner .fc-timegrid-slot-label-cushion { font-size: 11px; color: #9ca3af; padding-right: 10px; font-weight: 400; }
+  .fc-planner .fc-timegrid-slot-label-cushion { font-size: 11px; color: rgba(255, 255, 255, 0.4); padding-right: 12px; font-weight: 600; font-family: monospace; }
   .fc-planner .fc-timegrid-axis { border: none !important; }
 
   /* All-day row */
-  .fc-planner .fc-daygrid-body { background: white; }
-  .fc-planner .fc-daygrid-day { background: white !important; }
+  .fc-planner .fc-daygrid-body { background: transparent; }
+  .fc-planner .fc-daygrid-day { background: transparent !important; }
   .fc-planner .fc-daygrid-day-events { min-height: 0 !important; }
 
-  /* Sin fondo amarillo en hoy */
-  .fc-planner .fc-day-today { background: transparent !important; }
-  .fc-planner .fc-timegrid-col.fc-day-today { background: transparent !important; }
+  /* Sin fondo hoy */
+  .fc-planner .fc-day-today { background: rgba(255, 255, 255, 0.03) !important; }
+  .fc-planner .fc-timegrid-col.fc-day-today { background: rgba(255, 255, 255, 0.03) !important; }
 
   /* ── EVENTOS: neutralizar TODO lo que pinta FullCalendar ── */
   .fc-planner .fc-event,
@@ -51,16 +52,16 @@ const CALENDAR_CSS = `
     background:    transparent !important;
     background-color: transparent !important;
     border:        none !important;
-    border-radius: 0 !important;
+    border-radius: 12px !important;
     box-shadow:    none !important;
     padding:       0 !important;
-    margin:        0 1px !important;
+    margin:        2px 3px !important;
   }
   .fc-planner .fc-event-main {
     background: transparent !important;
     padding:    0 !important;
     height:     100%;
-    overflow:   hidden;
+    overflow:   visible;
   }
   /* timegrid: el wrapper interior también tiene fondo */
   .fc-planner .fc-timegrid-event,
@@ -73,39 +74,40 @@ const CALENDAR_CSS = `
   .fc-planner .fc-daygrid-event {
     background: transparent !important;
     border:     none !important;
-    margin-bottom: 1px !important;
+    margin-bottom: 2px !important;
   }
   /* mirror (drag preview) */
   .fc-planner .fc-event-mirror {
-    opacity: .75;
+    opacity: .6;
+    filter: blur(1px);
   }
 
   /* Now indicator */
-  .fc-planner .fc-timegrid-now-indicator-line { border-color: #ef4444 !important; border-width: 1.5px !important; z-index: 10; }
+  .fc-planner .fc-timegrid-now-indicator-line { border-color: #38bdf8 !important; border-width: 2px !important; z-index: 10; box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
   .fc-planner .fc-timegrid-now-indicator-arrow {
     border-top-color:    transparent !important;
     border-bottom-color: transparent !important;
-    border-left-color:   #ef4444 !important;
-    border-width: 5px !important;
-    margin-top: -5px;
+    border-left-color:   #38bdf8 !important;
+    border-width: 6px !important;
+    margin-top: -6px;
   }
 
   /* All-day label */
-  .fc-planner .fc-timegrid-axis-cushion { font-size: 10px; color: #9ca3af; padding: 0 6px; }
+  .fc-planner .fc-timegrid-axis-cushion { font-size: 10px; color: rgba(255, 255, 255, 0.4); padding: 0 8px; font-weight: bold; text-transform: uppercase; }
 
   /* Scrollbar */
   .fc-planner .fc-scroller::-webkit-scrollbar { width: 4px; }
-  .fc-planner .fc-scroller::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+  .fc-planner .fc-scroller::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
   .fc-planner .fc-scroller::-webkit-scrollbar-track { background: transparent; }
 
   /* More link */
-  .fc-planner .fc-daygrid-more-link { font-size: 11px; color: #6b7280; }
+  .fc-planner .fc-daygrid-more-link { font-size: 11px; color: rgba(255, 255, 255, 0.6); font-weight: bold; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 6px; }
 
   /* Ocultar toolbar nativo */
   .fc-planner .fc-header-toolbar { display: none !important; }
 
   /* Header border */
-  .fc-planner .fc-scrollgrid-section-header > td { border-bottom: 1px solid #f0f0f0 !important; }
+  .fc-planner .fc-scrollgrid-section-header > td { border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; }
 
   @keyframes fc-spin { to { transform: rotate(360deg); } }
 `
@@ -113,14 +115,13 @@ const CALENDAR_CSS = `
 /* ─── Helpers ───────────────────────────────────────────────────────────────── */
 function toFCEvent(event, categories) {
   const cat   = categories.find((c) => c.id === event.category_id)
-  const color = event.color_override ?? cat?.color ?? '#14b8a6'
+  const color = event.color_override ?? cat?.color ?? '#60a5fa'
   return {
     id:     String(event.id ?? `r-${event.routine_id}-${event.start_at}`),
     title:  event.title,
     start:  event.start_at,
     end:    event.end_at,
     allDay: event.all_day,
-    // Pasamos el color para que FullCalendar no use su default azul
     backgroundColor: 'transparent',
     borderColor:     'transparent',
     extendedProps: { color, isRoutine: !!event.routine_id, raw: event },
@@ -129,16 +130,14 @@ function toFCEvent(event, categories) {
 
 function getInitialRange() {
   const now   = new Date()
-  // Empieza el lunes de la semana actual
-  const diff  = (now.getDay() + 6) % 7   // días desde el lunes
+  const diff  = (now.getDay() + 6) % 7
   const start = new Date(now); start.setDate(now.getDate() - diff)
   const end   = new Date(start); end.setDate(start.getDate() + 7)
   return { start, end }
 }
 
-/* ─── Convierte hex a rgb ─────────────────────────────────────────────────── */
 function hexToRgb(hex) {
-  const h = (hex ?? '#14b8a6').replace('#', '')
+  const h = (hex ?? '#60a5fa').replace('#', '')
   return {
     r: parseInt(h.substring(0, 2), 16),
     g: parseInt(h.substring(2, 4), 16),
@@ -153,63 +152,45 @@ function DayHeader({ date }) {
   const dayName = date.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '').toUpperCase()
   const dayNum  = date.getDate()
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '6px 0 8px', gap: 2 }}>
-      <span style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', letterSpacing: '.04em' }}>{dayName}</span>
-      <span style={{
-        fontSize: 18, fontWeight: 600, lineHeight: 1,
-        width: 30, height: 30,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        borderRadius: '50%',
-        background: isToday ? '#ef4444' : 'transparent',
-        color:      isToday ? 'white'   : '#374151',
-      }}>{dayNum}</span>
+    <div className="flex flex-col items-center py-2 gap-1.5">
+      <span className="text-[10px] font-bold text-white/40 tracking-widest">{dayName}</span>
+      <span className={`
+        text-base font-black w-8 h-8 flex items-center justify-center rounded-full transition-all
+        ${isToday ? 'bg-white text-slate-900 shadow-lg scale-110' : 'text-white/80 hover:bg-white/10'}
+      `}>{dayNum}</span>
     </div>
   )
 }
 
-/* ─── EventBlock — estilo ClickUp ─────────────────────────────────────────── */
-/*
- * ClickUp usa:
- *  - Fondo pastel: color base mezclado con blanco → rgba(r,g,b, 0.18)
- *  - Borde izquierdo sólido: 3px color base
- *  - Texto: color base (oscuro sobre fondo muy claro)
- */
+/* ─── EventBlock — Glassmorphism ─────────────────────────────────────────── */
 function EventBlock({ event }) {
-  const color     = event.extendedProps?.color ?? '#14b8a6'
+  const color     = event.extendedProps?.color ?? '#60a5fa'
   const { r, g, b } = hexToRgb(color)
 
-  const bgPastel  = `rgba(${r},${g},${b},0.13)`   // ~13% → muy pastel, como ClickUp
-  const textColor = color                           // mismo color pero sobre fondo casi blanco
+  const bgGlass   = `rgba(${r},${g},${b}, 0.25)`
+  const borderGlass = `rgba(${r},${g},${b}, 0.4)`
 
   return (
-    <div style={{
-      display:    'flex',
-      flexDirection: 'column',
-      justifyContent: 'flex-start',
-      borderLeft: `3px solid ${color}`,
-      background: bgPastel,
-      height:     '100%',
-      minHeight:  18,
-      borderRadius: '0 4px 4px 0',
-      padding:    '3px 6px',
-      overflow:   'hidden',
-      boxSizing:  'border-box',
-    }}>
-      <div style={{
-        fontSize:     11.5,
-        fontWeight:   600,
-        color:        textColor,
-        lineHeight:   1.35,
-        whiteSpace:   'nowrap',
-        overflow:     'hidden',
-        textOverflow: 'ellipsis',
-      }}>
-        {event.title}
+    <div 
+      className="flex flex-col h-full rounded-lg border backdrop-blur-md px-2 py-1.5 shadow-sm transition-all hover:brightness-110 overflow-hidden"
+      style={{
+        background: bgGlass,
+        borderColor: borderGlass,
+        boxShadow: `inset 0 1px 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.1)`,
+      }}
+    >
+      <div className="flex items-center gap-1.5 overflow-hidden">
+        <div className="w-1.5 h-1.5 rounded-full shrink-0 shadow-sm" style={{ background: color }} />
+        <span className="text-[11px] font-bold text-white truncate leading-tight drop-shadow-sm">
+          {event.title}
+        </span>
       </div>
       {event.start && !event.allDay && (
-        <div style={{ fontSize: 10.5, color: textColor, opacity: .75, marginTop: 1 }}>
-          {event.start.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-          {event.end ? ` - ${event.end.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}` : ''}
+        <div className="text-[9px] font-bold text-white/60 mt-1 flex items-center gap-1 tabular-nums">
+          <svg className="w-2.5 h-2.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3" />
+          </svg>
+          {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       )}
     </div>
@@ -217,7 +198,6 @@ function EventBlock({ event }) {
 }
 
 /* ─── Views ────────────────────────────────────────────────────────────────── */
-/* ─── CalendarView ─────────────────────────────────────────────────────────── */
 export default function CalendarView({ onEventClick, onSlotSelect, onExternalDrop }) {
   const { t, i18n: { language } } = useTranslation('calendar')
   const fcLocale = language?.startsWith('es') ? 'es' : 'en'
@@ -266,13 +246,11 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
     move.mutate({ id, start: event.start, end: event.end, allDay: event.allDay })
   }
 
-  // Drop externo desde el panel lateral.
-  // FullCalendar provee `date` = hora exacta del slot y `draggedEl` = el DOM element arrastrado.
   const handleExternalDrop = useCallback(({ date, draggedEl, allDay }) => {
     const reminderId = draggedEl.dataset?.reminderId
     if (!reminderId) return
     const start = date
-    const end   = new Date(date.getTime() + 60 * 60 * 1000) // +1h por defecto
+    const end   = new Date(date.getTime() + 60 * 60 * 1000)
     onExternalDrop?.(Number(reminderId), start, end, !!allDay)
   }, [onExternalDrop])
 
@@ -280,43 +258,47 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
     <>
       <style>{CALENDAR_CSS}</style>
 
-      <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 52px - 48px)', minHeight: 500 }}>
+      <div className="flex flex-col h-full relative overflow-hidden">
 
         {/* Toolbar */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 16px 10px', borderBottom: '1px solid #f0f0f0', flexShrink: 0,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={() => nav('prev')} style={navBtnStyle}>‹</button>
-            <button onClick={() => nav('next')} style={navBtnStyle}>›</button>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#111827', marginLeft: 4 }}>{title}</span>
+        <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-white/10 flex-shrink-0 bg-black/10 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
+              <button onClick={() => nav('prev')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all">‹</button>
+              <button onClick={() => nav('next')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all">›</button>
+            </div>
+            <span className="text-lg font-black text-white ml-2 drop-shadow-md capitalize">{title}</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ display: 'flex', background: '#f3f4f6', borderRadius: 8, padding: 3, gap: 2 }}>
+          <div className="flex items-center gap-4">
+            <div className="flex p-1 bg-black/20 rounded-xl border border-white/5">
               {VIEWS.map(({ key, label }) => (
-                <button key={key} onClick={() => changeView(key)} style={{
-                  padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
-                  fontSize: 12, fontWeight: 500,
-                  background: view === key ? 'white' : 'transparent',
-                  color:      view === key ? '#111827' : '#6b7280',
-                  boxShadow:  view === key ? '0 1px 3px rgba(0,0,0,.08)' : 'none',
-                }}>{label}</button>
+                <button 
+                  key={key} 
+                  onClick={() => changeView(key)} 
+                  className={clsx(
+                    "px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all",
+                    view === key ? "bg-white/15 text-white shadow-lg border border-white/20" : "text-white/40 hover:text-white/70"
+                  )}
+                >
+                  {label}
+                </button>
               ))}
             </div>
-            <button onClick={goToday} style={{
-              padding: '5px 12px', borderRadius: 7, border: '1px solid #e5e7eb',
-              background: 'white', color: '#374151', fontSize: 12, fontWeight: 500, cursor: 'pointer',
-            }}>{t('views.today')}</button>
+            <button 
+              onClick={goToday} 
+              className="px-4 py-2 bg-white/10 text-white text-[11px] font-bold uppercase tracking-widest rounded-xl border border-white/20 hover:bg-white/20 transition-all shadow-sm active:scale-95"
+            >
+              {t('views.today')}
+            </button>
           </div>
         </div>
 
         {/* FullCalendar */}
-        <div className="fc-planner" style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden' }}>
+        <div className="fc-planner flex-1 min-h-0 relative overflow-hidden group">
           {isLoading && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 20, background: 'rgba(255,255,255,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 22, height: 22, borderRadius: '50%', border: '2px solid #e0e7ff', borderTopColor: '#6366f1', animation: 'fc-spin .7s linear infinite' }} />
+            <div className="absolute inset-0 z-20 bg-black/20 backdrop-blur-[2px] flex items-center justify-center transition-all">
+              <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin shadow-lg" />
             </div>
           )}
           <FullCalendar
@@ -329,13 +311,13 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
             events={fcEvents}
             editable selectable selectMirror
             droppable
-            dayMaxEvents={2}
+            dayMaxEvents={3}
             nowIndicator
             height="100%"
             slotMinTime="00:00:00"
             slotMaxTime="24:00:00"
             allDaySlot
-            slotLabelFormat={{ hour: 'numeric', minute: '2-digit', meridiem: 'short' }}
+            slotLabelFormat={{ hour: 'numeric', minute: '2-digit', hour12: false }}
             eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
             datesSet={handleDatesSet}
             dayHeaderContent={({ date }) => <DayHeader date={date} />}
