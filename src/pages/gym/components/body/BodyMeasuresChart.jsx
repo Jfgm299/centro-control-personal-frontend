@@ -13,13 +13,13 @@ const IS_MOBILE = Capacitor.isNativePlatform() || window.innerWidth < 768
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-slate-100 shadow-lg rounded-xl p-3 text-xs">
-      <p className="font-semibold text-slate-600 mb-1">{label.slice(0, 10)}</p>
+    <div className="bg-black/60 backdrop-blur-xl border border-white/10 shadow-xl rounded-xl p-3 text-xs">
+      <p className="font-semibold text-white/70 mb-2">{label.slice(0, 10)}</p>
       {payload.map((p) => (
-        <div key={p.dataKey} className="flex items-center gap-2">
+        <div key={p.dataKey} className="flex items-center gap-2 mb-1 last:mb-0">
           <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="text-slate-500">{p.name}:</span>
-          <span className="font-mono font-semibold text-slate-800">
+          <span className="text-white/60">{p.name}:</span>
+          <span className="font-mono font-bold text-white">
             {p.value}{p.dataKey === 'weight' ? ' kg' : '%'}
           </span>
         </div>
@@ -58,22 +58,22 @@ export default function BodyMeasuresChart() {
   }
 
   // Clases condicionales según plataforma
-  const kpiPad     = IS_MOBILE ? 'px-3 py-2'   : 'px-4 py-3'
-  const kpiNum     = IS_MOBILE ? 'text-lg'      : 'text-2xl'
+  const kpiPad     = IS_MOBILE ? 'px-4 py-3'   : 'px-5 py-4'
+  const kpiNum     = IS_MOBILE ? 'text-xl'      : 'text-3xl'
   const kpiUnit    = IS_MOBILE ? 'text-xs'      : 'text-sm'
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col gap-5">
+      <div className="bg-white/10 rounded-3xl border border-white/20 shadow-lg backdrop-blur-xl p-6 flex flex-col gap-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-slate-800">{t('body.title')}</h2>
-            <p className="text-xs text-slate-400 mt-0.5">{t('body.subtitle')}</p>
+            <h2 className="text-base font-bold text-white">{t('body.title')}</h2>
+            <p className="text-xs text-white/60 mt-0.5">{t('body.subtitle')}</p>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-all"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all border border-white/10 shadow-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -83,26 +83,26 @@ export default function BodyMeasuresChart() {
 
         {/* Latest KPIs */}
         {latest && (
-          <div className="grid grid-cols-3 gap-2">
-            <div className={`bg-slate-900 rounded-xl ${kpiPad}`}>
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentWeight')}</p>
-              <p className={`${kpiNum} font-bold font-mono text-white mt-0.5`}>
-                {latest.weight_kg}<span className={`${kpiUnit} font-normal text-slate-400 ml-1`}>kg</span>
+          <div className="grid grid-cols-3 gap-3">
+            <div className={`bg-white/20 rounded-2xl border border-white/30 shadow-inner ${kpiPad}`}>
+              <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest">{t('body.currentWeight')}</p>
+              <p className={`${kpiNum} font-bold font-mono text-white mt-1 drop-shadow-md`}>
+                {latest.weight_kg}<span className={`${kpiUnit} font-normal text-white/60 ml-1`}>kg</span>
               </p>
             </div>
             {latest.body_fat_percentage != null && (
-              <div className={`bg-white border border-slate-100 rounded-xl ${kpiPad}`}>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.currentFat')}</p>
-                <p className={`${kpiNum} font-bold font-mono text-slate-900 mt-0.5`}>
-                  {latest.body_fat_percentage}<span className={`${kpiUnit} font-normal text-slate-400 ml-0.5`}>%</span>
+              <div className={`bg-black/20 rounded-2xl border border-white/10 ${kpiPad}`}>
+                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">{t('body.currentFat')}</p>
+                <p className={`${kpiNum} font-bold font-mono text-white/90 mt-1`}>
+                  {latest.body_fat_percentage}<span className={`${kpiUnit} font-normal text-white/50 ml-0.5`}>%</span>
                 </p>
               </div>
             )}
             {weightDiff !== null && (
-              <div className={`bg-white border border-slate-100 rounded-xl ${kpiPad}`}>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest">{t('body.change')}</p>
-                <p className={`${kpiNum} font-bold font-mono mt-0.5 ${parseFloat(weightDiff) < 0 ? 'text-green-500' : parseFloat(weightDiff) > 0 ? 'text-red-500' : 'text-slate-900'}`}>
-                  {parseFloat(weightDiff) > 0 ? '+' : ''}{weightDiff}<span className={`${kpiUnit} font-normal text-slate-400 ml-1`}>kg</span>
+              <div className={`bg-black/20 rounded-2xl border border-white/10 ${kpiPad}`}>
+                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">{t('body.change')}</p>
+                <p className={`${kpiNum} font-bold font-mono mt-1 ${parseFloat(weightDiff) < 0 ? 'text-green-400' : parseFloat(weightDiff) > 0 ? 'text-red-400' : 'text-white/80'}`}>
+                  {parseFloat(weightDiff) > 0 ? '+' : ''}{weightDiff}<span className={`${kpiUnit} font-normal text-white/40 ml-1`}>kg</span>
                 </p>
               </div>
             )}
@@ -111,27 +111,27 @@ export default function BodyMeasuresChart() {
 
         {/* Chart */}
         {isLoading ? (
-          <div className="flex items-center justify-center h-40 text-slate-400 text-sm">Loading…</div>
+          <div className="flex items-center justify-center h-40 text-white/40 text-sm">Loading…</div>
         ) : chartData.length > 1 ? (
-          <div style={{ height: 200 }}>
+          <div style={{ height: 220 }} className="bg-black/10 rounded-2xl p-4 border border-white/5">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }}
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }}
                   axisLine={false} tickLine={false} tickFormatter={(d) => d.slice(0, 10).slice(5)} />
-                <YAxis yAxisId="weight" tick={{ fontSize: 10, fill: '#94a3b8' }}
+                <YAxis yAxisId="weight" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }}
                   axisLine={false} tickLine={false} tickFormatter={(v) => `${v}kg`}
                   domain={['dataMin - 2', 'dataMax + 2']} />
                 {hasFat && (
                   <YAxis yAxisId="fat" orientation="right"
-                    tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+                    tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }} axisLine={false} tickLine={false}
                     tickFormatter={(v) => `${v}%`} domain={['dataMin - 1', 'dataMax + 1']} />
                 )}
                 <Tooltip content={<CustomTooltip />} />
-                <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 11, color: '#64748b' }} />
+                <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }} />
                 <Line yAxisId="weight" type="monotone" dataKey="weight"
-                  name={t('body.weight')} stroke="#6366f1" strokeWidth={2.5}
-                  dot={{ r: 4, fill: '#6366f1', strokeWidth: 0 }} activeDot={{ r: 5 }} />
+                  name={t('body.weight')} stroke="#60a5fa" strokeWidth={3}
+                  dot={{ r: 4, fill: '#60a5fa', strokeWidth: 0 }} activeDot={{ r: 6, fill: '#fff' }} />
                 {hasFat && (
                   <Line yAxisId="fat" type="monotone" dataKey="fat"
                     name={t('body.fat')} stroke="#f97316" strokeWidth={2}
@@ -141,23 +141,23 @@ export default function BodyMeasuresChart() {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="text-sm text-slate-400 text-center py-8">
+          <p className="text-sm text-white/40 text-center py-8 bg-black/10 rounded-2xl border border-white/5">
             {chartData.length === 0 ? t('body.empty') : t('body.needMore')}
           </p>
         )}
 
         {/* Historial — colapsable */}
         {sorted.length > 0 && (
-          <div className="border-t border-slate-50 pt-3">
+          <div className="border-t border-white/10 pt-4">
             <button
               onClick={() => setHistoryOpen(v => !v)}
               className="flex items-center gap-2 w-full text-left"
             >
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest flex-1">
+              <span className="text-[11px] font-bold text-white/50 uppercase tracking-widest flex-1">
                 {t('body.history') ?? 'Historial'}
               </span>
               <svg
-                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${historyOpen ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 text-white/40 transition-transform duration-200 ${historyOpen ? 'rotate-180' : ''}`}
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -165,36 +165,36 @@ export default function BodyMeasuresChart() {
             </button>
 
             {historyOpen && (
-              <div className="flex flex-col divide-y divide-slate-50 mt-2">
+              <div className="flex flex-col divide-y divide-white/5 mt-3">
                 {[...sorted].reverse().slice(0, 5).map((m) => (
-                  <div key={m.id} className="flex items-center justify-between py-2.5 group">
+                  <div key={m.id} className="flex items-center justify-between py-3 group">
                     <div>
-                      <p className="text-sm font-medium text-slate-800">
+                      <p className="text-sm font-semibold text-white">
                         {m.weight_kg} kg
                         {m.body_fat_percentage != null && (
-                          <span className="text-slate-400 font-normal ml-2 text-xs">· {m.body_fat_percentage}% grasa</span>
+                          <span className="text-white/40 font-normal ml-2 text-xs">· {m.body_fat_percentage}% grasa</span>
                         )}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-white/40 mt-0.5">
                         {new Date(m.created_at).toLocaleDateString()}{m.notes && ` · ${m.notes}`}
                       </p>
                     </div>
 
                     {confirmId === m.id ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-2">
                         <button onClick={() => { remove.mutateAsync(m.id); setConfirmId(null) }}
-                          className="px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
+                          className="px-3 py-1 text-xs font-bold bg-red-500/40 border border-red-500/50 text-white rounded-lg hover:bg-red-500/60 transition-all">
                           {t('common.confirm')}
                         </button>
                         <button onClick={() => setConfirmId(null)}
-                          className="px-2 py-0.5 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
+                          className="px-3 py-1 text-xs font-bold text-white/60 border border-white/20 rounded-lg hover:bg-white/10 transition-all">
                           {t('common.cancel')}
                         </button>
                       </div>
                     ) : (
                       <button onClick={() => setConfirmId(m.id)}
-                        className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="opacity-0 group-hover:opacity-100 w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 text-white/50 hover:text-red-400 hover:bg-red-400/20 transition-all border border-white/10">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                       </button>
