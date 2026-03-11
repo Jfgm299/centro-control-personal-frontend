@@ -60,18 +60,17 @@ export default function UserMenu() {
       {/* Panel */}
       {open && (
         <div
-          className="absolute right-0 top-12 w-64 rounded-2xl shadow-xl border border-white/60 overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)' }}
+          className="absolute right-0 top-12 w-64 rounded-2xl shadow-xl border border-white/20 overflow-hidden backdrop-blur-xl bg-white/10"
         >
           {/* Usuario */}
-          <div className="px-4 py-4 border-b border-gray-100">
-            <p className="font-semibold text-gray-800">{user?.username}</p>
-            <p className="text-xs text-gray-400">{user?.email}</p>
+          <div className="px-4 py-4 border-b border-white/10">
+            <p className="font-semibold text-white">{user?.username}</p>
+            <p className="text-xs text-white/60">{user?.email}</p>
           </div>
 
           {/* Idioma */}
-          <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+          <div className="px-4 py-3 border-b border-white/10">
+            <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">
               {t('settings.language')}
             </p>
             <div className="flex gap-2">
@@ -80,8 +79,8 @@ export default function UserMenu() {
                   className={clsx(
                     'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all',
                     currentLang === lang.code
-                      ? 'bg-indigo-500 text-white font-medium'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-white/20 text-white font-medium border border-white/30'
+                      : 'bg-black/20 text-white/70 hover:bg-black/40 border border-transparent'
                   )}>
                   <span>{lang.flag}</span>
                   <span>{lang.label}</span>
@@ -93,7 +92,7 @@ export default function UserMenu() {
           {/* Logout */}
           <div className="px-4 py-3">
             <button onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 transition-colors">
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-400/10 transition-colors">
               <span>→</span>
               <span>{t('settings.logout')}</span>
             </button>

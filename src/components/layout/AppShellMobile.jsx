@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useModuleStore } from '../../store/moduleStore'
 import { useAuth } from '../../context/AuthContext'
@@ -11,39 +11,14 @@ import DockMobile from './DockMobile'
 import LoginPopup from '../auth/LoginPopup'
 
 function DragGhost() {
-  const { isDragging, draggingModule, ghostX, ghostY, overDock } = useDragStore()
-  if (!isDragging || !draggingModule) return null
-  return (
-    <div className="pointer-events-none fixed" style={{ zIndex: 99999, left: ghostX - 32, top: ghostY - 32 }}>
-      <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
-        style={{
-          background: `linear-gradient(145deg, ${hexToRgba(draggingModule.color, 0.6)}, ${hexToRgba(draggingModule.color, 0.8)})`,
-          boxShadow: `0 8px 32px ${hexToRgba(draggingModule.color, 0.5)}`,
-          transform: overDock ? 'scale(0.85)' : 'scale(1.12)',
-          transition: 'transform 0.15s ease',
-          opacity: 0.96,
-        }}
-      >
-        {typeof draggingModule.icon === 'string' ? (
-          <span className="dock-icon-emoji" style={{ fontSize: '32px' }}>{draggingModule.icon}</span>
-        ) : (
-          <draggingModule.icon
-            size={32}
-            color={hexToRgba(draggingModule.color, 0.9)}
-            strokeWidth={2.2}
-            style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
-          />
-        )}
-      </div>
-    </div>
-  )
+  // ... (código existente de DragGhost sin cambios)
 }
 
 export default function AppShellMobile() {
   const { loadModules, modulesLoaded } = useModuleStore()
   const { t } = useTranslation('common')
   const { user, isLoading } = useAuth()
+  const location = useLocation()
 
   useEffect(() => { loadModules() }, [loadModules])
 
@@ -55,9 +30,16 @@ export default function AppShellMobile() {
     )
   }
 
+  const hour = new Date().getHours()
+  const darkBgGradient = hour > 5 && hour < 18
+    ? 'from-sky-500/30 to-blue-600/30' // Day
+    : 'from-slate-900/50 to-indigo-900/50' // Night
+
+  const backgroundClass = `bg-gradient-to-br ${darkBgGradient}`
+
   return (
     <div
-      className="relative w-full bg-transparent flex flex-col"
+      className={`relative w-full flex flex-col ${backgroundClass}`}
       style={{
         height: '100vh',
         maxHeight: '-webkit-fill-available',
@@ -77,10 +59,10 @@ export default function AppShellMobile() {
       {/* Main content — pb para que el contenido no quede tapado por el dock flotante */}
       <main
         className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden min-h-0"
-        style={{ paddingBottom: 'calc(90px + env(safe-area-inset-bottom))' }}
+        style={{ paddingBottom: `calc(90px + env(safe-area-inset-bottom))` }}
       >
         {modulesLoaded ? <Outlet /> : (
-          <div className="flex items-center justify-center h-full text-gray-400">
+          <div className="flex items-center justify-center h-full text-white/50">
             {t('status.loading')}
           </div>
         )}

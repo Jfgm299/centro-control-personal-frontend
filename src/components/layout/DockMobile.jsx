@@ -65,21 +65,19 @@ export default function DockMobile() {
     <div className="relative z-30 w-full">
       <div
         ref={dockRef}
-        className="mx-4 mt-2 mb-2 flex items-center justify-around rounded-3xl px-2 border transition-all duration-200"
+        className="mx-4 mt-2 mb-2 flex items-center justify-around rounded-3xl px-2 border transition-all duration-200 backdrop-blur-xl"
         style={{
           paddingTop:    dockExpanded ? '16px' : '12px',
           paddingBottom: dockExpanded ? '16px' : '12px',
           background: dockExpanded
-            ? showReject ? 'rgba(239,68,68,0.15)' : 'rgba(99,102,241,0.15)'
-            : 'rgba(255,255,255,0.60)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+            ? showReject ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.2)'
+            : 'rgba(255,255,255,0.15)',
           borderColor: dockExpanded
-            ? showReject ? 'rgba(239,68,68,0.5)' : 'rgba(99,102,241,0.5)'
-            : 'rgba(255,255,255,0.80)',
+            ? showReject ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.4)'
+            : 'rgba(255,255,255,0.2)',
           boxShadow: dockExpanded
-            ? showReject ? '0 0 0 2px rgba(239,68,68,0.25)' : '0 0 0 2px rgba(99,102,241,0.25)'
-            : '0 4px 24px rgba(0,0,0,0.10)',
+            ? showReject ? '0 0 0 2px rgba(239,68,68,0.25)' : '0 0 0 2px rgba(255,255,255,0.25)'
+            : '0 4px 24px rgba(0,0,0,0.15)',
         }}
       >
         {slots.map((mod, idx) => {
@@ -180,7 +178,7 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
           ) : (
             <mod.icon
               size={28}
-              color={isActive ? mod.color : 'rgb(100 116 139)'}
+              color={isActive ? mod.color : 'rgba(255, 255, 255, 0.8)'}
               strokeWidth={2.2}
               style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
             />
@@ -206,8 +204,9 @@ function HomeButton({ isActive, onPress }) {
         }}>
         <Home
           size={28}
-          color={isActive ? homeColor : 'rgb(100 116 139)'}
+          color={isActive ? homeColor : 'rgba(255, 255, 255, 0.8)'}
           strokeWidth={2.2}
+          style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
         />
       </div>
       <div className="w-1 h-1 rounded-full"
