@@ -48,15 +48,15 @@ function SetRow({ set, type, onDelete }) {
       ].filter(Boolean).join(' · ')
 
   return (
-    <div className="flex items-center justify-between group py-1">
-      <div className="flex items-center gap-2">
-        <span className="text-slate-300 text-xs w-4">│</span>
-        <span className="text-xs text-slate-400 font-mono">S{set.set_number}</span>
-        <span className="text-xs text-slate-600">{label || '—'}</span>
+    <div className="flex items-center justify-between group py-1.5 border-b border-white/5 last:border-0">
+      <div className="flex items-center gap-3">
+        <span className="text-white/20 text-xs w-4 font-mono">│</span>
+        <span className="text-[10px] text-white/50 font-mono font-bold bg-white/5 px-1.5 py-0.5 rounded">S{set.set_number}</span>
+        <span className="text-sm font-medium text-white/80">{label || '—'}</span>
       </div>
       <button
         onClick={() => onDelete(set.id)}
-        className={`text-slate-300 hover:text-red-400 transition-all text-xs px-1
+        className={`text-white/30 hover:text-red-400 bg-white/5 hover:bg-white/10 rounded-lg p-1.5 transition-all
           ${IS_MOBILE ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
       >✕</button>
     </div>
@@ -92,48 +92,47 @@ function ExerciseBlock({ exercise, workoutId }) {
     ? '💪 Bodyweight'
     : '🏋️ Weights'
   const typeColor = type === EXERCISE_TYPES.CARDIO
-    ? 'bg-orange-50 text-orange-500'
+    ? 'bg-orange-500/20 text-orange-300 border-orange-500/30'
     : type === EXERCISE_TYPES.BODYWEIGHT
-    ? 'bg-emerald-50 text-emerald-600'
-    : 'bg-indigo-50 text-indigo-500'
+    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+    : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
 
   return (
-    <div className="ml-4 mt-2">
-      <div className="flex items-center justify-between group">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-slate-300 text-sm">├─</span>
-          <span className="text-sm font-medium text-slate-700">{exercise.name}</span>
-          <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${typeColor}`}>
+    <div className="ml-2 mt-4 bg-black/20 rounded-2xl p-4 border border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between group gap-3 mb-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="text-base font-bold text-white">{exercise.name}</span>
+          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${typeColor}`}>
             {typeLabel}
           </span>
           {(exercise.muscle_groups || []).map(g => (
-            <span key={g} className="text-xs px-1.5 py-0.5 rounded-full text-white font-medium"
-              style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#94a3b8' }}>
+            <span key={g} className="text-[10px] px-2 py-0.5 rounded-full text-white font-bold tracking-wider shadow-sm"
+              style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#818cf8' }}>
               {g}
             </span>
           ))}
         </div>
-        <div className={`flex items-center gap-1 transition-opacity
+        <div className={`flex items-center gap-2 transition-opacity
           ${IS_MOBILE ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
           <button
             onClick={() => setShowAddSet(true)}
-            className="text-xs px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-all"
+            className="text-xs px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/10"
           >
             + {t('set.add')}
           </button>
           <button
             onClick={handleDeleteExercise}
-            className="text-xs text-slate-300 hover:text-red-400 transition-colors px-1"
+            className="w-7 h-7 flex items-center justify-center text-white/40 bg-white/5 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30 rounded-xl transition-all"
           >✕</button>
         </div>
       </div>
 
-      <div className="ml-6">
+      <div className="ml-2 pl-3 border-l-2 border-white/10">
         {exercise.sets.map((s) => (
           <SetRow key={s.id} set={s} type={type} onDelete={handleDeleteSet} />
         ))}
         {exercise.sets.length === 0 && (
-          <p className="text-xs text-slate-300 ml-6 mt-1">{t('set.empty')}</p>
+          <p className="text-xs text-white/40 py-2 italic">{t('set.empty')}</p>
         )}
       </div>
 
@@ -174,36 +173,39 @@ export default function ActiveWorkout({ onEnd }) {
   if (!workout) return null
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-5 md:p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs font-medium text-green-600">{t('active.inProgress')}</span>
+          <div className="flex items-center gap-2.5 mb-2 bg-green-500/10 w-fit px-3 py-1 rounded-full border border-green-500/20">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+            <span className="text-[10px] font-bold text-green-400 uppercase tracking-widest">{t('active.inProgress')}</span>
           </div>
-          <h2 className="text-base font-semibold text-slate-800">{t('active.title')}</h2>
+          <h2 className="text-lg font-bold text-white">{t('active.title')}</h2>
           {/* Muscle groups — computed live from exercises */}
           {dynamicMuscleGroups.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-1.5">
+            <div className="flex flex-wrap gap-2 mt-2">
               {dynamicMuscleGroups.map((g) => (
                 <span key={g}
-                  className="text-xs px-2 py-0.5 rounded-full text-white font-medium"
-                  style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#94a3b8' }}>
+                  className="text-[10px] px-2.5 py-0.5 rounded-full text-white font-bold tracking-wider shadow-sm"
+                  style={{ background: MUSCLE_GROUP_COLORS[g] ?? '#818cf8' }}>
                   {g}
                 </span>
               ))}
             </div>
           )}
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-mono font-bold text-slate-800">{elapsed}</p>
-          <p className="text-xs text-slate-400 mt-0.5">{t('active.elapsed')}</p>
+        <div className="text-right bg-black/20 px-4 py-2 rounded-2xl border border-white/10 backdrop-blur-md">
+          <p className="text-3xl font-mono font-black text-white drop-shadow-md">{elapsed}</p>
+          <p className="text-[10px] font-bold text-white/50 mt-1 uppercase tracking-widest">{t('active.elapsed')}</p>
         </div>
       </div>
 
-      <div className="border-t border-slate-50 pt-4">
+      <div className="border-t border-white/10 pt-2 mt-4">
         {exercises.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-4">{t('active.noExercises')}</p>
+          <div className="flex flex-col items-center justify-center py-8 gap-3 bg-black/10 rounded-2xl border border-white/5 mt-4">
+            <span className="text-3xl opacity-50">🏋️</span>
+            <p className="text-sm font-medium text-white/50">{t('active.noExercises')}</p>
+          </div>
         ) : (
           exercises.map((ex) => (
             <ExerciseBlock key={ex.id} exercise={ex} workoutId={workout.id} />
@@ -211,16 +213,16 @@ export default function ActiveWorkout({ onEnd }) {
         )}
       </div>
 
-      <div className="flex gap-2 mt-5 pt-4 border-t border-slate-50">
+      <div className="flex gap-3 mt-6 pt-5 border-t border-white/10">
         <button
           onClick={() => setShowAddExercise(true)}
-          className="flex-1 py-2.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+          className="flex-1 py-3 text-sm font-bold text-white bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all shadow-sm"
         >
           + {t('exercise.add')}
         </button>
         <button
           onClick={onEnd}
-          className="flex-1 py-2.5 text-sm font-medium bg-slate-900 text-white rounded-xl hover:bg-slate-700 transition-all"
+          className="flex-1 py-3 text-sm font-bold bg-red-500/30 text-red-100 border border-red-500/50 rounded-xl hover:bg-red-500/50 hover:text-white transition-all shadow-lg backdrop-blur-md"
         >
           ■ {t('active.finish')}
         </button>

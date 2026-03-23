@@ -8,11 +8,11 @@ export const MEAL_TYPES = [
 ]
 
 export const NUTRIENT_COLORS = {
-  energy_kcal:     '#f59e0b',
-  proteins_g:      '#3b82f6',
-  carbohydrates_g: '#10b981',
-  fat_g:           '#f43f5e',
-  fiber_g:         '#8b5cf6',
+  energy_kcal:     '#facc15', // amber-400
+  proteins_g:      '#38bdf8', // sky-400
+  carbohydrates_g: '#2dd4bf', // teal-400
+  fat_g:           '#fb7185', // rose-400
+    fiber_g:         '#a3e635', // lime-400
 }
 
 export const NUTRIENT_GOAL_MAP = {

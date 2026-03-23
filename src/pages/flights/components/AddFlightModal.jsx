@@ -58,7 +58,7 @@ export default function AddFlightModal({ onClose }) {
               placeholder="VY 1234"
               value={form.flight_number}
               onChange={e => set('flight_number', e.target.value.toUpperCase())}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 font-mono text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 font-mono text-sm focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
             />
           </div>
 
@@ -70,7 +70,7 @@ export default function AddFlightModal({ onClose }) {
               type="date"
               value={form.flight_date}
               onChange={e => set('flight_date', e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 text-sm focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
             />
           </div>
 
@@ -83,7 +83,7 @@ export default function AddFlightModal({ onClose }) {
               value={form.notes}
               onChange={e => set('notes', e.target.value)}
               rows={2}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 resize-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 text-sm focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-100 resize-none"
             />
           </div>
 
@@ -101,7 +101,7 @@ export default function AddFlightModal({ onClose }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50"
             >
               {loading ? 'Adding...' : t('upcoming.addFlight')}
             </button>

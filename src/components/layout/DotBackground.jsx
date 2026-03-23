@@ -1,11 +1,11 @@
 export default function DotBackground() {
   return (
-    <div className="fixed inset-0 -z-10" style={{ backgroundColor: '#f0f0f5' }}>
+    <div className="fixed inset-0 -z-10 pointer-events-none">
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-20 mix-blend-overlay"
         style={{
-          backgroundImage: 'radial-gradient(circle, #c8c8d8 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
+          backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
         }}
       />
     </div>

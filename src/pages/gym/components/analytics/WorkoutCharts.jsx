@@ -7,13 +7,13 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-slate-100 shadow-lg rounded-xl p-3 text-xs">
-      <p className="font-semibold text-slate-600 mb-1">{label}</p>
+    <div className="bg-black/60 backdrop-blur-xl border border-white/10 shadow-xl rounded-xl p-3 text-xs">
+      <p className="font-semibold text-white/70 mb-2">{label}</p>
       {payload.map((p) => (
-        <div key={p.dataKey} className="flex items-center gap-2">
+        <div key={p.dataKey} className="flex items-center gap-2 mb-1 last:mb-0">
           <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="text-slate-500">{p.name}:</span>
-          <span className="font-mono font-semibold text-slate-800">{p.value}</span>
+          <span className="text-white/60">{p.name}:</span>
+          <span className="font-mono font-bold text-white">{p.value}</span>
         </div>
       ))}
     </div>
@@ -26,40 +26,41 @@ export default function WorkoutCharts({ sessionData = [] }) {
 
   return (
     // h-full + flex-col so both charts split the available height equally
-    <div className="h-full flex flex-col gap-4">
+    <div className="h-full flex flex-col gap-6">
       {/* Exercises & sets per session */}
-      <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col">
-        <h3 className="text-sm font-semibold text-slate-700 mb-4 flex-shrink-0">{t('charts.exercisesTitle')}</h3>
+      <div className="flex-1 bg-white/10 rounded-3xl border border-white/20 shadow-lg backdrop-blur-xl p-6 flex flex-col">
+        <h3 className="text-base font-bold text-white mb-4 flex-shrink-0">{t('charts.exercisesTitle')}</h3>
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={last10}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }} axisLine={false} tickLine={false}
                 tickFormatter={(d) => d.slice(5)} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
-              <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 11, color: '#64748b' }} />
-              <Bar dataKey="exercises" name={t('charts.exercises')} fill="#6366f1" radius={[4,4,0,0]} />
-              <Bar dataKey="sets"      name={t('charts.sets')}      fill="#a5b4fc" radius={[4,4,0,0]} />
+              <YAxis tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+              <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }} />
+              <Bar dataKey="exercises" name={t('charts.exercises')} fill="#3b82f6" radius={[4,4,0,0]} />
+              <Bar dataKey="sets"      name={t('charts.sets')}      fill="#06b6d4" radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Duration per session */}
-      <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col">
-        <h3 className="text-sm font-semibold text-slate-700 mb-4 flex-shrink-0">{t('charts.durationTitle')}</h3>
+      <div className="flex-1 bg-white/10 rounded-3xl border border-white/20 shadow-lg backdrop-blur-xl p-6 flex flex-col">
+        <h3 className="text-base font-bold text-white mb-4 flex-shrink-0">{t('charts.durationTitle')}</h3>
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={last10}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }} axisLine={false} tickLine={false}
                 tickFormatter={(d) => d.slice(5)} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+              <YAxis tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.5)' }} axisLine={false} tickLine={false}
                 tickFormatter={(v) => `${v}m`} />
               <Tooltip content={<CustomTooltip />} />
+              <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }} />
               <Line type="monotone" dataKey="minutes" name={t('charts.duration')}
-                stroke="#6366f1" strokeWidth={2} dot={{ r: 3, fill: '#6366f1' }} />
+                stroke="#ec4899" strokeWidth={3} dot={{ r: 4, fill: '#ec4899', strokeWidth: 0 }} activeDot={{ r: 6, fill: '#fff' }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

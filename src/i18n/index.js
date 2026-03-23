@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next'
 
 // Importar todos los namespaces
 import esCommon from './locales/es/common.json'
+import esAuth from './locales/es/auth.json'
 import esHome from './locales/es/home.json'
 import esGym from './locales/es/gym.json'
 import esExpenses from './locales/es/expenses.json'
@@ -13,6 +14,7 @@ import esCalendar from './locales/es/calendar.json'
 import esAutomations from './locales/es/automations.json'
 
 import enCommon from './locales/en/common.json'
+import enAuth from './locales/en/auth.json'
 import enHome from './locales/en/home.json'
 import enGym from './locales/en/gym.json'
 import enExpenses from './locales/en/expenses.json'
@@ -26,6 +28,7 @@ i18n.use(initReactI18next).init({
   resources: {
     es: {
       common:   esCommon,
+      auth:     esAuth,
       home:     esHome,
       gym:      esGym,
       expenses: esExpenses,
@@ -37,6 +40,7 @@ i18n.use(initReactI18next).init({
     },
     en: {
       common:   enCommon,
+      auth:     enAuth,
       home:     enHome,
       gym:      enGym,
       expenses: enExpenses,

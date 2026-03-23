@@ -1,10 +1,10 @@
-export default function NodeSidebarItem({ item, onDragStart }) {
+export default function NodeSidebarItem({ item, onDragStart, nodeCategory }) {
   return (
     <div
       draggable
       onDragStart={(e) => {
         e.dataTransfer.effectAllowed = 'move'
-        e.dataTransfer.setData('application/xyflow-node', JSON.stringify(item))
+        e.dataTransfer.setData('application/xyflow-node', JSON.stringify({ ...item, nodeCategory }))
         onDragStart?.(item)
       }}
       style={{

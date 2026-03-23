@@ -1,14 +1,15 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { useDeleteFlight } from '../hooks/useFlights'
 import { flightsService } from '../services/flightsService'
 import { useQueryClient } from '@tanstack/react-query'
 
 const statusColors = {
-  expected:  'bg-blue-100 text-blue-700',
-  delayed:   'bg-amber-100 text-amber-700',
-  canceled:  'bg-red-100 text-red-700',
-  arrived:   'bg-green-100 text-green-700',
-  en_route:  'bg-indigo-100 text-indigo-700',
+  expected:  'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  delayed:   'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  canceled:  'bg-red-500/20 text-red-300 border-red-500/30',
+  arrived:   'bg-green-500/20 text-green-300 border-green-500/30',
+  en_route:  'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
 }
 
 export default function FlightCard({ flight }) {
@@ -28,7 +29,7 @@ export default function FlightCard({ flight }) {
     ? new Date(flight.scheduled_arrival).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '--:--'
 
-  const statusClass = statusColors[flight.status] || 'bg-gray-100 text-gray-600'
+  const statusClass = statusColors[flight.status] || 'bg-white/10 text-white/70 border-white/20'
 
   const handleDelete = async () => {
     if (!window.confirm(`Delete flight ${flight.flight_number}?`)) return
@@ -47,29 +48,31 @@ export default function FlightCard({ flight }) {
   }
 
   return (
-    <div
+    <motion.div
       className="relative group"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
         setHovered(false)
         setEditingNotes(false)
       }}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-black/5 transition-all group-hover:bg-white/15 group-hover:border-white/30">
         {/* Route */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-2xl font-black text-gray-900">{flight.origin_iata}</span>
-            <span className="text-gray-300 text-lg">→</span>
-            <span className="text-2xl font-black text-gray-900">{flight.destination_iata}</span>
+            <span className="text-2xl font-black text-white">{flight.origin_iata}</span>
+            <span className="text-white/30 text-lg">→</span>
+            <span className="text-2xl font-black text-white">{flight.destination_iata}</span>
           </div>
 
-          <p className="text-xs text-gray-400 truncate">
+          <p className="text-xs text-white/60 truncate">
             {flight.origin_city} → {flight.destination_city}
           </p>
 
           {flight.notes && !editingNotes && (
-            <p className="text-xs text-sky-600 mt-1 truncate">{flight.notes}</p>
+            <p className="text-xs text-white/70 mt-1 truncate font-medium">{flight.notes}</p>
           )}
 
           {editingNotes && (
@@ -78,13 +81,13 @@ export default function FlightCard({ flight }) {
                 autoFocus
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                className="flex-1 text-xs px-2 py-1 rounded-lg border border-sky-300 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                className="flex-1 text-xs px-2 py-1 rounded-lg bg-black/20 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/50"
                 placeholder="Add notes..."
               />
               <button
                 onClick={handleSaveNotes}
                 disabled={saving}
-                className="text-xs px-2 py-1 bg-sky-500 text-white rounded-lg hover:bg-sky-600 disabled:opacity-50"
+                className="text-xs px-2 py-1 bg-white/20 text-white rounded-lg hover:bg-white/30 disabled:opacity-50 border border-white/20"
               >
                 {saving ? '…' : '✓'}
               </button>
@@ -94,10 +97,10 @@ export default function FlightCard({ flight }) {
 
         {/* Times */}
         <div className="text-right shrink-0">
-          <p className="text-sm font-semibold text-gray-800">
+          <p className="text-sm font-semibold text-white">
             {dep} → {arr}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-white/60">
             {new Date(flight.flight_date).toLocaleDateString([], {
               day: 'numeric',
               month: 'short',
@@ -107,10 +110,10 @@ export default function FlightCard({ flight }) {
 
         {/* Status + number */}
         <div className="text-right shrink-0">
-          <p className="text-xs font-mono text-gray-600 mb-1">
+          <p className="text-xs font-mono text-white/70 mb-1">
             {flight.flight_number}
           </p>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusClass}`}>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${statusClass}`}>
             {flight.status || 'scheduled'}
           </span>
         </div>
@@ -118,15 +121,15 @@ export default function FlightCard({ flight }) {
 
       {/* Hover actions centradas */}
       {hovered && !editingNotes && (
-        <div className="absolute inset-0 flex items-center justify-center gap-4 z-20">
+        <div className="absolute inset-0 flex items-center justify-center gap-4 z-20 bg-black/20 backdrop-blur-sm rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
           
           {/* Edit */}
           <button
             onClick={() => setEditingNotes(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-md border border-gray-100 text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/20 shadow-md border border-white/30 text-white hover:bg-white/30 transition-all hover:scale-105"
             title="Edit notes"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -139,10 +142,10 @@ export default function FlightCard({ flight }) {
           {/* Delete */}
           <button
             onClick={handleDelete}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-md border border-gray-100 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/40 shadow-md border border-red-500/50 text-white hover:bg-red-500/60 transition-all hover:scale-105"
             title="Delete flight"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -154,6 +157,6 @@ export default function FlightCard({ flight }) {
 
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

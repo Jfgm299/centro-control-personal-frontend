@@ -1,3 +1,4 @@
+import { Home } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -5,6 +6,7 @@ import { useModuleStore } from '../../store/moduleStore'
 import { useDockStore } from '../../store/dockStore'
 import { useDragStore, setDockBounds } from '../../store/dragStore'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { hexToRgba } from '../../lib/colorUtils'
 
 const LONG_PRESS_MS = 500
 
@@ -63,21 +65,19 @@ export default function DockMobile() {
     <div className="relative z-30 w-full">
       <div
         ref={dockRef}
-        className="mx-4 mt-2 mb-2 flex items-center justify-around rounded-3xl px-2 border transition-all duration-200"
+        className="mx-4 mt-2 mb-2 flex items-center justify-around rounded-3xl px-2 border transition-all duration-200 backdrop-blur-xl"
         style={{
           paddingTop:    dockExpanded ? '16px' : '12px',
           paddingBottom: dockExpanded ? '16px' : '12px',
           background: dockExpanded
-            ? showReject ? 'rgba(239,68,68,0.15)' : 'rgba(99,102,241,0.15)'
-            : 'rgba(255,255,255,0.60)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+            ? showReject ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.2)'
+            : 'rgba(255,255,255,0.15)',
           borderColor: dockExpanded
-            ? showReject ? 'rgba(239,68,68,0.5)' : 'rgba(99,102,241,0.5)'
-            : 'rgba(255,255,255,0.80)',
+            ? showReject ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.4)'
+            : 'rgba(255,255,255,0.2)',
           boxShadow: dockExpanded
-            ? showReject ? '0 0 0 2px rgba(239,68,68,0.25)' : '0 0 0 2px rgba(99,102,241,0.25)'
-            : '0 4px 24px rgba(0,0,0,0.10)',
+            ? showReject ? '0 0 0 2px rgba(239,68,68,0.25)' : '0 0 0 2px rgba(255,255,255,0.25)'
+            : '0 4px 24px rgba(0,0,0,0.15)',
         }}
       >
         {slots.map((mod, idx) => {
@@ -167,13 +167,22 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
         onPointerCancel={() => clearTimeout(timerRef.current)}
         className="flex flex-col items-center gap-1 w-14 active:scale-90 transition-transform duration-100"
       >
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm"
-          style={{
-            backgroundColor: isActive ? mod.color : `${mod.color}22`,
-            boxShadow: isActive ? `0 4px 14px ${mod.color}55` : undefined,
-            outline: showRemove ? '2px solid rgba(239,68,68,0.6)' : 'none',
-          }}>
-          {mod.icon}
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+            style={{
+              backgroundColor: isActive ? hexToRgba(mod.color, 0.35) : hexToRgba(mod.color, 0.2),
+              boxShadow: isActive ? `0 4px 14px ${hexToRgba(mod.color, 0.3)}` : 'none',
+              outline: showRemove ? '2px solid rgba(239,68,68,0.6)' : 'none',
+            }}>
+          {typeof mod.icon === 'string' ? (
+            <span className="dock-icon-emoji" style={{ fontSize: '28px' }}>{mod.icon}</span>
+          ) : (
+            <mod.icon
+              size={28}
+              color={isActive ? mod.color : 'rgba(255, 255, 255, 0.8)'}
+              strokeWidth={2.2}
+              style={{ pointerEvents: 'none', filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
+            />
+          )}
         </div>
         <div className="w-1 h-1 rounded-full"
           style={{ backgroundColor: isActive ? mod.color : 'transparent' }} />
@@ -183,20 +192,25 @@ function DockSlot({ mod, isActive, removeLabel, onPress, onRemove }) {
 }
 
 function HomeButton({ isActive, onPress }) {
+  const homeColor = '#6366f1'
+
   return (
     <button onPointerDown={onPress}
       className="flex flex-col items-center gap-1 w-14 active:scale-90 transition-transform duration-100">
-      <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-md"
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
         style={{
-          background: isActive
-            ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-            : 'linear-gradient(135deg, #6366f122, #8b5cf622)',
-          boxShadow: isActive ? '0 4px 18px #6366f166' : undefined,
+          backgroundColor: isActive ? hexToRgba(homeColor, 0.35) : hexToRgba(homeColor, 0.2),
+          boxShadow: isActive ? `0 4px 14px ${hexToRgba(homeColor, 0.3)}` : 'none',
         }}>
-        🏠
+        <Home
+          size={28}
+          color={isActive ? homeColor : 'rgba(255, 255, 255, 0.8)'}
+          strokeWidth={2.2}
+          style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18))' }}
+        />
       </div>
       <div className="w-1 h-1 rounded-full"
-        style={{ backgroundColor: isActive ? '#6366f1' : 'transparent' }} />
+        style={{ backgroundColor: isActive ? homeColor : 'transparent' }} />
     </button>
   )
 }

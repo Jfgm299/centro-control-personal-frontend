@@ -45,6 +45,7 @@ automations/
 ## Key Behaviour
 
 - **XYFlow canvas:** los nodos se renderizan como componentes React custom. Cada tipo de nodo (`trigger`, `action`, `condition`, `outbound_webhook`, `automation_call`, `delay`, `stop`) tiene su propio componente en `components/nodes/`.
+- **Drag & drop desde sidebar:** `NodeSidebar` propaga `nodeCategory` ("trigger" | "action") a través de `NodeSidebarSection` → `NodeSidebarItem`, que lo incluye en el payload del drag. `AutomationEditor` lo usa en el drop para determinar el tipo de nodo correcto (`nodeCategory === 'action'`).
 - **Registry:** `useRegistry` carga todos los triggers y acciones registrados en el backend. Se usa para poblar los selectores al configurar nodos.
 - **Ejecución streaming:** `useExecution` puede conectarse a un SSE/stream del backend para recibir el estado de cada nodo en tiempo real durante la ejecución.
 - **Trigger manual:** `automationsService.trigger(id, payload)` permite disparar un flujo desde la UI para testing.

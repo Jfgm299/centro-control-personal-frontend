@@ -8,6 +8,7 @@ import ReminderPanel     from './components/reminders/ReminderPanel'
 import RoutinesList      from './components/routines/RoutinesList'
 import CategoriesManager from './components/categories/CategoriesManager'
 import IntegrationsManager from './components/integrations/IntegrationsManager'
+import { motion } from 'framer-motion'
 
 const TABS = [
   { key: 'calendar',     icon: '📅' },
@@ -68,135 +69,121 @@ export default function CalendarPageMobile() {
   }, [schedule])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'white', position: 'relative', overflow: 'hidden' }}>
+    <div className="flex flex-col h-full text-white relative overflow-hidden">
 
       {/* ── Header ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 16px 8px', flexShrink: 0 }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>{t('title')}</span>
-        <div style={{ display: 'flex', background: '#f3f4f6', borderRadius: 10, padding: 3, gap: 2 }}>
+      <div className="flex items-center gap-3 px-4 pt-4 pb-2 sticky top-0 z-10 flex-shrink-0">
+        <span className="text-xl font-bold text-white">{t('title')}</span>
+        <div className="flex gap-1 bg-black/20 backdrop-blur-md rounded-full p-1 border border-white/5 shadow-inner">
           {TABS.map(({ key, icon }) => (
-            <button key={key} onClick={() => setTab(key)} style={{
-              width: 36, height: 30, borderRadius: 7, border: 'none', cursor: 'pointer',
-              fontSize: 14,
-              background: tab === key ? 'white' : 'transparent',
-              boxShadow:  tab === key ? '0 1px 3px rgba(0,0,0,.08)' : 'none',
-              transition: 'background .15s',
-            }}>{icon}</button>
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className="relative w-9 h-8 flex items-center justify-center rounded-full transition-all"
+            >
+              {tab === key && (
+                <motion.div
+                  layoutId="active-tab-calendar-mobile"
+                  className="absolute inset-0 bg-white/10 rounded-full shadow-sm border border-white/10"
+                />
+              )}
+              <span className="relative z-10 text-base">{icon}</span>
+            </button>
           ))}
         </div>
       </div>
 
       {/* ── Banner tap-to-place ── */}
       {pendingReminder && (
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '8px 16px',
-          background: '#111827', color: 'white',
-          fontSize: 12.5, fontWeight: 500,
-          flexShrink: 0,
-          animation: 'slideDown .2s ease',
-        }}>
-          <span>📍 {t('reminders.tapToPlace', 'Toca un slot para colocar')}:<br />
-            <span style={{ fontWeight: 700 }}>{pendingReminder.title}</span>
-          </span>
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex items-center justify-between px-4 py-3 bg-indigo-500 text-white text-sm font-semibold flex-shrink-0 shadow-lg z-20"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📍</span>
+            <div className="leading-tight">
+              <p className="text-[10px] uppercase opacity-70 tracking-widest">{t('reminders.tapToPlace')}</p>
+              <p className="font-black truncate max-w-[200px]">{pendingReminder.title}</p>
+            </div>
+          </div>
           <button
             onClick={() => setPendingReminder(null)}
-            style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer' }}
+            className="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors border border-white/20"
           >
-            {t('common.cancel', 'Cancelar')}
+            {t('common.cancel')}
           </button>
-        </div>
+        </motion.div>
       )}
 
       {/* ── Contenido ── */}
-      <div style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden' }}>
+      <div className="flex-1 min-h-0 relative overflow-hidden">
 
         {/* Calendario */}
-        <div style={{ display: tab === 'calendar' ? 'block' : 'none', height: '100%', padding: '0 8px' }}>
-          <CalendarView
-            onEventClick={handleEventClick}
-            onSlotSelect={handleSlotSelect}
-            onExternalDrop={handleExternalDrop}
-            // Cursor especial cuando hay reminder pendiente
-            style={pendingReminder ? { cursor: 'crosshair' } : undefined}
-          />
+        <div className={`h-full px-2 ${tab === 'calendar' ? 'block' : 'hidden'}`}>
+          <div className="h-full bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-xl overflow-hidden relative">
+            <CalendarView
+              onEventClick={handleEventClick}
+              onSlotSelect={handleSlotSelect}
+              onExternalDrop={handleExternalDrop}
+              style={pendingReminder ? { cursor: 'crosshair' } : undefined}
+            />
+          </div>
         </div>
 
         {/* Rutinas */}
         {tab === 'routines' && (
-          <div style={{ height: '100%', overflowY: 'auto', padding: '0 16px 16px' }}>
+          <div className="h-full overflow-y-auto px-4 pb-32">
             <RoutinesList />
           </div>
         )}
 
         {/* Categorías */}
         {tab === 'categories' && (
-          <div style={{ height: '100%', overflowY: 'auto', padding: '0 16px 16px' }}>
+          <div className="h-full overflow-y-auto px-4 pb-32">
             <CategoriesManager />
           </div>
         )}
 
         {/* Integraciones */}
         {tab === 'integrations' && (
-          <div style={{ height: '100%', overflowY: 'auto', padding: '0 16px 16px' }}>
+          <div className="h-full overflow-y-auto px-4 pb-32">
             <IntegrationsManager />
           </div>
         )}
 
         {/* Overlay oscuro */}
         {panelOpen && (
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             onClick={() => setPanelOpen(false)}
-            style={{
-              position: 'absolute', inset: 0, zIndex: 30,
-              background: 'rgba(0,0,0,0.25)',
-              animation: 'fadeIn .2s ease',
-            }}
+            className="absolute inset-0 z-30 bg-black/60 backdrop-blur-sm"
           />
         )}
 
         {/* Panel de recordatorios (slide desde la izquierda) */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, bottom: 0,
-          width: 260, zIndex: 40,
-          background: 'white',
-          boxShadow: panelOpen ? '4px 0 24px rgba(0,0,0,.12)' : 'none',
-          transform: panelOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform .25s cubic-bezier(.4,0,.2,1)',
-          overflowY: 'auto',
-        }}>
-          {/* Pasamos onReminderTap para que los items sean tapeables en móvil */}
+        <motion.div
+          animate={{ x: panelOpen ? 0 : '-100%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="absolute top-0 left-0 bottom-0 w-72 z-40 bg-slate-900/90 backdrop-blur-2xl border-r border-white/10 shadow-2xl overflow-y-auto"
+        >
           <ReminderPanel onReminderTap={handleReminderTap} />
-        </div>
+        </motion.div>
       </div>
 
-      {/* Botón flotante (solo en tab calendario) */}
+      {/* Botón flotante para abrir panel lateral */}
       {tab === 'calendar' && (
         <button
           onClick={() => setPanelOpen(o => !o)}
-          style={{
-            position: 'absolute',
-            top: 96, left: 16,
-            zIndex: 50,
-            width: 36, height: 36,
-            borderRadius: 10,
-            border: '1px solid #e5e7eb',
-            background: panelOpen ? '#111827' : 'white',
-            color:      panelOpen ? 'white'   : '#374151',
-            boxShadow: '0 2px 8px rgba(0,0,0,.10)',
-            cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'background .15s, color .15s',
-          }}
+          className={`absolute top-[68px] right-4 z-20 w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-lg
+            ${panelOpen 
+              ? 'bg-white text-slate-900 border-white rotate-0' 
+              : 'bg-white/10 text-white border-white/20 backdrop-blur-md'}`}
         >
           <MenuIcon open={panelOpen} />
         </button>
       )}
-
-      <style>{`
-        @keyframes fadeIn   { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes slideDown { from { transform: translateY(-100%) } to { transform: translateY(0) } }
-      `}</style>
 
       <EventModal isOpen={eventModalOpen} onClose={closeEventModal} initialData={eventModalData} />
     </div>

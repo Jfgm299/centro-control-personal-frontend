@@ -18,6 +18,12 @@
     },
     "travels": {
       "description": "Registro de viajes y aventuras"
+    },
+    "calendar": {
+      "description": "Gestión de eventos y recordatorios"
+    },
+    "automations": {
+      "description": "Creación de workflows y automatizaciones"
     }
   }
 }

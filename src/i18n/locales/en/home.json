@@ -18,6 +18,12 @@
     },
     "travels": {
       "description": "Travel and adventures logging"
+    },
+    "calendar": {
+      "description": "Events and reminders management"
+    },
+    "automations": {
+      "description": "Workflows and automations creation"
     }
   }
 }

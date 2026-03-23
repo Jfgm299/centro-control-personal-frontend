@@ -1,7 +1,8 @@
-import { useState }              from 'react'
-import { useTranslation }         from 'react-i18next'
-import { useMacroStats }          from '../../hooks/useMacroStats'
-import { useMacroGoals }          from '../../hooks/useMacroGoals'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useMacroStats } from '../../hooks/useMacroStats'
+import { useMacroGoals } from '../../hooks/useMacroGoals'
 import NutrientGauge              from './NutrientGauge'
 import NutrientEvolutionChart     from './NutrientEvolutionChart'
 import GoalsModal                 from '../GoalsModal'
@@ -25,6 +26,22 @@ const NUTRIENT_COLOR_MAP = {
   avg_fiber_g:         NUTRIENT_COLORS.fiber_g,
 }
 
+function GlassCard({ children, className = '' }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+            className={`
+        relative rounded-2xl p-4 md:p-6 backdrop-blur-xl backdrop-saturate-150
+        bg-white/5 border border-white/10 shadow-xl shadow-black/5 ${className}
+      `}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export default function StatsView() {
   const { t }                     = useTranslation('macro')
   const [days, setDays]           = useState(30)
@@ -36,56 +53,62 @@ export default function StatsView() {
   const avg = stats?.daily_average ?? {}
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
 
       {/* Period selector */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-1">
-          {PERIOD_OPTIONS.map((d) => (
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm">
+            {PERIOD_OPTIONS.map((d) => (
+              <button
+                key={d}
+                onClick={() => setDays(d)}
+                className="relative px-4 py-1.5 rounded-full text-xs font-semibold transition-colors text-white/60 hover:text-white"
+              >
+                {days === d && (
+                  <motion.div
+                    layoutId="stats-period-indicator"
+                    className="absolute inset-0 bg-white/10 rounded-full shadow-md"
+                  />
+                )}
+                <span className="relative z-10">{d}d</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm">
             <button
-              key={d}
-              onClick={() => setDays(d)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                days === d
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
-              }`}
+              onClick={() => setGoalsOpen(true)}
+              className="relative px-3 py-1 rounded-full text-xs font-semibold transition-colors text-white/60 hover:text-white flex items-center gap-2"
             >
-              {d}d
+                            <span className="relative z-10">{t('stats.editGoals')}</span>
             </button>
-          ))}
+          </div>
         </div>
-        <button
-          onClick={() => setGoalsOpen(true)}
-          className="text-xs font-medium text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition-colors flex items-center gap-1"
-        >
-          🎯 {t('stats.editGoals')}
-        </button>
-      </div>
 
       {/* Consistency KPI */}
       {stats && (
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: t('stats.daysLogged'),   value: stats.days_logged,                       suffix: ''  },
-            { label: t('stats.consistency'),  value: `${Math.round(stats.consistency_pct)}`,  suffix: '%' },
-            { label: t('stats.totalEntries'), value: stats.total_entries,                     suffix: ''  },
-          ].map(({ label, value, suffix }) => (
-            <div key={label} className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
-              <p className="text-gray-800 text-xl font-bold">{value}<span className="text-gray-400 text-sm">{suffix}</span></p>
-              <p className="text-gray-400 text-xs mt-0.5">{label}</p>
-            </div>
-          ))}
-        </div>
+        <GlassCard>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: t('stats.daysLogged'),   value: stats.days_logged,                       suffix: ''  },
+              { label: t('stats.consistency'),  value: `${Math.round(stats.consistency_pct)}`,  suffix: '%' },
+              { label: t('stats.totalEntries'), value: stats.total_entries,                     suffix: ''  },
+            ].map(({ label, value, suffix }) => (
+              <div key={label} className="text-center">
+                <p className="text-white text-2xl font-bold">{value}<span className="text-white/50 text-base">{suffix}</span></p>
+                <p className="text-white/50 text-xs mt-0.5">{label}</p>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
       )}
 
       {/* Gauges */}
-      <div>
-        <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
+      <GlassCard>
+        <h3 className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-4">
           {t('stats.dailyAvg')} · {days}d
         </h3>
         {isLoading ? (
-          <div className="flex justify-center py-8 text-gray-400 text-sm">{t('common.loading')}</div>
+          <div className="flex justify-center py-8 text-white/60 text-sm">{t('common.loading')}</div>
         ) : (
           <div className="flex justify-around flex-wrap gap-4">
             {GAUGE_CONFIG.map(({ key, goalKey, unit, label }) => (
@@ -100,49 +123,54 @@ export default function StatsView() {
             ))}
           </div>
         )}
-      </div>
+      </GlassCard>
 
       {/* Evolution line chart */}
-      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+      <GlassCard>
         <NutrientEvolutionChart />
-      </div>
+      </GlassCard>
 
       {/* Top products */}
       {stats?.top_products?.length > 0 && (
-        <div>
-          <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
+        <GlassCard>
+          <h3 className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-4">
             {t('stats.topProducts')}
           </h3>
-          <div className="space-y-1.5">
-            {stats.top_products.slice(0, 8).map(({ product, entry_count }, i) => (
+          <div className="space-y-2">
+            {stats.top_products.slice(0, 5).map(({ product, entry_count }, i) => (
               <div
                 key={product.id}
-                className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
+                                className="
+                  flex items-center gap-3 px-3 py-2 rounded-xl
+                  bg-black/10 hover:bg-black/20 transition-colors
+                "
               >
-                <span className="text-gray-300 text-xs w-4 text-right flex-shrink-0">{i + 1}</span>
-                <div className="w-7 h-7 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                <span className="text-white/40 text-sm w-5 text-center flex-shrink-0">{i + 1}</span>
+                <div className="w-9 h-9 rounded-lg bg-white/5 overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {product.image_url
                     ? <img src={product.image_url} alt={product.product_name} className="w-full h-full object-cover" />
-                    : <span className="w-full h-full flex items-center justify-center text-gray-300 text-xs">🍽</span>
+                    : <span className="text-lg">🍽️</span>
                   }
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-gray-700 text-sm truncate">{product.product_name}</p>
-                  {product.brand && <p className="text-gray-400 text-xs truncate">{product.brand}</p>}
+                  <p className="text-white text-sm font-medium truncate">{product.product_name}</p>
+                  {product.brand && <p className="text-white/50 text-xs truncate">{product.brand}</p>}
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-[#f59e0b] text-sm font-semibold">{entry_count}×</p>
+                  <p className="text-amber-400 text-sm font-semibold">{entry_count}×</p>
                   {product.energy_kcal_100g != null && (
-                    <p className="text-gray-300 text-xs">{Math.round(product.energy_kcal_100g)} kcal/100g</p>
+                    <p className="text-white/40 text-xs">{Math.round(product.energy_kcal_100g)} kcal</p>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </GlassCard>
       )}
 
-      {goalsOpen && <GoalsModal onClose={() => setGoalsOpen(false)} />}
+      <AnimatePresence>
+        {goalsOpen && <GoalsModal onClose={() => setGoalsOpen(false)} />}
+      </AnimatePresence>
     </div>
   )
 }

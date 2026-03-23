@@ -7,61 +7,45 @@ import { useCalendarStore }         from '../../store/calendarStore'
 import CreateReminderModal          from './CreateReminderModal'
 import CategoryFilter               from '../categories/CategoryFilter'
 import RoutineFilter                from '../routines/RoutineFilter'
+import ReminderCard                 from './ReminderCard'
+import clsx from 'clsx'
 
 /* ─── SectionTitle ─────────────────────────────────────────────────────────── */
 function SectionTitle({ children }) {
   return (
-    <div style={{ fontSize: 10.5, fontWeight: 700, color: '#9ca3af', letterSpacing: '.07em', textTransform: 'uppercase', padding: '10px 12px 4px' }}>
+    <div className="text-[10px] font-black text-white/40 tracking-[0.1em] uppercase px-3 pt-6 pb-2">
       {children}
     </div>
   )
 }
 
-/* ─── Reminder item (draggable) ────────────────────────────────────────────── */
-const PRIORITY_COLOR = { high: '#ef4444', medium: '#f59e0b', low: '#6b7280' }
-
-function ReminderItem({ reminder, categoryColor, onTap }) {
-  const dotColor = categoryColor ?? PRIORITY_COLOR[reminder.priority] ?? '#9ca3af'
-  return (
-    <div
-      draggable
-      data-reminder-id={String(reminder.id)}
-      onDragStart={e => e.dataTransfer.setData('reminderId', String(reminder.id))}
-      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 6, margin: '0 4px', cursor: 'grab' }}
-      onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
-      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-      onClick={() => onTap?.(reminder)}
-    >
-      <span style={{ width: 7, height: 7, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
-      <span style={{ fontSize: 12.5, color: '#374151', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {reminder.title}
-      </span>
-    </div>
-  )
-}
-
 /* ─── Collapsible category group (para recordatorios asignados) ─────────────── */
-function ScheduledCategoryGroup({ category, items }) {
+function ScheduledCategoryGroup({ category, items, onTap }) {
   const { t } = useTranslation('calendar')
-  const [open, setOpen]                         = useState(true)
+  const [open, setOpen] = useState(true)
   const { hiddenCategoryIds, toggleCategoryVisibility } = useCalendarStore()
   const catId   = category?.id ?? null
   const visible = catId !== null ? !hiddenCategoryIds.has(catId) : true
-  const color   = category?.color ?? '#9ca3af'
+  const color   = category?.color ?? '#94a3b8'
 
   return (
-    <div>
+    <div className="mb-1">
       {/* Header del grupo */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px 4px', gap: 6 }}>
+      <div className="flex items-center px-3 py-2 gap-2 group/header">
         {/* Flecha collapse */}
-        <button onClick={() => setOpen(o => !o)} style={iconBtn}>
-          <span style={{ display: 'inline-block', transform: open ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s', fontSize: 10, color: '#9ca3af' }}>▶</span>
+        <button onClick={() => setOpen(o => !o)} className="w-5 h-5 flex items-center justify-center rounded-md hover:bg-white/5 transition-colors">
+          <span className={clsx(
+            "text-[8px] text-white/30 transition-transform duration-200",
+            open ? "rotate-90" : "rotate-0"
+          )}>▶</span>
         </button>
 
         {/* Color + nombre */}
-        <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', letterSpacing: '.05em', textTransform: 'uppercase', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {category ? (category.icon ? `${category.icon} ${category.name}` : category.name) : t('reminders.uncategorized')}
+        <div className="w-2 h-2 rounded-full shrink-0 shadow-sm" style={{ background: color }} />
+        <span className="text-[11px] font-bold text-white/70 uppercase tracking-wider flex-1 truncate">
+          {category
+            ? (category.icon ? `${category.icon} ${category.name}` : category.name)
+            : t('reminders.uncategorized')}
         </span>
 
         {/* Ojo — solo si tiene category_id real */}
@@ -69,22 +53,31 @@ function ScheduledCategoryGroup({ category, items }) {
           <button
             onClick={() => toggleCategoryVisibility(catId)}
             title={visible ? t('categories.filter.hide') : t('categories.filter.show')}
-            style={{ ...iconBtn, color: visible ? '#6b7280' : '#d1d5db' }}
+            className={clsx(
+              "w-6 h-6 flex items-center justify-center rounded-lg transition-all",
+              visible ? "text-white/40 hover:text-white hover:bg-white/10" : "text-white/20 hover:text-white/40"
+            )}
           >
-            {visible ? (<svg style={{ width: 13, height: 13, display: 'block' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>) : (<svg style={{ width: 13, height: 13, display: 'block' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-            </svg>)}
+            {visible
+              ? (<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>)
+              : (<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                </svg>)}
           </button>
         )}
       </div>
 
       {/* Items */}
-      {open && items.map(r => (
-        <ReminderItem key={r.id} reminder={r} categoryColor={color} onTap={onReminderTap} />
-      ))}
+      {open && (
+        <div className="flex flex-col gap-1 px-1">
+          {items.map(r => (
+            <ReminderCard key={r.id} reminder={r} color={color} onTap={onTap} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -92,20 +85,20 @@ function ScheduledCategoryGroup({ category, items }) {
 /* ─── ReminderPanel ────────────────────────────────────────────────────────── */
 export default function ReminderPanel({ onReminderTap }) {
   const { t } = useTranslation('calendar')
-  const { data: reminders  = [] }                    = useReminders()
-  const { data: categories = [] }                    = useCategories()
-  const { data: scheduledIds = new Set() }           = useScheduledReminderIds()
-  const [search, setSearch]                          = useState(false)
-  const [searchText, setSearchText]                  = useState('')
-  const [createOpen, setCreateOpen]                  = useState(false)
+  const { data: reminders  = [] }          = useReminders()
+  const { data: categories = [] }          = useCategories()
+  const { data: scheduledIds = new Set() } = useScheduledReminderIds()
+  const [search, setSearch]                = useState(false)
+  const [searchText, setSearchText]        = useState('')
+  const [createOpen, setCreateOpen]        = useState(false)
 
   /* Separar scheduled vs unscheduled */
-  const scheduled   = useMemo(() => reminders.filter(r => scheduledIds.has(r.id)),   [reminders, scheduledIds])
-  const unscheduled = useMemo(() => reminders.filter(r => !scheduledIds.has(r.id)),  [reminders, scheduledIds])
+  const scheduled   = useMemo(() => reminders.filter(r =>  scheduledIds.has(r.id)), [reminders, scheduledIds])
+  const unscheduled = useMemo(() => reminders.filter(r => !scheduledIds.has(r.id)), [reminders, scheduledIds])
 
   /* Unscheduled: alta prioridad por un lado, resto por otro */
-  const highPriority = unscheduled.filter(r => r.priority === 'high')
-  const others       = unscheduled.filter(r => r.priority !== 'high')
+  const highPriority = unscheduled.filter(r => r.priority === 'high' || r.priority === 'urgent')
+  const others       = unscheduled.filter(r => r.priority !== 'high' && r.priority !== 'urgent')
 
   /* Agrupar "others" por categoría */
   const othersByCategory = useMemo(() => {
@@ -139,19 +132,23 @@ export default function ReminderPanel({ onReminderTap }) {
     : null
 
   return (
-    <div style={{ width: 220, flexShrink: 0, display: 'flex', flexDirection: 'column', background: 'white', borderRight: '1px solid #f0f0f0', height: '100%', overflow: 'hidden' }}>
+    <div className="flex flex-col h-full bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden w-full">
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 12px 8px' }}>
-        <span style={{ fontSize: 13.5, fontWeight: 700, color: '#111827' }}>{t('reminders.title')}</span>
-        <div style={{ display: 'flex', gap: 4 }}>
-          <button onClick={() => setSearch(s => !s)} style={{ ...iconBtn, color: search ? '#6366f1' : '#9ca3af', fontSize: 13 }}>🔍</button>
-          <button onClick={() => setCreateOpen(true)} style={{
-            display: 'flex', alignItems: 'center', gap: 3,
-            padding: '3px 8px', borderRadius: 6,
-            border: '1px solid #e5e7eb', background: 'white',
-            fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer',
-          }}>
+      <div className="flex items-center justify-between p-4 flex-shrink-0">
+        <span className="text-sm font-black text-white drop-shadow-md uppercase tracking-widest">{t('reminders.title')}</span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSearch(s => !s)}
+            className={clsx(
+              "w-8 h-8 flex items-center justify-center rounded-xl transition-all border",
+              search ? "bg-white/20 text-white border-white/30" : "bg-white/5 text-white/50 border-white/5 hover:bg-white/10"
+            )}
+          >🔍</button>
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white text-[11px] font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all shadow-sm"
+          >
             {t('reminders.add')}
           </button>
         </div>
@@ -159,50 +156,41 @@ export default function ReminderPanel({ onReminderTap }) {
 
       {/* Search input */}
       {search && (
-        <div style={{ padding: '0 10px 8px' }}>
+        <div className="px-4 pb-4">
           <input
             autoFocus
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
             placeholder={t('reminders.searchPlaceholder')}
-            style={{ width: '100%', boxSizing: 'border-box', padding: '5px 10px', borderRadius: 7, border: '1px solid #e5e7eb', fontSize: 12, color: '#374151', outline: 'none', background: '#f9fafb' }}
+            className="w-full px-4 py-2.5 text-xs bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all shadow-inner"
           />
         </div>
       )}
 
       {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="flex-1 overflow-y-auto no-scrollbar pb-32">
         {filtered ? (
           /* ── Resultados búsqueda ── */
-          filtered.length === 0
-            ? <div style={{ padding: '20px 12px', fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>{t('reminders.noResults')}</div>
-            : filtered.map(r => {
-                const cat = categories.find(c => c.id === r.category_id)
-                return <ReminderItem key={r.id} reminder={r} categoryColor={cat?.color} onTap={onReminderTap} />
-              })
+          <div className="flex flex-col gap-1 px-1">
+            {filtered.length === 0
+              ? <div className="p-8 text-center text-xs text-white/30 italic font-medium">{t('reminders.noResults')}</div>
+              : filtered.map(r => {
+                  const cat = categories.find(c => c.id === r.category_id)
+                  return <ReminderCard key={r.id} reminder={r} color={cat?.color} onTap={onReminderTap} />
+                })}
+          </div>
         ) : (
           <>
-            {/* ── 1. PRIORIDAD ALTA (sin asignar) ── */}
+            {/* ── 1. ALTA PRIORIDAD (sin asignar) ── */}
             {highPriority.length > 0 && (
               <>
                 <SectionTitle>{t('reminders.sections.highPriority')}</SectionTitle>
-                {highPriority.map((r, i) => (
-                  <div
-                    key={r.id}
-                    draggable
-                    data-reminder-id={String(r.id)}
-                    onDragStart={e => e.dataTransfer.setData('reminderId', String(r.id))}
-                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 6, margin: '0 4px', cursor: 'grab' }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#fef2f2'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    onClick={() => onReminderTap?.(r)}
-                  >
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', minWidth: 14 }}>{i + 1}</span>
-                    <span style={{ fontSize: 14 }}>🚩</span>
-                    <span style={{ fontSize: 12.5, color: '#374151', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</span>
-                  </div>
-                ))}
-                <div style={{ height: 1, background: '#f3f4f6', margin: '6px 12px' }} />
+                <div className="flex flex-col gap-1 px-1">
+                  {highPriority.map(r => (
+                    <ReminderCard key={r.id} reminder={r} onTap={onReminderTap} />
+                  ))}
+                </div>
+                <div className="h-px bg-white/5 mx-4 my-4" />
               </>
             )}
 
@@ -210,14 +198,17 @@ export default function ReminderPanel({ onReminderTap }) {
             {scheduledByCategory.length > 0 && (
               <>
                 <SectionTitle>{t('reminders.sections.scheduled')}</SectionTitle>
-                {scheduledByCategory.map(({ category, items }) => (
-                  <ScheduledCategoryGroup
-                    key={category?.id ?? 'none'}
-                    category={category}
-                    items={items}
-                  />
-                ))}
-                <div style={{ height: 1, background: '#f3f4f6', margin: '6px 12px' }} />
+                <div className="flex flex-col gap-2">
+                  {scheduledByCategory.map(({ category, items }) => (
+                    <ScheduledCategoryGroup
+                      key={category?.id ?? 'none'}
+                      category={category}
+                      items={items}
+                      onTap={onReminderTap}
+                    />
+                  ))}
+                </div>
+                <div className="h-px bg-white/5 mx-4 my-4" />
               </>
             )}
 
@@ -225,38 +216,48 @@ export default function ReminderPanel({ onReminderTap }) {
             {othersByCategory.length > 0 && (
               <>
                 <SectionTitle>{t('reminders.sections.unassigned')}</SectionTitle>
-                {othersByCategory.map(({ category, items }) => {
-                  const color = category?.color ?? '#9ca3af'
-                  return (
-                    <div key={category?.id ?? 'none'}>
-                      {othersByCategory.length > 1 && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px 2px' }}>
-                          <span style={{ width: 7, height: 7, borderRadius: '50%', background: color }} />
-                          <span style={{ fontSize: 10.5, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                            {category ? (category.icon ? `${category.icon} ${category.name}` : category.name) : t('reminders.uncategorized')}
-                          </span>
+                <div className="flex flex-col gap-3">
+                  {othersByCategory.map(({ category, items }) => {
+                    const color = category?.color ?? '#94a3b8'
+                    return (
+                      <div key={category?.id ?? 'none'}>
+                        {othersByCategory.length > 1 && (
+                          <div className="flex items-center gap-2 px-4 py-1">
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+                            <span className="text-[10px] font-black text-white/30 uppercase tracking-widest truncate">
+                              {category
+                                ? (category.icon ? `${category.icon} ${category.name}` : category.name)
+                                : t('reminders.uncategorized')}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1 px-1">
+                          {items.map(r => (
+                            <ReminderCard key={r.id} reminder={r} color={color} onTap={onReminderTap} />
+                          ))}
                         </div>
-                      )}
-                      {items.map(r => <ReminderItem key={r.id} reminder={r} categoryColor={color} onTap={onReminderTap} />)}
-                    </div>
-                  )
-                })}
+                      </div>
+                    )
+                  })}
+                </div>
               </>
             )}
 
             {/* ── Empty state ── */}
             {reminders.length === 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 12px', gap: 8 }}>
-                <span style={{ fontSize: 24 }}>✅</span>
-                <span style={{ fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>{t('reminders.empty')}</span>
+              <div className="flex flex-col items-center justify-center p-12 gap-4">
+                <span className="text-4xl drop-shadow-lg opacity-50">✅</span>
+                <span className="text-xs text-white/40 text-center font-medium leading-relaxed italic">{t('reminders.empty')}</span>
               </div>
             )}
           </>
         )}
 
-        {/* Categorías */}
-        <CategoryFilter />
-        <RoutineFilter />
+        <div className="mt-8 border-t border-white/5 pt-4">
+          <CategoryFilter />
+          <div className="h-4" />
+          <RoutineFilter />
+        </div>
       </div>
 
       <CreateReminderModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />
@@ -264,4 +265,9 @@ export default function ReminderPanel({ onReminderTap }) {
   )
 }
 
-const iconBtn = { width: 24, height: 24, borderRadius: 5, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: 12 }
+const iconBtn = {
+  width: 24, height: 24, borderRadius: 5, border: 'none',
+  background: 'transparent', cursor: 'pointer',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  padding: 0, fontSize: 12,
+}

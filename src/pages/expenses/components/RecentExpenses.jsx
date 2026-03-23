@@ -25,25 +25,16 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+      <div className="relative overflow-hidden rounded-2xl backdrop-blur-xl backdrop-saturate-150 bg-white/5 border border-white/10 shadow-lg p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-slate-800">{t('list.title')}</h2>
-          <button
-            onClick={() => setModalExpense(null)}
-            className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-all"
-            title={t('list.create')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-            </svg>
-          </button>
+          <h2 className="text-base font-semibold text-white">{t('list.title')}</h2>
         </div>
 
         {sorted.length === 0 ? (
-          <p className="text-slate-400 text-sm text-center py-8">{t('list.empty')}</p>
+          <p className="text-white/50 text-sm text-center py-8">{t('list.empty')}</p>
         ) : (
-          <div className="flex flex-col divide-y divide-slate-50">
+          <div className="flex flex-col divide-y divide-white/10">
             {sorted.map((expense) => (
               <div key={expense.id} className="flex items-center justify-between py-3 group">
                 {/* Info */}
@@ -55,8 +46,8 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
                     {expense.account[0]}
                   </span>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{expense.name}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-sm font-medium text-white">{expense.name}</p>
+                    <p className="text-xs text-white/50">
                       {expense.account} · {new Date(expense.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -64,7 +55,7 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
 
                 {/* Amount + actions */}
                 <div className="flex items-center gap-3">
-                  <span className="font-mono font-semibold text-slate-800 text-sm">
+                  <span className="font-mono font-semibold text-white text-sm">
                     {fmt(expense.quantity)}
                   </span>
 
@@ -73,7 +64,7 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
                     {/* Edit */}
                     <button
                       onClick={() => setModalExpense(expense)}
-                      className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
                       title={t('list.edit')}
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +83,7 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
                         </button>
                         <button
                           onClick={() => setConfirmId(null)}
-                          className="px-2 py-0.5 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+                          className="px-2 py-0.5 text-xs font-medium text-white/70 border border-white/20 rounded-lg hover:bg-white/10 transition-all"
                         >
                           {t('modal.cancel')}
                         </button>
@@ -100,7 +91,7 @@ export default function RecentExpenses({ expenses, onCreate, onUpdate, onRemove 
                     ) : (
                       <button
                         onClick={() => setConfirmId(expense.id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-white/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
                         title={t('list.delete')}
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

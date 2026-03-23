@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 import { useWorkouts, useWorkoutDetail } from './hooks/useWorkouts'
 import { useWorkoutMutations } from './hooks/useWorkoutMutations'
 import { useActiveWorkoutStore } from './store/activeWorkoutStore'
@@ -46,26 +47,26 @@ export default function GymPageMobile() {
   }
 
   if (isLoading) return (
-    <div className="flex items-center justify-center h-64 text-slate-400">
-      <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
+    <div className="flex items-center justify-center h-64 text-white/50">
+      <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="flex flex-col pb-32">
+    <div className="flex flex-col pb-32 text-white min-h-full">
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-3">
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 sticky top-0 z-10 mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{t('title')}</h1>
-          <p className="text-slate-400 text-sm mt-0.5">{t('subtitle')}</p>
+          <h1 className="text-3xl font-bold text-white">{t('title')}</h1>
+          <p className="text-white/60 text-sm mt-0.5">{t('subtitle')}</p>
         </div>
         {!activeWorkout && (
           <button
             onClick={() => setShowStartModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 text-white text-sm font-medium rounded-xl flex-shrink-0"
+            className="flex items-center gap-1.5 px-3 py-2 bg-white/10 text-white text-sm font-semibold rounded-xl flex-shrink-0 backdrop-blur-md shadow-sm border border-white/10 hover:bg-white/20 transition-colors"
           >
-            <span>+</span> {t('start.cta')}
+            <span className="text-lg leading-none mb-0.5">+</span> {t('start.cta')}
           </button>
         )}
       </div>
@@ -78,19 +79,27 @@ export default function GymPageMobile() {
       )}
 
       {/* Tabs */}
-      <div className="px-4 mb-4">
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="px-4 mb-5">
+        <div className="flex gap-1 bg-black/20 backdrop-blur-md rounded-xl p-1 border border-white/10">
           {TABS.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`relative flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 activeTab === tab
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-gray-400 hover:text-gray-700'
+                  ? 'text-white'
+                  : 'text-white/50 hover:text-white/80'
               }`}
             >
-              {tab === 'overview' ? '📊 Resumen' : '📈 Gráficas'}
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="active-tab-gym-mobile"
+                  className="absolute inset-0 bg-white/20 rounded-lg shadow-sm border border-white/10"
+                />
+              )}
+              <span className="relative z-10">
+                {tab === 'overview' ? '📊 Resumen' : '📈 Gráficas'}
+              </span>
             </button>
           ))}
         </div>
@@ -98,7 +107,7 @@ export default function GymPageMobile() {
 
       {/* Tab: Overview — KPIs + Calendario + Mediciones */}
       {activeTab === 'overview' && (
-        <div className="flex flex-col gap-3 px-4">
+        <div className="flex flex-col gap-4 px-4">
           {/* KPIs compact 2x2 */}
           <WorkoutKPIs kpis={kpis} compact />
 
@@ -112,8 +121,8 @@ export default function GymPageMobile() {
 
       {/* Tab: Charts — gráficas de sesiones + progresión ejercicios */}
       {activeTab === 'charts' && (
-        <div className="flex flex-col gap-4 px-4">
-          <div style={{ height: 500 }}>
+        <div className="flex flex-col gap-5 px-4">
+          <div style={{ height: 600 }}>
             <WorkoutCharts sessionData={sessionData} />
           </div>
           <ExerciseProgressChart />

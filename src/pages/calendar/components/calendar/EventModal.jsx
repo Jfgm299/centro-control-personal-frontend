@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { useCategories } from '../../hooks/useCategories'
 import { useCalendarMutations } from '../../hooks/useCalendarMutations'
 import { useRoutineMutations } from '../../hooks/useRoutineMutations'
+import clsx from 'clsx'
+import CategorySelect from '../categories/CategorySelect'
+import SelectInput from '../../../../components/ui/SelectInput'
+
+const inputCls = 'w-full px-4 py-2.5 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all shadow-inner'
 
 const REMINDER_OPTIONS = [5, 10, 15, 30, 60, 120, 1440]
 
-function toDatetimeLocal(date) {
-  if (!date) return ''
-  const d = date instanceof Date ? date : new Date(date)
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
 
 function toDateOnly(date) {
   if (!date) return ''
@@ -26,9 +26,19 @@ function inputToISO(value, allDay) {
   return new Date(value).toISOString()
 }
 
-const inputCls = 'w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-800 placeholder-gray-400'
-const selectCls = 'w-full px-3 py-2.5 h-[42px] text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all bg-white text-slate-700'
-const labelCls = 'text-xs font-medium text-gray-500 mb-1 block'
+function toDatetimeLocal(isoString) {
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+
+const labelCls = 'text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1.5 block'
 
 export default function EventModal({ isOpen, onClose, initialData }) {
   const { t } = useTranslation('calendar')
@@ -39,57 +49,38 @@ export default function EventModal({ isOpen, onClose, initialData }) {
   const isRoutine = !!initialData?.routine_id
   const isEditing = !!initialData?.id && !isRoutine
 
-  const [form, setForm] = useState({
-    title: '', description: '', category_id: '',
-    start_at: '', end_at: '', all_day: false,
-    color_override: '', enable_dnd: false, reminder_minutes: '',
-  })
+  const defaultFormState = useMemo(() => ({
+    title: initialData?.title ?? '',
+    description: initialData?.description ?? '',
+    category_id: initialData?.category_id ?? '',
+    start_at: (initialData && (initialData.start_at || initialData.start)) 
+              ? (initialData.all_day ? toDateOnly(initialData.start_at || initialData.start) : toDatetimeLocal(initialData.start_at || initialData.start))
+              : '',
+    end_at: (initialData && (initialData.end_at || initialData.end)) 
+            ? (initialData.all_day ? toDateOnly(initialData.end_at || initialData.end) : toDatetimeLocal(initialData.end_at || initialData.end))
+            : '',
+    all_day: initialData?.all_day ?? false,
+    color_override: initialData?.color_override ?? '',
+    enable_dnd: initialData?.enable_dnd ?? false,
+    reminder_minutes: initialData?.reminder_minutes ?? '',
+  }), [initialData])
+
+  const [form, setForm] = useState(defaultFormState)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    if (!isOpen) return
-    if (initialData) {
-      const allDay = initialData.all_day ?? false
-      const toVal = allDay ? toDateOnly : toDatetimeLocal
-      setForm({
-        title:            initialData.title            ?? '',
-        description:      initialData.description      ?? '',
-        category_id:      initialData.category_id      ?? '',
-        start_at:         toVal(initialData.start_at ?? initialData.start),
-        end_at:           toVal(initialData.end_at   ?? initialData.end),
-        all_day:          allDay,
-        color_override:   initialData.color_override   ?? '',
-        enable_dnd:       initialData.enable_dnd       ?? false,
-        reminder_minutes: initialData.reminder_minutes ?? '',
-      })
-    } else {
-      setForm({ title: '', description: '', category_id: '', start_at: '', end_at: '', all_day: false, color_override: '', enable_dnd: false, reminder_minutes: '' })
-    }
-    setError(null)
-    setConfirmDelete(false)
-  }, [isOpen, initialData])
+  const set = useCallback((key, val) => setForm((f) => ({ ...f, [key]: val })), [])
 
-  useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onClose])
-
-  if (!isOpen) return null
-
-  const set = (key, val) => setForm((f) => ({ ...f, [key]: val }))
-
-  const handleAllDayChange = (checked) => {
+  const handleAllDayChange = useCallback((checked) => {
     setForm(f => ({
       ...f,
       all_day: checked,
-      start_at: f.start_at ? (checked ? f.start_at.slice(0, 10) : f.start_at + 'T00:00') : '',
-      end_at:   f.end_at   ? (checked ? f.end_at.slice(0, 10)   : f.end_at   + 'T00:00') : '',
+      start_at: f.start_at ? (checked ? f.start_at.slice(0, 10) : f.start_at.slice(0, 10) + 'T00:00') : '',
+      end_at:   f.end_at   ? (checked ? f.end_at.slice(0, 10)   : f.end_at.slice(0, 10)   + 'T00:00') : '',
     }))
-  }
+  }, [])
 
-  const buildPayload = () => ({
+  const buildPayload = useCallback(() => ({
     title:            form.title,
     description:      form.description      || undefined,
     category_id:      form.category_id      || undefined,
@@ -99,12 +90,11 @@ export default function EventModal({ isOpen, onClose, initialData }) {
     color_override:   form.color_override   || undefined,
     enable_dnd:       form.enable_dnd,
     reminder_minutes: form.reminder_minutes || undefined,
-  })
+  }), [form])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     setError(null)
-    // Las instancias de rutina son de solo lectura — el submit no debería ocurrir
     if (isRoutine) return
     try {
       if (isEditing) {
@@ -116,15 +106,14 @@ export default function EventModal({ isOpen, onClose, initialData }) {
     } catch {
       setError(t('errors.saveEvent'))
     }
-  }
+  }, [isRoutine, isEditing, initialData?.id, buildPayload, create, update, onClose, t])
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     try { await remove.mutateAsync(initialData.id); onClose() }
     catch { setError(t('errors.deleteEvent')) }
-  }
+  }, [initialData?.id, onClose, remove, t])
 
-  // Cancela solo esta ocurrencia de la rutina (crea una RoutineException)
-  const handleCancelOccurrence = async () => {
+  const handleCancelOccurrence = useCallback(async () => {
     try {
       const originalDate = new Date(initialData.start_at).toISOString().slice(0, 10)
       await addException.mutateAsync({
@@ -136,279 +125,201 @@ export default function EventModal({ isOpen, onClose, initialData }) {
     } catch {
       setError(t('errors.deleteEvent'))
     }
-  }
+  }, [addException, initialData?.routine_id, initialData?.start_at, onClose, t])
 
   const isPending = create.isPending || update.isPending
 
-  // ── Vista de solo lectura para instancias de rutina ──────────────────────
-  if (isRoutine) {
-    return (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
-        onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-      >
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+  const reminderOptions = useMemo(() => [
+    { value: '', label: t('event.fields.reminderNone') },
+    ...REMINDER_OPTIONS.map(m => ({
+      value: m,
+      label: t(`event.fields.reminderOptions.${m}`),
+    }))
+  ], [t])
 
-          {/* Header — igual que el modal de evento */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-gray-800">
-              🔁 {t('routines.title')}
-            </h2>
-            <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+  // Este useEffect solo resetea el formulario cuando se cierra el modal o cambia el evento (id)
+  useEffect(() => {
+    if (isOpen) {
+      setForm(defaultFormState)
+      setError(null)
+      setConfirmDelete(false)
+    }
+  }, [isOpen, defaultFormState])
 
-          <div className="px-6 py-5 flex flex-col gap-4">
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
 
-            {/* Título — readonly */}
-            <div className="flex flex-col gap-1.5">
-              <label className={labelCls}>{t('event.fields.title')}</label>
-              <input
-                readOnly
-                value={form.title}
-                className={inputCls + ' bg-gray-50 cursor-default'}
-              />
-            </div>
+  if (!isOpen) return null
 
-            {/* Descripción — readonly */}
-            {form.description && (
-              <div className="flex flex-col gap-1.5">
-                <label className={labelCls}>{t('event.fields.description')}</label>
-                <textarea
-                  readOnly
-                  value={form.description}
-                  rows={2}
-                  className={`${inputCls} resize-none bg-gray-50 cursor-default`}
-                />
-              </div>
-            )}
-
-            {/* Fechas — readonly */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex flex-col gap-1.5">
-                <label className={labelCls}>{t('event.fields.startAt')}</label>
-                <input
-                  readOnly
-                  type="datetime-local"
-                  value={form.start_at}
-                  className={inputCls + ' h-[42px] bg-gray-50 cursor-default'}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className={labelCls}>{t('event.fields.endAt')}</label>
-                <input
-                  readOnly
-                  type="datetime-local"
-                  value={form.end_at}
-                  className={inputCls + ' h-[42px] bg-gray-50 cursor-default'}
-                />
-              </div>
-            </div>
-
-            {/* Nota readonly */}
-            <p className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
-              {t('routines.readonlyNote')}
-            </p>
-
-            {error && (
-              <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
-            )}
-
-            {/* Acciones — misma estructura que el modal de evento */}
-            <div className="flex items-center justify-between pt-1">
-              {!confirmDelete ? (
-                <button
-                  type="button"
-                  onClick={() => setConfirmDelete(true)}
-                  className="text-xs text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors px-3 py-1.5 rounded-lg"
-                >
-                  {t('routines.cancelOccurrence')}
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-red-500">{t('event.confirmDelete')}</span>
-                  <button
-                    type="button"
-                    onClick={handleCancelOccurrence}
-                    disabled={addException.isPending}
-                    className="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-50 transition-colors px-3 py-1.5 rounded-lg"
-                  >
-                    {t('routines.cancelOccurrence')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmDelete(false)}
-                    className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                  >✕</button>
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 max-w-[140px] py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 transition-all"
-              >
-                {t('common:actions.close')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // ── Vista normal para eventos ─────────────────────────────────────────────
-  return (
+  const modalBody = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
-
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden">
+        
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-800">
-            {isEditing ? t('event.edit') : t('event.new')}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 flex-shrink-0">
+          <h2 className="text-lg font-bold text-white">
+            {isRoutine ? `🔁 ${t('routines.title')}` : isEditing ? t('event.edit') : t('event.new')}
           </h2>
-          <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
+          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
-
+        <form onSubmit={handleSubmit} className="px-6 py-6 flex flex-col gap-5 overflow-y-auto flex-1">
+          
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.title')}</label>
             <input
-              required autoFocus
+              required autoFocus={!isRoutine}
+              readOnly={isRoutine}
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
               placeholder={t('event.fields.titlePlaceholder')}
-              className={inputCls}
+              className={clsx(inputCls, isRoutine && 'opacity-60 cursor-default')}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>{t('event.fields.description')}</label>
             <textarea
+              readOnly={isRoutine}
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               placeholder={t('event.fields.descriptionPlaceholder')}
               rows={2}
-              className={`${inputCls} resize-none`}
+              className={clsx(inputCls, 'resize-none', isRoutine && 'opacity-60 cursor-default')}
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>{t('event.fields.category')}</label>
-            <select
-              value={form.category_id}
-              onChange={(e) => set('category_id', e.target.value ? Number(e.target.value) : '')}
-              className={selectCls}
-            >
-              <option value="">{t('event.fields.categoryNone')}</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.icon ? `${c.icon} ` : ''}{c.name}</option>
-              ))}
-            </select>
-          </div>
+          {!isRoutine && (
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>{t('event.fields.category')}</label>
+              <CategorySelect
+                categories={categories}
+                value={form.category_id}
+                onChange={(val) => set('category_id', val)}
+              />
+            </div>
+          )}
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('event.fields.startAt')}</label>
               <input
-                required
                 type={form.all_day ? 'date' : 'datetime-local'}
                 value={form.start_at}
                 onChange={(e) => set('start_at', e.target.value)}
-                className={inputCls + ' h-[42px]'}
+                className={clsx(inputCls, isRoutine && 'opacity-60 cursor-default')}
+                readOnly={isRoutine}
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>{t('event.fields.endAt')}</label>
               <input
-                required
                 type={form.all_day ? 'date' : 'datetime-local'}
                 value={form.end_at}
                 onChange={(e) => set('end_at', e.target.value)}
-                className={inputCls + ' h-[42px]'}
+                className={clsx(inputCls, isRoutine && 'opacity-60 cursor-default')}
+                readOnly={isRoutine}
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>{t('event.fields.reminder')}</label>
-            <select
-              value={form.reminder_minutes}
-              onChange={(e) => set('reminder_minutes', e.target.value ? Number(e.target.value) : '')}
-              className={selectCls}
-            >
-              <option value="">{t('event.fields.reminderNone')}</option>
-              {REMINDER_OPTIONS.map((m) => (
-                <option key={m} value={m}>{t(`event.fields.reminderOptions.${m}`)}</option>
-              ))}
-            </select>
-          </div>
+          {!isRoutine && (
+            <div className="flex gap-6 py-2">
+              <label className="flex items-center gap-3 cursor-pointer select-none group">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={form.all_day}
+                    onChange={(e) => handleAllDayChange(e.target.checked)}
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-white/20 bg-white/5 transition-all checked:bg-white/20 checked:border-white/40 focus:outline-none"
+                  />
+                  <svg className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{t('event.fields.allDay')}</span>
+              </label>
 
-          <div className="flex gap-6">
-            <label className="flex items-center gap-3 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={form.all_day}
-                onChange={(e) => handleAllDayChange(e.target.checked)}
-                className="w-5 h-5 rounded border-gray-300 accent-slate-900 cursor-pointer"
-              />
-              <span className="text-sm text-slate-600">{t('event.fields.allDay')}</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={form.enable_dnd}
-                onChange={(e) => set('enable_dnd', e.target.checked)}
-                className="w-5 h-5 rounded border-gray-300 accent-slate-900 cursor-pointer"
-              />
-              <span className="text-sm text-slate-600">{t('event.fields.enableDnd')}</span>
-            </label>
-          </div>
-
-          {error && (
-            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+              <label className="flex items-center gap-3 cursor-pointer select-none group">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={form.enable_dnd}
+                    onChange={(e) => set('enable_dnd', e.target.checked)}
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-white/20 bg-white/5 transition-all checked:bg-white/20 checked:border-white/40 focus:outline-none"
+                  />
+                  <svg className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{t('event.fields.enableDnd')}</span>
+              </label>
+            </div>
           )}
 
-          <div className="flex items-center justify-between pt-1">
+          {isRoutine && (
+            <p className="text-xs text-white/40 bg-white/5 px-3 py-2 rounded-xl border border-white/5 italic">
+              {t('routines.readonlyNote')}
+            </p>
+          )}
+
+          {error && (
+            <p className="text-xs font-bold text-red-200 bg-red-500/20 border border-red-500/30 px-4 py-3 rounded-xl shadow-lg">{error}</p>
+          )}
+
+          <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
             {isEditing && !confirmDelete && (
               <button type="button" onClick={() => setConfirmDelete(true)}
-                className="text-xs text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors px-3 py-1.5 rounded-lg">
+                className="px-4 py-2.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all">
                 {t('event.delete')}
               </button>
             )}
+            
+            {isRoutine && !confirmDelete && (
+              <button type="button" onClick={() => setConfirmDelete(true)}
+                className="px-4 py-2.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all">
+                {t('routines.cancelOccurrence')}
+              </button>
+            )}
+
             {confirmDelete && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-red-500">{t('event.confirmDelete')}</span>
-                <button type="button" onClick={handleDelete}
-                  className="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors px-3 py-1.5 rounded-lg">
-                  {t('event.delete')}
-                </button>
-                <button type="button" onClick={() => setConfirmDelete(false)}
-                  className="text-xs text-gray-400 hover:text-gray-600 transition-colors">✕</button>
+              <div className="flex items-center gap-3 bg-red-500/10 p-2 rounded-2xl border border-red-500/20 shadow-inner">
+                <span className="text-[10px] font-black uppercase text-red-300 ml-2">{t('event.confirmDelete')}</span>
+                <div className="flex gap-1">
+                  <button type="button" onClick={isRoutine ? handleCancelOccurrence : handleDelete}
+                    disabled={isPending || addException.isPending}
+                    className="px-3 py-1.5 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all shadow-md">
+                    {t('common:actions.confirm', { defaultValue: 'Si' })}
+                  </button>
+                  <button type="button" onClick={() => setConfirmDelete(false)}
+                    className="px-3 py-1.5 text-xs font-bold text-white/50 hover:text-white transition-all">✕</button>
+                </div>
               </div>
             )}
-            {!confirmDelete && !isEditing && <span />}
+
             <button
-              type="submit"
+              type={isRoutine ? 'button' : 'submit'}
+              onClick={isRoutine ? onClose : undefined}
               disabled={isPending}
-              className="flex-1 max-w-[140px] py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex-1 max-w-[160px] py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all border border-white/20 shadow-lg drop-shadow-sm ml-auto"
             >
-              {isPending ? t('status.saving') : isEditing ? t('event.save') : t('event.create')}
+              {isPending ? t('status.saving') : isRoutine ? t('common:actions.close') : isEditing ? t('event.save') : t('event.create')}
             </button>
           </div>
-
         </form>
       </div>
     </div>
   )
+
+  return createPortal(modalBody, document.getElementById('modal-root'))
 }
