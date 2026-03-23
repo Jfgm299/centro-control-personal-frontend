@@ -28,24 +28,32 @@ export default function RoutineWeekPreview({ routines }) {
   }))
 
   return (
-    <div className="grid grid-cols-7 gap-2 flex-1 min-h-0">
+    <div className="grid grid-cols-7 gap-2 h-full">
       {grid.map(({ key, label, routines: dayRoutines }) => (
-        <div key={key} className="flex flex-col gap-1.5">
-          <div className="text-center text-xs font-bold text-gray-400 py-1 sticky top-0 bg-transparent">
+        <div key={key} className="flex flex-col gap-2 min-w-0 h-full">
+          <div className="text-center text-[10px] font-black text-white/30 uppercase tracking-[0.2em] py-2 sticky top-0 bg-transparent">
             {label}
           </div>
-          <div className="flex flex-col gap-1 flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-1.5 flex-1 overflow-y-auto no-scrollbar pb-4">
             {dayRoutines.map((r) => {
-              const color = r.color_override ?? r.category?.color ?? '#1f2937'
+              const color = r.color_override ?? r.category?.color ?? '#818cf8'
               return (
                 <div
                   key={r.id}
-                  className="rounded-xl px-2 py-1.5 text-[10px] leading-snug"
-                  style={{ backgroundColor: color + '1a', borderLeft: `3px solid ${color}`, color }}
+                  className="rounded-xl px-2 py-2 text-[10px] leading-snug border backdrop-blur-sm shadow-sm transition-all hover:scale-105"
+                  style={{ 
+                    backgroundColor: color + '20', 
+                    borderLeft: `3px solid ${color}`, 
+                    borderColor: color + '30',
+                    color: '#fff'
+                  }}
                 >
-                  <div className="font-semibold truncate">{r.title}</div>
-                  <div className="text-[9px] opacity-70 mt-0.5">
-                    {r.start_time?.slice(0, 5)}–{r.end_time?.slice(0, 5)}
+                  <div className="font-black truncate drop-shadow-sm">{r.title}</div>
+                  <div className="text-[9px] font-bold opacity-50 mt-1 flex items-center gap-1">
+                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3" />
+                    </svg>
+                    {r.start_time?.slice(0, 5)}
                   </div>
                 </div>
               )

@@ -7,7 +7,7 @@ export default {
   icon: BarChart2,
   iconType: 'lucide',
   path: '/macro',
-  color: '#3b82f6',
+    color: '#4ade80',
   component: MacroPage,
   permanent: false,
   descriptionKey: 'home:modules.macro.description',

@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import { ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup } from 'react-simple-maps'
+import { motion } from 'framer-motion'
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 const MIN_ZOOM = 1
@@ -8,14 +9,26 @@ const MAX_ZOOM = 12
 function CircularFlag({ code, size = 28 }) {
   const lower = code.toLowerCase()
   return (
-    <div style={{ width: size, height: size, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.3)', flexShrink: 0 }}>
+    <motion.div 
+      whileHover={{ scale: 1.1, y: -2 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      className="relative flex-shrink-0 rounded-full overflow-hidden shadow-lg border border-white/40 group"
+      style={{ 
+        width: size, 
+        height: size,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3)' 
+      }}
+    >
+      {/* Overlay sutil para brillo interno */}
+      <div className="absolute inset-0 rounded-full border border-white/20 pointer-events-none z-10 mix-blend-overlay"></div>
+      
       <img
         src={`https://flagcdn.com/w40/${lower}.png`}
         alt={code}
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        className="w-full h-full object-cover relative z-0 transition-transform duration-300 group-hover:scale-110"
         onError={(e) => { e.target.style.display = 'none' }}
       />
-    </div>
+    </motion.div>
   )
 }
 
@@ -90,13 +103,13 @@ export default function PassportMap({
   const strokeWidth  = Math.max(0.2, 0.8 / Math.sqrt(zoom))
 
   return (
-    <div style={{ background: 'linear-gradient(180deg, #1a0550 0%, #2d0a8a 100%)' }}>
+    <div className="bg-white/5 backdrop-blur-md border-y border-white/10 mt-4 rounded-3xl overflow-hidden shadow-xl mx-0">
       {/* Airport strip */}
-      <div className="overflow-hidden py-2 px-2 border-b border-white/10">
-        <div className="flex gap-3 text-white/60 text-xs font-mono">
+      <div className="overflow-hidden py-3 px-4 border-b border-white/10 bg-black/20">
+        <div className="flex gap-4 text-white/70 text-xs font-mono">
           {airports.slice(0, 20).map(a => (
-            <span key={a.iata} className="flex items-center gap-1 shrink-0">
-              <span className="text-[#f59e0b]">✈</span>
+            <span key={a.iata} className="flex items-center gap-1.5 shrink-0">
+              <span className="text-blue-400">✈</span>
               {a.iata}
             </span>
           ))}
@@ -104,7 +117,7 @@ export default function PassportMap({
       </div>
 
       {/* Map — height controlada por prop */}
-      <div ref={containerRef} style={{ position: 'relative', height, overflow: 'hidden' }}>
+      <div ref={containerRef} style={{ position: 'relative', height, overflow: 'hidden' }} className="bg-black/10">
         <ComposableMap
           projection="geoNaturalEarth1"
           projectionConfig={{ scale: 140, center: [50, -90] }}
@@ -117,20 +130,20 @@ export default function PassportMap({
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
-                    fill="#3d1f8a"
-                    stroke="#5a2fd4"
+                    fill="rgba(255, 255, 255, 0.1)"
+                    stroke="rgba(255, 255, 255, 0.2)"
                     strokeWidth={0.4 / zoom}
-                    style={{ default: { outline: 'none' }, hover: { outline: 'none', fill: '#4a2aaa' }, pressed: { outline: 'none' } }}
+                    style={{ default: { outline: 'none' }, hover: { outline: 'none', fill: 'rgba(255, 255, 255, 0.15)' }, pressed: { outline: 'none' } }}
                   />
                 ))
               }
             </Geographies>
             {routes.map((route, i) => (
-              <Line key={i} from={route.from} to={route.to} stroke="#f59e0b" strokeWidth={strokeWidth} strokeOpacity={0.5} strokeLinecap="round" />
+              <Line key={i} from={route.from} to={route.to} stroke="#60a5fa" strokeWidth={strokeWidth} strokeOpacity={0.6} strokeLinecap="round" />
             ))}
             {airports.map(airport => (
               <Marker key={airport.iata} coordinates={airport.coords}>
-                <circle r={markerRadius} fill="#f59e0b" stroke="#fff" strokeWidth={0.5 / zoom} opacity={0.9} />
+                <circle r={markerRadius} fill="#60a5fa" stroke="#fff" strokeWidth={0.5 / zoom} opacity={0.9} />
               </Marker>
             ))}
           </ZoomableGroup>
@@ -140,7 +153,7 @@ export default function PassportMap({
         <div style={{ position: 'absolute', bottom: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
           {[{ label: '+', action: handleZoomIn }, { label: '−', action: handleZoomOut }, { label: '⊙', action: handleReset }].map(({ label, action }) => (
             <button key={label} onClick={action}
-              style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}
+              style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
             >{label}</button>
@@ -148,16 +161,16 @@ export default function PassportMap({
         </div>
 
         {zoom > 1 && (
-          <div style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '2px 8px', color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'monospace', backdropFilter: 'blur(4px)' }}>
+          <div style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '4px 10px', color: 'rgba(255,255,255,0.7)', fontSize: 12, fontFamily: 'monospace', backdropFilter: 'blur(8px)' }}>
             {zoom.toFixed(1)}×
           </div>
         )}
       </div>
 
       {/* Flags */}
-      <div className="flex flex-wrap gap-1.5 px-3 py-3">
+      <div className="flex flex-wrap gap-2 p-4 bg-black/20">
         {uniqueCountryCodes.map(code => (
-          <CircularFlag key={code} code={code} size={30} />
+          <CircularFlag key={code} code={code} size={36} />
         ))}
       </div>
     </div>

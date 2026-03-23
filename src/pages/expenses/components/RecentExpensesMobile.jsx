@@ -22,16 +22,16 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="relative overflow-hidden rounded-2xl backdrop-blur-xl backdrop-saturate-150 bg-white/5 border border-white/10 shadow-lg">
         {/* Header — siempre visible */}
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => setOpen((v) => !v)}
             className="flex items-center gap-2 flex-1"
           >
-            <span className="text-sm font-semibold text-slate-800">{t('list.title')}</span>
+            <span className="text-sm font-semibold text-white">{t('list.title')}</span>
             <svg
-              className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-white/50 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -41,7 +41,7 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
           {/* + siempre visible */}
           <button
             onClick={() => setModalExpense(null)}
-            className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-900 text-white"
+            className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-white/20"
             title={t('list.create')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,11 +53,11 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
         {/* Lista colapsable — scroll de 5 items */}
         {open && (
           <div
-            className="overflow-y-auto divide-y divide-slate-50 border-t border-slate-50"
+            className="overflow-y-auto divide-y divide-white/10 border-t border-white/10"
             style={{ maxHeight: 5 * 60 }} // ~60px por fila = 5 visibles
           >
             {sorted.length === 0 ? (
-              <p className="text-slate-400 text-sm text-center py-6">{t('list.empty')}</p>
+              <p className="text-white/50 text-sm text-center py-6">{t('list.empty')}</p>
             ) : (
               sorted.map((expense) => (
                 <div key={expense.id} className="flex items-center justify-between px-4 py-3">
@@ -70,8 +70,8 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
                       {expense.account[0]}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-800 truncate">{expense.name}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-sm font-medium text-white truncate">{expense.name}</p>
+                      <p className="text-xs text-white/50">
                         {expense.account} · {new Date(expense.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -79,14 +79,14 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
 
                   {/* Amount + actions */}
                   <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                    <span className="font-mono font-semibold text-slate-800 text-sm">
+                    <span className="font-mono font-semibold text-white text-sm">
                       {fmt(expense.quantity)}
                     </span>
 
                     {/* Edit */}
                     <button
                       onClick={() => setModalExpense(expense)}
-                      className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -104,7 +104,7 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
                         </button>
                         <button
                           onClick={() => setConfirmId(null)}
-                          className="px-2 py-0.5 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg"
+                          className="px-2 py-0.5 text-xs font-medium text-white/70 border border-white/20 rounded-lg"
                         >
                           {t('modal.cancel')}
                         </button>
@@ -112,7 +112,7 @@ export default function RecentExpensesMobile({ expenses, onCreate, onUpdate, onR
                     ) : (
                       <button
                         onClick={() => setConfirmId(expense.id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-white/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

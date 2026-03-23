@@ -26,8 +26,7 @@ export default function PassportView({ flights }) {
 
   if (!stats || stats.total === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-white/40 gap-2"
-        style={{ background: '#0a0520' }}>
+      <div className="flex flex-col items-center justify-center h-64 text-white/40 gap-2 bg-transparent">
         <span className="text-4xl">✈️</span>
         <p>Sin vuelos registrados aún</p>
       </div>
@@ -35,7 +34,7 @@ export default function PassportView({ flights }) {
   }
 
   return (
-    <div style={{ background: '#0a0520', minHeight: '100%' }}>
+    <div className="bg-transparent min-h-full">
       <YearFilter
         years={availableYears}
         selected={selectedYear}

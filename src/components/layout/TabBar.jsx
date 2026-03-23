@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useModuleStore } from '../../store/moduleStore'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -17,14 +18,12 @@ export default function TabBar() {
 
   const handleClose = (e, tabId) => {
     e.stopPropagation()
-    const { openTabs, activeTabId } = useModuleStore.getState()
     closeTab(tabId)
-    if (activeTabId === tabId) {
-      const remaining = openTabs.filter(t => t.id !== tabId)
+    const { openTabs: currentTabs, activeTabId: currentActive } = useModuleStore.getState()
+    if (currentActive === tabId) {
+      const remaining = currentTabs.filter(t => t.id !== tabId)
       if (remaining.length > 0) {
-        const idx = openTabs.findIndex(t => t.id === tabId)
-        const next = remaining[idx - 1] || remaining[0]
-        navigate(next.path)
+        navigate(remaining[0].path)
       }
     }
   }
@@ -41,52 +40,56 @@ export default function TabBar() {
           <div
             key={tab.id}
             className="relative pointer-events-auto flex-shrink-0"
-            style={{ zIndex: isActive ? 10 : 5 }}
           >
             <button
               onClick={() => handleTabClick(tab)}
               className={clsx(
-                'relative flex items-center gap-2 px-4 py-2 text-sm font-medium',
-                'transition-all duration-150 select-none rounded-xl border',
+                'relative flex items-center gap-2 pl-3 pr-4 py-2 text-sm font-semibold',
+                'transition-colors duration-200 select-none rounded-lg',
                 isActive
-                  ? 'text-gray-800 border-white/80 shadow-sm'
-                  : 'text-gray-500 border-transparent hover:text-gray-700 hover:bg-white/40',
+                  ? 'text-white'
+                  : 'text-white/60 hover:text-white hover:bg-black/10',
               )}
-              style={isActive ? {
-                background: 'rgba(255,255,255,0.85)',
-                backdropFilter: 'blur(16px)',
-              } : {}}
             >
-              {tab.iconType === 'emoji' ? (
-                <span className="text-base">{tab.icon}</span>
-              ) : (
-                <tab.icon
-                  size={20} // Adjust size as needed for tabs
-                  color={isActive ? tab.color : 'rgb(100 116 139)'} // Use tab.color for active state
-                  strokeWidth={2.2} // Adjust stroke width for visual weight
-                />
-              )}
-              <span>{t(tab.labelKey)}</span>
-
-              {!tab.permanent && (
-                <span
-                  onClick={(e) => handleClose(e, tab.id)}
-                  className={clsx(
-                    'ml-1 w-5 h-5 rounded-full flex items-center justify-center text-xs',
-                    'hover:bg-black/10 transition-colors',
-                    isActive ? 'text-gray-400' : 'text-gray-300',
-                  )}
-                >
-                  ✕
-                </span>
-              )}
-              
               {isActive && (
-                <span
-                  className="absolute bottom-1.5 left-4 right-4 h-0.5 rounded-full"
-                  style={{ backgroundColor: tab.color }}
+                <motion.div
+                  layoutId="active-tab-indicator-main"
+                  className="absolute inset-0 bg-white/5 rounded-lg shadow-md backdrop-blur-sm"
                 />
               )}
+
+              {/* Module Color Indicator */}
+              <div
+                className="relative w-1 h-4 rounded-full"
+                style={{ backgroundColor: tab.color ?? 'rgb(255 255 255 / 0.5)' }}
+              />
+
+              <span className="relative z-10 flex items-center gap-2">
+                {tab.iconType === 'emoji' ? (
+                  <span className="text-base">{tab.icon}</span>
+                ) : (
+                  <tab.icon
+                    size={20}
+                    // Color del icono es blanco, la barra lateral ya da el color del módulo
+                    color={'#FFF'}
+                    strokeWidth={2.2}
+                  />
+                )}
+                <span>{t(tab.labelKey)}</span>
+
+                {!tab.permanent && (
+                  <span
+                    onClick={(e) => handleClose(e, tab.id)}
+                    className={clsx(
+                      'ml-1 w-5 h-5 rounded-full flex items-center justify-center text-xs',
+                      'hover:bg-black/20 transition-colors',
+                      isActive ? 'text-white/70' : 'text-white/40',
+                    )}
+                  >
+                    ✕
+                  </span>
+                )}
+              </span>
             </button>
           </div>
         )

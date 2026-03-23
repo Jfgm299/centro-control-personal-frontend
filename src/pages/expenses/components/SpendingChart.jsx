@@ -9,13 +9,13 @@ const fmt = (v) => `€${v.toFixed(2)}`
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-slate-100 shadow-lg rounded-xl p-3 text-sm">
-      <p className="font-semibold text-slate-700 mb-2">{label}</p>
+    <div className="bg-slate-800/80 backdrop-blur-sm border border-white/10 shadow-lg rounded-xl p-3 text-sm">
+      <p className="font-semibold text-white mb-2">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full inline-block" style={{ background: entry.fill }} />
-          <span className="text-slate-500">{entry.dataKey}:</span>
-          <span className="font-mono font-semibold">{fmt(entry.value)}</span>
+          <span className="text-white/60">{entry.dataKey}:</span>
+          <span className="font-mono font-semibold text-white">{fmt(entry.value)}</span>
         </div>
       ))}
     </div>
@@ -38,16 +38,16 @@ export default function SpendingChart({ monthlyData, selectedMonthData, drilldow
   }
 
   return (
-    <div className="h-full bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col">
+    <div className="h-full relative overflow-hidden rounded-2xl backdrop-blur-xl backdrop-saturate-150 bg-white/5 border border-white/10 shadow-lg p-6 flex flex-col">
       <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <div>
-          <h2 className="text-base font-semibold text-slate-800">
+          <h2 className="text-base font-semibold text-white">
             {isWeeklyView
               ? `${t('chart.weeklyTitle')} — ${selectedMonthData.label}`
               : t('chart.monthlyTitle')}
           </h2>
           {!isWeeklyView && (
-            <p className="text-xs text-slate-400 mt-0.5">{t('chart.clickToDrilldown')}</p>
+            <p className="text-xs text-white/60 mt-0.5">{t('chart.clickToDrilldown')}</p>
           )}
         </div>
       </div>
@@ -55,18 +55,18 @@ export default function SpendingChart({ monthlyData, selectedMonthData, drilldow
       <div className="flex-1 min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} onClick={handleBarClick} style={{ cursor: isWeeklyView ? 'default' : 'pointer' }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-            <YAxis tickFormatter={(v) => `€${v}`} tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
-            <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: '#64748b', paddingTop: 16 }} />
-            {accounts.map((account) => (
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+            <XAxis dataKey="label" tick={{ fontSize: 12, fill: 'rgba(255, 255, 255, 0.6)' }} axisLine={false} tickLine={false} />
+            <YAxis tickFormatter={(v) => `€${v}`} tick={{ fontSize: 12, fill: 'rgba(255, 255, 255, 0.6)' }} axisLine={false} tickLine={false} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} />
+            <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.7)', paddingTop: 16 }} />
+            {accounts.map((account, index) => (
               <Bar
                 key={account}
                 dataKey={account}
                 stackId="a"
                 fill={ACCOUNT_COLORS[account] ?? '#94a3b8'}
-                radius={account === accounts[accounts.length - 1] ? [6, 6, 0, 0] : [0, 0, 0, 0]}
+                radius={index === accounts.length - 1 ? [6, 6, 0, 0] : [0, 0, 0, 0]}
               />
             ))}
           </BarChart>

@@ -198,44 +198,44 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     <>
       {showCamera && <BarcodeScannerModal onDetected={handleCameraDetected} onClose={() => setShowCamera(false)} />}
 
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-2 space-y-4">
+      <div className="bg-white/5 rounded-xl p-4 mt-2 space-y-4">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <span className="text-gray-600 text-sm font-medium">{t('add.title')}</span>
-          <button onClick={onClose} className="text-gray-300 hover:text-gray-500 text-lg leading-none">×</button>
+          <span className="text-white/80 text-sm font-medium">{t('add.title')}</span>
+          <button onClick={onClose} className="text-white/30 hover:text-white text-lg leading-none">×</button>
         </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-red-500 text-xs">{error}</div>
-        )}
+        
+{error && (
+    <div className="bg-red-500/20 border border-red-500/30 rounded-lg px-3 py-2 text-red-300 text-xs">{error}</div>
+)}
 
         {/* ── STEP: UPLOAD ── */}
         {(step === STEP.UPLOAD || step === STEP.LOADING) && (
           <div className="space-y-3">
             <button onClick={handleScanPress} disabled={step === STEP.LOADING}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-colors">
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-colors">
               {step === STEP.LOADING
                 ? <><span className="animate-spin text-lg">⟳</span>{t('add.decoding')}</>
                 : <><span className="text-xl">📷</span>Escanear código de barras</>}
             </button>
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-gray-200" /><span className="text-gray-400 text-xs">o</span><div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-px bg-white/10" /><span className="text-white/40 text-xs">o</span><div className="flex-1 h-px bg-white/10" />
             </div>
             <div
-              className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-colors ${dragOver ? 'border-[#f59e0b] bg-amber-50' : 'border-gray-200 hover:border-gray-300'} ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
+              className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-colors ${dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-white/20 hover:border-white/40'} ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)} onDrop={onDrop}
               onClick={() => fileRef.current?.click()}>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
-              <p className="text-gray-400 text-xs">Sube una foto del código de barras</p>
+              <p className="text-white/60 text-xs">Sube una foto del código de barras</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => { setStep(STEP.SEARCH); setError(null) }}
-                className="flex-1 text-center text-gray-400 hover:text-gray-600 text-xs py-2 border border-gray-200 rounded-lg">
+                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors">
                 🔍 Buscar por nombre
               </button>
               <button onClick={() => { setStep(STEP.CREATE); setError(null); setCreateForm(emptyCreate()) }}
-                className="flex-1 text-center text-gray-400 hover:text-gray-600 text-xs py-2 border border-gray-200 rounded-lg">
+                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors">
                 ✏️ Crear producto
               </button>
             </div>
@@ -248,26 +248,26 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             <div className="relative">
               <input type="text" value={searchQ} onChange={(e) => setSearchQ(e.target.value)} placeholder="Buscar producto..."
                 autoFocus
-                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm placeholder-gray-400 outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b] pr-8" />
-              {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm animate-spin">⟳</span>}
+                className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 pr-8 transition-colors" />
+              {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-sm animate-spin">⟳</span>}
             </div>
 
             {searchResults.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm divide-y divide-gray-50">
+              <div className="bg-black/20 border border-white/20 rounded-xl overflow-hidden shadow-sm divide-y divide-white/10">
                 {searchResults.map((p) => (
                   <button key={p.id} onClick={() => selectProduct(p)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 text-left transition-colors">
-                    <div className="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 text-left transition-colors">
+                    <div className="w-9 h-9 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
                       {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-cover" />
-                        : <span className="w-full h-full flex items-center justify-center text-gray-300">🍽</span>}
+                        : <span className="w-full h-full flex items-center justify-center text-white/40">🍽</span>}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-gray-800 text-sm font-medium truncate">{p.product_name}</p>
-                      {p.brand && <p className="text-gray-400 text-xs truncate">{p.brand}</p>}
+                      <p className="text-white text-sm font-medium truncate">{p.product_name}</p>
+                      {p.brand && <p className="text-white/50 text-xs truncate">{p.brand}</p>}
                       {p.source === 'manual' && <span className="text-xs text-indigo-400">• manual</span>}
                     </div>
                     {p.energy_kcal_100g != null && (
-                      <span className="text-[#f59e0b] text-xs font-semibold flex-shrink-0">{Math.round(p.energy_kcal_100g)} kcal</span>
+                      <span className="text-amber-400 text-xs font-semibold flex-shrink-0">{Math.round(p.energy_kcal_100g)} kcal</span>
                     )}
                   </button>
                 ))}
@@ -275,14 +275,14 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             )}
 
             {!searching && searchQ.trim().length >= 2 && searchResults.length === 0 && (
-              <p className="text-center text-gray-400 text-xs py-2">Sin resultados — <button className="text-indigo-400 underline" onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}>crear manualmente</button></p>
+              <p className="text-center text-white/50 text-xs py-2">Sin resultados — <button className="text-blue-400 underline" onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}>crear manualmente</button></p>
             )}
 
             <div className="flex gap-3">
               <button onClick={() => { setStep(STEP.UPLOAD); setError(null); setSearchQ(''); setSearchResults([]) }}
-                className="text-gray-400 hover:text-gray-600 text-xs">← Volver</button>
+                className="text-white/50 hover:text-white text-xs">← Volver</button>
               <button onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}
-                className="text-indigo-400 hover:text-indigo-600 text-xs ml-auto">✏️ Crear nuevo</button>
+                className="text-blue-400 hover:text-blue-500 text-xs ml-auto">✏️ Crear nuevo</button>
             </div>
           </div>
         )}
@@ -290,18 +290,18 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {/* ── STEP: CREATE ── */}
         {step === STEP.CREATE && (
           <div className="space-y-3">
-            <p className="text-gray-500 text-xs font-medium">Nuevo producto</p>
+            <p className="text-white/60 text-xs font-medium">Nuevo producto</p>
 
             {/* Name + brand */}
             <input type="text" placeholder="Nombre del producto *" value={createForm.product_name}
               onChange={(e) => setCreateForm(f => ({ ...f, product_name: e.target.value }))}
-              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]" />
+              className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
             <input type="text" placeholder="Marca (opcional)" value={createForm.brand}
               onChange={(e) => setCreateForm(f => ({ ...f, brand: e.target.value }))}
-              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]" />
+              className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
 
             {/* Nutrients grid */}
-            <p className="text-gray-400 text-xs">Valores nutricionales por 100g</p>
+            <p className="text-white/40 text-xs">Valores nutricionales por 100g</p>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { key: 'energy_kcal_100g',   label: 'Calorías (kcal)' },
@@ -313,22 +313,22 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                 { key: 'serving_quantity_g', label: 'Ración típica (g)' },
               ].map(({ key, label }) => (
                 <div key={key}>
-                  <p className="text-gray-400 text-xs mb-1">{label}</p>
+                  <p className="text-white/40 text-xs mb-1">{label}</p>
                   <input type="number" min="0" step="0.1" placeholder="—"
                     value={createForm[key]}
                     onChange={(e) => setCreateForm(f => ({ ...f, [key]: e.target.value }))}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-gray-800 text-sm outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]" />
+                    className="w-full bg-black/20 border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
                 </div>
               ))}
             </div>
 
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setError(null) }}
-                className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-500 text-sm hover:bg-gray-50">
+                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-colors">
                 Cancelar
               </button>
               <button onClick={handleCreate} disabled={creating || !createForm.product_name.trim()}
-                className="flex-1 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 disabled:opacity-50">
+                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors">
                 {creating ? '…' : 'Crear y añadir'}
               </button>
             </div>
@@ -339,19 +339,19 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {step === STEP.CONFIRM && product && (
           <div className="space-y-4">
             {/* Product card */}
-            <div className="flex gap-3 bg-white border border-gray-200 rounded-xl p-3">
+            <div className="flex gap-3 bg-black/20 border border-white/20 rounded-xl p-3">
               {product.image_url && (
                 <img src={product.image_url} alt={product.product_name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start gap-2">
-                  <p className="text-gray-800 text-sm font-semibold flex-1 leading-tight">{product.product_name}</p>
+                  <p className="text-white text-sm font-semibold flex-1 leading-tight">{product.product_name}</p>
                   {product.nutriscore && (
                     <span className="text-white text-xs font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0"
                       style={{ background: nsColor, fontSize: '0.6rem' }}>{product.nutriscore}</span>
                   )}
                 </div>
-                {product.brand && <p className="text-gray-400 text-xs mt-0.5">{product.brand}</p>}
+                {product.brand && <p className="text-white/60 text-xs mt-0.5">{product.brand}</p>}
                 {product.source === 'manual' && <p className="text-indigo-400 text-xs">producto manual</p>}
 
                 {/* Nutrient display / edit */}
@@ -359,12 +359,12 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                   <div className="grid grid-cols-3 gap-1.5 mt-2">
                     {NUTRIENT_FIELDS.map(({ key, label, unit }) => (
                       <div key={key}>
-                        <p className="text-gray-400 text-xs">{label}</p>
+                        <p className="text-white/50 text-xs">{label}</p>
                         <div className="flex items-center gap-0.5">
                           <input type="number" min="0" step="0.1" value={editVals[key]}
                             onChange={(e) => setEditVals(v => ({ ...v, [key]: e.target.value }))}
-                            className="w-full bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 text-gray-800 text-xs outline-none focus:border-[#f59e0b]" />
-                          <span className="text-gray-400 text-xs">{unit}</span>
+                            className="w-full bg-black/20 border border-white/20 rounded px-1.5 py-0.5 text-white text-xs outline-none focus:border-blue-500" />
+                          <span className="text-white/40 text-xs">{unit}</span>
                         </div>
                       </div>
                     ))}
@@ -374,28 +374,28 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                     {NUTRIENT_FIELDS.slice(0, 4).map(({ key, label, color }) => (
                       <div key={key} className="text-center">
                         <p className="text-xs font-semibold" style={{ color }}>{fmt(product[key], key === 'energy_kcal_100g' ? 0 : 1)}</p>
-                        <p className="text-gray-400 text-xs">{label}</p>
+                        <p className="text-white/50 text-xs">{label}</p>
                       </div>
                     ))}
                   </div>
                 )}
-                <p className="text-gray-300 text-xs mt-1">por 100g</p>
+                <p className="text-white/30 text-xs mt-1">por 100g</p>
               </div>
             </div>
 
             {/* Edit / save nutrients banner */}
             {!editing && hasNulls && (
               <button onClick={startEdit}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 text-xs font-medium">
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium transition-colors hover:bg-amber-500/30">
                 ⚠️ Algunos valores faltan — toca para editar
               </button>
             )}
             {editing && (
               <div className="flex gap-2">
                 <button onClick={() => setEditing(false)}
-                  className="flex-1 py-1.5 rounded-lg border border-gray-300 text-gray-500 text-xs">Cancelar</button>
+                  className="flex-1 py-1.5 rounded-lg border border-white/20 text-white/60 text-xs hover:bg-white/10 transition-colors">Cancelar</button>
                 <button onClick={saveEdit} disabled={saving}
-                  className="flex-1 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold disabled:opacity-50">
+                  className="flex-1 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors">
                   {saving ? '…' : 'Guardar valores'}
                 </button>
               </div>
@@ -403,13 +403,13 @@ export default function AddProductFlow({ mealType, date, onClose }) {
 
             {/* Amount input */}
             <div className="flex items-center gap-3">
-              <label className="text-gray-500 text-sm flex-shrink-0">Cantidad</label>
+              <label className="text-white/60 text-sm flex-shrink-0">Cantidad</label>
               <input type="number" min="1" max="5000" step="1" value={amountG}
                 onChange={(e) => setAmountG(e.target.value)}
-                className="w-24 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 text-sm text-center outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]" />
-              <span className="text-gray-400 text-sm">g</span>
+                className="w-24 bg-black/20 border border-white/20 rounded-lg px-3 py-1.5 text-white text-sm text-center outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+              <span className="text-white/50 text-sm">g</span>
               {product.energy_kcal_100g != null && parseFloat(amountG) > 0 && (
-                <span className="text-[#f59e0b] text-sm font-semibold ml-auto">
+                <span className="text-amber-400 text-sm font-semibold ml-auto">
                   ≈ {Math.round(product.energy_kcal_100g * parseFloat(amountG) / 100)} kcal
                 </span>
               )}
@@ -418,11 +418,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             {/* Actions */}
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setProduct(null); setError(null) }}
-                className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-500 text-sm hover:bg-gray-50">
+                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-colors">
                 Cancelar
               </button>
               <button onClick={handleConfirm} disabled={addEntry.isPending || !amountG || parseFloat(amountG) <= 0}
-                className="flex-1 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 disabled:opacity-50">
+                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors">
                 {addEntry.isPending ? 'Guardando…' : 'Añadir al diario'}
               </button>
             </div>

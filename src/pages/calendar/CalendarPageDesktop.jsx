@@ -8,16 +8,18 @@ import ReminderPanel     from './components/reminders/ReminderPanel'
 import RoutinesList      from './components/routines/RoutinesList'
 import CategoriesManager from './components/categories/CategoriesManager'
 import IntegrationsManager from './components/integrations/IntegrationsManager'
+import clsx from 'clsx'
+import { motion } from 'framer-motion'
 
 export default function CalendarPageDesktop() {
   const { t } = useTranslation('calendar')
   const [tab, setTab] = useState('calendar')
 
   const TABS = [
-    { key: 'calendar',     label: `📅 ${t('tabs.calendar')}`      },
-    { key: 'routines',     label: `🔁 ${t('tabs.routines')}`      },
-    { key: 'categories',   label: `🏷️ ${t('tabs.categories')}`   },
-    { key: 'integrations', label: `🔗 ${t('tabs.integrations')}`  },
+    { key: 'calendar',     label: t('tabs.calendar'), icon: '📅' },
+    { key: 'routines',     label: t('tabs.routines'), icon: '🔁' },
+    { key: 'categories',   label: t('tabs.categories'), icon: '🏷️' },
+    { key: 'integrations', label: t('tabs.integrations'), icon: '🔗' },
   ]
 
   const { eventModalOpen, eventModalData, openEventModal, closeEventModal } = useCalendarStore()
@@ -39,16 +41,11 @@ export default function CalendarPageDesktop() {
     })
   }, [schedule])
 
-  // Drop nativo HTML5 desde el ReminderPanel.
-  // FullCalendar renderiza cada franja con data-time="HH:MM:SS" en el DOM.
-  // Con elementFromPoint leemos ese atributo para colocar el reminder
-  // exactamente en el slot donde el usuario lo soltó.
   const handleDrop = useCallback(async (e) => {
     e.preventDefault()
     const id = e.dataTransfer.getData('reminderId')
     if (!id) return
 
-    // 1. Leer la hora: data-time="HH:MM:SS" está en las filas de la grilla
     let slotTime = null
     let el = document.elementFromPoint(e.clientX, e.clientY)
     while (el && el !== document.body) {
@@ -56,8 +53,6 @@ export default function CalendarPageDesktop() {
       el = el.parentElement
     }
 
-    // 2. Leer el día: data-date="YYYY-MM-DD" está en los headers de columna,
-    //    que son una rama distinta del DOM. Los buscamos por posición horizontal.
     let slotDate = null
     const dayHeaders = document.querySelectorAll('[data-date]')
     for (const header of dayHeaders) {
@@ -86,68 +81,81 @@ export default function CalendarPageDesktop() {
   }, [schedule])
 
   return (
-    <div style={{
-      margin: '-32px',
-      height: 'calc(100vh - 52px)',
-      display: 'flex', flexDirection: 'column',
-      background: 'white',
-      fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
-    }}>
+    <div className="flex flex-col h-full text-white overflow-hidden max-w-full">
       {/* ── Top bar ── */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12,
-        padding: '0 20px', height: 48,
-        borderBottom: '1px solid #f0f0f0', flexShrink: 0,
-      }}>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Planner</span>
-        <div style={{ display: 'flex', gap: 2 }}>
-          {TABS.map(({ key, label }) => (
-            <button key={key} onClick={() => setTab(key)} style={{
-              padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
-              fontSize: 12.5, fontWeight: 500,
-              background: tab === key ? '#f3f4f6' : 'transparent',
-              color:      tab === key ? '#111827' : '#6b7280',
-            }}>
-              {label}
-            </button>
-          ))}
+      <div className="flex items-center justify-between px-6 pt-4 pb-2 sticky top-0 z-20 flex-shrink-0">
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold text-white">Planner</h1>
+          <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm border border-white/5 shadow-inner">
+            {TABS.map(({ key, label, icon }) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={clsx(
+                  'px-4 py-1.5 text-sm font-semibold rounded-full transition-all relative whitespace-nowrap',
+                  tab === key ? 'text-white' : 'text-white/50 hover:text-white'
+                )}
+              >
+                {tab === key && (
+                  <motion.div
+                    layoutId="active-tab-calendar-desktop"
+                    className="absolute inset-0 bg-white/10 rounded-full shadow-md border border-white/10"
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <span className="text-base">{icon}</span>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
+
+        {tab === 'calendar' && (
+          <button
+            onClick={() => openEventModal({})}
+            className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white text-sm font-semibold rounded-xl hover:bg-white/20 transition-colors shadow-sm backdrop-blur-sm border border-white/10"
+          >
+            <span className="text-lg leading-none mb-0.5">+</span> {t('actions.addEvent', { defaultValue: 'Nuevo Evento' })}
+          </button>
+        )}
       </div>
 
       {/* ── Body ── */}
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-
+      <div className="flex-1 flex min-h-0 overflow-hidden px-4 md:px-6 pb-2">
         {/* Calendario */}
         {tab === 'calendar' && (
-          <>
-            <ReminderPanel />
+          <div className="flex-1 flex overflow-hidden gap-6">
+            <div className="w-80 flex-shrink-0 flex flex-col overflow-hidden">
+              <ReminderPanel />
+            </div>
             <div
-              style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '12px 16px 0' }}
+              className="flex-1 min-w-0 flex flex-col overflow-hidden bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl relative"
               onDragOver={e => e.preventDefault()}
               onDrop={handleDrop}
             >
               <CalendarView onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} onExternalDrop={handleExternalDrop} />
             </div>
-          </>
+          </div>
         )}
 
         {/* Rutinas */}
         {tab === 'routines' && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+          <div className="flex-1 overflow-y-auto">
             <RoutinesList />
           </div>
         )}
 
         {/* Categorías */}
         {tab === 'categories' && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+          <div className="flex-1 overflow-y-auto">
             <CategoriesManager />
           </div>
         )}
 
         {/* Integraciones */}
         {tab === 'integrations' && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+          <div className="flex-1 overflow-y-auto">
             <IntegrationsManager />
           </div>
         )}
