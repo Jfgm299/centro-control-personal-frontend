@@ -121,7 +121,7 @@ export default function FlightCard({ flight }) {
 
       {/* Hover actions centradas */}
       {hovered && !editingNotes && (
-        <div className="absolute inset-0 flex items-center justify-center gap-4 z-20 bg-black/20 backdrop-blur-sm rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-0 flex items-center justify-center gap-4 z-20 bg-black/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
           
           {/* Edit */}
           <button
