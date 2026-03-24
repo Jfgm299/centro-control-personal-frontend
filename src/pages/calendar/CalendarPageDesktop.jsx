@@ -116,7 +116,7 @@ export default function CalendarPageDesktop() {
             onClick={() => openEventModal({})}
             className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white text-sm font-semibold rounded-xl hover:bg-white/20 transition-colors shadow-sm backdrop-blur-sm border border-white/10"
           >
-            <span className="text-lg leading-none mb-0.5">+</span> {t('actions.addEvent', { defaultValue: 'Nuevo Evento' })}
+            <span className="text-lg leading-none mb-0.5">+</span> {t('event.new')}
           </button>
         )}
       </div>
