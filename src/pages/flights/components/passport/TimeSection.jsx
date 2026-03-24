@@ -47,7 +47,7 @@ export default function TimeSection({ stats }) {
         <div className="flex flex-col gap-4">
           {stats.shortest && (
             <div>
-              <p className="text-blue-400/80 text-xs uppercase tracking-widest font-bold mb-1">{t('passport.shortestFlight')}</p>
+              <p className="text-blue-300 text-xs uppercase tracking-widest font-bold mb-1 bg-blue-500/20 px-2 py-0.5 rounded-md inline-block">{t('passport.shortestFlight')}</p>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white font-semibold text-sm">
@@ -67,7 +67,7 @@ export default function TimeSection({ stats }) {
           
           {stats.longest && (
             <div className="pt-4 border-t border-white/5">
-              <p className="text-purple-400/80 text-xs uppercase tracking-widest font-bold mb-1">{t('passport.longestFlight')}</p>
+              <p className="text-purple-300 text-xs uppercase tracking-widest font-bold mb-1 bg-purple-500/20 px-2 py-0.5 rounded-md inline-block">{t('passport.longestFlight')}</p>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white font-semibold text-sm">
