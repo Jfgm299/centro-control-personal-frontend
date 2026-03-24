@@ -41,7 +41,7 @@ export default function CountriesSection({ stats }) {
         {countries.length > INITIAL_SHOW && (
           <button
             onClick={() => setExpanded(e => !e)}
-            className="w-full mt-3 py-2 text-center text-blue-400 text-sm font-semibold hover:text-blue-300 hover:bg-white/5 rounded-xl transition-colors"
+            className="w-full mt-3 py-2 text-center text-white/70 text-sm font-semibold bg-white/10 hover:bg-white/15 rounded-xl transition-colors"
           >
             {expanded ? t('passport.showLess') : t('passport.showMore')}
           </button>

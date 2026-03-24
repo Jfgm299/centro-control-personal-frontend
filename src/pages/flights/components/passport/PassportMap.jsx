@@ -14,10 +14,12 @@ function CircularFlag({ code, size = 28 }) {
       whileHover={{ scale: 1.1, y: -2 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
       className="relative flex-shrink-0 rounded-full overflow-hidden shadow-lg border border-white/40 group"
-      style={{ 
-        width: size, 
+      style={{
+        width: size,
         height: size,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3)' 
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
+        transform: 'translateZ(0)',
+        isolation: 'isolate',
       }}
     >
       {/* Overlay sutil para brillo interno */}
@@ -26,7 +28,7 @@ function CircularFlag({ code, size = 28 }) {
       <img
         src={`https://flagcdn.com/w40/${lower}.png`}
         alt={code}
-        className="w-full h-full object-cover relative z-0 transition-transform duration-300 group-hover:scale-110"
+        className="w-full h-full object-cover relative z-0"
         onError={(e) => { e.target.style.display = 'none' }}
       />
     </motion.div>

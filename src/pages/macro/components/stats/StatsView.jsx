@@ -11,11 +11,11 @@ import { NUTRIENT_COLORS }        from '../../constants'
 const PERIOD_OPTIONS = [7, 30, 90]
 
 const GAUGE_CONFIG = [
-  { key: 'avg_energy_kcal',     goalKey: 'energy_kcal',     unit: 'kcal', label: 'kcal'  },
-  { key: 'avg_proteins_g',      goalKey: 'proteins_g',      unit: 'g',    label: 'Prot'  },
-  { key: 'avg_carbohydrates_g', goalKey: 'carbohydrates_g', unit: 'g',    label: 'Carbs' },
-  { key: 'avg_fat_g',           goalKey: 'fat_g',           unit: 'g',    label: 'Grasas'},
-  { key: 'avg_fiber_g',         goalKey: 'fiber_g',         unit: 'g',    label: 'Fibra' },
+  { key: 'avg_energy_kcal',     goalKey: 'energy_kcal',     unit: 'kcal', labelKey: 'nutrients.energy_kcal'     },
+  { key: 'avg_proteins_g',      goalKey: 'proteins_g',      unit: 'g',    labelKey: 'nutrients.proteins_g'      },
+  { key: 'avg_carbohydrates_g', goalKey: 'carbohydrates_g', unit: 'g',    labelKey: 'nutrients.carbohydrates_g' },
+  { key: 'avg_fat_g',           goalKey: 'fat_g',           unit: 'g',    labelKey: 'nutrients.fat_g'           },
+  { key: 'avg_fiber_g',         goalKey: 'fiber_g',         unit: 'g',    labelKey: 'nutrients.fiber_g'         },
 ]
 
 const NUTRIENT_COLOR_MAP = {
@@ -111,10 +111,10 @@ export default function StatsView() {
           <div className="flex justify-center py-8 text-white/60 text-sm">{t('common.loading')}</div>
         ) : (
           <div className="flex justify-around flex-wrap gap-4">
-            {GAUGE_CONFIG.map(({ key, goalKey, unit, label }) => (
+            {GAUGE_CONFIG.map(({ key, goalKey, unit, labelKey }) => (
               <NutrientGauge
                 key={key}
-                label={label}
+                label={t(labelKey)}
                 current={avg[key] ?? 0}
                 goal={goals?.[goalKey] ?? 0}
                 color={NUTRIENT_COLOR_MAP[key]}

@@ -67,7 +67,7 @@ export default function FlightsPageDesktop() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
-              {t('actions.add')}
+              {t('upcoming.addFlight')}
             </button>
           )}
         </div>
@@ -76,11 +76,11 @@ export default function FlightsPageDesktop() {
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         {tab === 'upcoming' ? (
-          <div className="h-full overflow-y-auto">
+          <div className="h-full overflow-y-auto no-scrollbar">
             <UpcomingFlights flights={upcoming} onAdd={() => setShowAdd(true)} />
           </div>
         ) : (
-          <div className="h-full overflow-y-auto">
+          <div className="h-full overflow-y-auto no-scrollbar">
             <PassportView flights={flights} />
           </div>
         )}
