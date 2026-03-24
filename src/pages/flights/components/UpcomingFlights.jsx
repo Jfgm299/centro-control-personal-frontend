@@ -1,33 +1,19 @@
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import FlightCard from './FlightCard'
 
 export default function UpcomingFlights({ flights, onAdd }) {
   const { t } = useTranslation('flights')
 
-  // Orden cronológico
-  const sortedFlights = useMemo(() => {
-    return [...flights].sort((a, b) => {
-      const dateA = new Date(
-        a.scheduled_departure || `${a.flight_date}T00:00:00`
-      )
-      const dateB = new Date(
-        b.scheduled_departure || `${b.flight_date}T00:00:00`
-      )
-      return dateA - dateB
-    })
-  }, [flights])
-
   return (
     <>
       {/* Header row */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-white/80">
-          {sortedFlights.length} upcoming
+          {flights.length} upcoming
         </h2>
       </div>
 
-      {sortedFlights.length === 0 ? (
+      {flights.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
           <span className="text-5xl">✈️</span>
           <p className="text-white/70 font-medium">{t('upcoming.empty')}</p>
@@ -41,7 +27,7 @@ export default function UpcomingFlights({ flights, onAdd }) {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {sortedFlights.map(flight => (
+          {flights.map(flight => (
             <FlightCard key={flight.id} flight={flight} />
           ))}
         </div>

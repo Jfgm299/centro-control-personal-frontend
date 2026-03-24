@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { isPastFlight } from './useFlights'
 
 const EARTH_KM    = 40075
 const SUN_ORBIT_KM = 940000000
@@ -38,7 +39,7 @@ export const useFlightStats = (flights) => {
   return useMemo(() => {
     if (!flights.length) return null
 
-    const past = flights.filter(f => f.is_past)
+    const past = flights.filter(isPastFlight)
     if (!past.length) return null
 
     const total       = past.length

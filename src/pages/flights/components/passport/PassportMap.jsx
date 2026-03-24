@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import { ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup } from 'react-simple-maps'
 import { motion } from 'framer-motion'
+import { isPastFlight } from '../../hooks/useFlights'
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 const MIN_ZOOM = 1
@@ -75,7 +76,7 @@ export default function PassportMap({
   const routes = useMemo(() => {
     const seen = new Set()
     return flights
-      .filter(f => f.is_past && f.origin_lat && f.destination_lat)
+      .filter(f => isPastFlight(f) && f.origin_lat && f.destination_lat)
       .filter(f => {
         const key = [f.origin_iata, f.destination_iata].sort().join('-')
         if (seen.has(key)) return false
@@ -88,7 +89,7 @@ export default function PassportMap({
   const airports = useMemo(() => {
     const seen = new Map()
     flights
-      .filter(f => f.is_past)
+      .filter(isPastFlight)
       .sort((a, b) => new Date(a.flight_date) - new Date(b.flight_date))
       .forEach(f => {
         if (f.origin_lat && !seen.has(f.origin_iata))
