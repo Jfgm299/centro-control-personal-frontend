@@ -15,9 +15,7 @@ import { nodeTypes, edgeTypes, refIdToNodeType } from './nodeTypes'
 
 import EditorToolbar      from './EditorToolbar'
 import NodeSidebar        from './NodeSidebar'
-import PrevNodeOutputPanel from './PrevNodeOutputPanel'
-import NodeConfigPanel    from '../config/NodeConfigPanel'
-import NodeOutputPanel    from './NodeOutputPanel'
+import NodeDetailsView    from './NodeDetailsView'
 import TestPayloadModal   from './TestPayloadModal'
 import ExecutionHistory   from './ExecutionHistory'
 
@@ -40,12 +38,7 @@ export default function AutomationEditor({ automationId, onClose }) {
   const openTestPayload        = useAutomationsStore(s => s.openTestPayload)
   const closeTestPayload       = useAutomationsStore(s => s.closeTestPayload)
   const resetEditor            = useAutomationsStore(s => s.resetEditor)
-  const nodeOutputData         = useAutomationsStore(s => s.nodeOutputData)
-  const viewingOutputNodeId    = useAutomationsStore(s => s.viewingOutputNodeId)
-  const setViewingOutputNodeId = useAutomationsStore(s => s.setViewingOutputNodeId)
-
   const [showHistory, setShowHistory] = useState(false)
-  const [rightTab, setRightTab]         = useState('config')  // 'config' | 'output'
 
   // ── Datos del backend ─────────────────────────────────────────────────────
   const { data: automation, isLoading } = useAutomation(id)
@@ -87,7 +80,6 @@ export default function AutomationEditor({ automationId, onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDirty])
 
-  const selectedNode     = nodes.find(n => n.id === selectedNodeId) ?? null
   const contextVariables = buildContextVariables(automation?.trigger_type)
 
   // ── Guardar ───────────────────────────────────────────────────────────────
@@ -198,14 +190,7 @@ export default function AutomationEditor({ automationId, onClose }) {
   // ── Node click ────────────────────────────────────────────────────────────
   const handleNodeClick = useCallback((_, node) => {
     setSelectedNodeId(node.id)
-    if (nodeOutputData[node.id]) {
-      setViewingOutputNodeId(node.id)
-      setRightTab('output')
-    } else {
-      setViewingOutputNodeId(null)
-      setRightTab('config')
-    }
-  }, [setSelectedNodeId, nodeOutputData, setViewingOutputNodeId])
+  }, [setSelectedNodeId])
 
   // ── Drag & Drop ───────────────────────────────────────────────────────────
   const onDragOver = useCallback((e) => {
@@ -236,7 +221,7 @@ export default function AutomationEditor({ automationId, onClose }) {
     return (
       <div style={fullscreenStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-          <span style={{ fontSize: 13, color: '#9ca3af' }}>Cargando editor...</span>
+          <span style={{ fontSize: 13, color: '#9ca3af' }}>{t('status.loading')}</span>
         </div>
       </div>
     )
@@ -264,90 +249,66 @@ export default function AutomationEditor({ automationId, onClose }) {
         onToggleHistory={() => setShowHistory(v => !v)}
       />
 
-      <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
 
-        {selectedNodeId
-          ? <PrevNodeOutputPanel nodeId={selectedNodeId} nodes={nodes} edges={edges} />
-          : <NodeSidebar />
-        }
+        {/* CANVAS VIEW — hidden when a node is selected for editing */}
+        <div style={{
+          display: selectedNodeId ? 'none' : 'flex',
+          flex: 1,
+          minHeight: 0,
+          position: 'relative',
+        }}>
+          <NodeSidebar />
+          <div style={{ flex: 1, position: 'relative' }}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onPaneClick={onPaneClick}
+              onNodeClick={handleNodeClick}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.3 }}
+              deleteKeyCode={['Delete', 'Backspace']}
+              minZoom={0.2}
+              maxZoom={2}
+            >
+              <Background variant="dots" gap={16} size={1} color="rgba(255,255,255,0.08)" />
+              <MiniMap
+                nodeStrokeWidth={2}
+                style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10 }}
+              />
+              <Controls style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }} />
+            </ReactFlow>
+          </div>
 
-        <div style={{ flex: 1, position: 'relative' }}>
-          <ReactFlow
+          <ExecutionHistory
+            automationId={id}
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+          />
+        </div>
+
+        {/* NDV — shown when a node is selected, replaces canvas */}
+        {selectedNodeId && (
+          <NodeDetailsView
+            nodeId={selectedNodeId}
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onPaneClick={onPaneClick}
-            onNodeClick={handleNodeClick}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.3 }}
-            deleteKeyCode={['Delete', 'Backspace']}
-            minZoom={0.2}
-            maxZoom={2}
-          >
-            <Background variant="dots" gap={16} size={1} color="#e5e7eb" />
-            <MiniMap
-              nodeStrokeWidth={2}
-              style={{ background: '#f9fafb', border: '1px solid #f0f0f0', borderRadius: 10 }}
-            />
-            <Controls style={{ borderRadius: 8, border: '1px solid #f0f0f0', overflow: 'hidden' }} />
-          </ReactFlow>
-        </div>
+            onClose={() => clearSelection()}
+            onExecuteStep={() => openTestPayload()}
+            onUpdateNode={updateNodeData}
+            onDeleteNode={(nodeId) => onNodesChange([{ type: 'remove', id: nodeId }])}
+            variables={contextVariables}
+            automationId={id}
+          />
+        )}
 
-        {/* Panel derecho con tabs Config / Output */}
-        <div style={{ display: 'flex', flexDirection: 'column', width: 280, borderLeft: '1px solid #f0f0f0', flexShrink: 0 }}>
-
-          {/* Tabs — solo visibles cuando el nodo tiene datos de ejecución */}
-          {viewingOutputNodeId && (
-            <div style={{ display: 'flex', borderBottom: '1px solid #f0f0f0', background: '#fafafa' }}>
-              {[['config', '⚙️ Config'], ['output', '📤 Output']].map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => setRightTab(key)}
-                  style={{
-                    flex: 1, padding: '8px 0', fontSize: 12, fontWeight: 600,
-                    border: 'none', cursor: 'pointer',
-                    background:   rightTab === key ? '#fff'    : 'transparent',
-                    color:        rightTab === key ? '#111827' : '#6b7280',
-                    borderBottom: rightTab === key ? '2px solid #6366f1' : '2px solid transparent',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Contenido del panel */}
-          <div style={{ flex: 1, overflow: 'auto' }}>
-            {viewingOutputNodeId && rightTab === 'output'
-              ? <NodeOutputPanel
-                  node={nodes.find(n => n.id === viewingOutputNodeId)}
-                  onClose={() => { setViewingOutputNodeId(null); setRightTab('config') }}
-                  inline
-                />
-              : <NodeConfigPanel
-                  node={selectedNode}
-                  onUpdate={updateNodeData}
-                  onDelete={(nodeId) => onNodesChange([{ type: 'remove', id: nodeId }])}
-                  variables={contextVariables}
-                  automationId={id}
-                />
-            }
-          </div>
-        </div>
-
-        <ExecutionHistory
-          automationId={id}
-          isOpen={showHistory}
-          onClose={() => setShowHistory(false)}
-        />
       </div>
 
       <TestPayloadModal
@@ -365,7 +326,8 @@ export default function AutomationEditor({ automationId, onClose }) {
 
 const fullscreenStyle = {
   position: 'fixed', inset: 0, zIndex: 100,
-  background: '#fff',
+  background: 'rgba(0,0,0,0.7)',
+  backdropFilter: 'blur(40px)',
   display: 'flex', flexDirection: 'column',
   fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
 }

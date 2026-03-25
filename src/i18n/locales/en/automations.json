@@ -88,6 +88,25 @@
     "dragHint": "Drag a field to an input"
   },
 
+  "ndv": {
+    "input": "INPUT",
+    "output": "OUTPUT",
+    "schema": "Schema",
+    "table": "Table",
+    "json": "JSON",
+    "executeStep": "Execute step",
+    "noInput": "This node has no input data",
+    "noOutput": "No output",
+    "noOutputHint": "Execute this step to see output",
+    "parameters": "Parameters",
+    "settings": "Settings",
+    "continueOnError": "Continue on error",
+    "continueOnErrorDesc": "Flow continues even if this step fails",
+    "notes": "Notes",
+    "notesPlaceholder": "Notes about this node...",
+    "dragHint": "Drag a field to a center input"
+  },
+
   "nodes": {
     "trigger":            "Trigger",
     "action":             "Action",

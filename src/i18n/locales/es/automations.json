@@ -88,6 +88,25 @@
     "dragHint": "Arrastrá un campo a un input"
   },
 
+  "ndv": {
+    "input": "INPUT",
+    "output": "OUTPUT",
+    "schema": "Schema",
+    "table": "Tabla",
+    "json": "JSON",
+    "executeStep": "Ejecutar paso",
+    "noInput": "Este nodo no tiene datos de entrada",
+    "noOutput": "Sin salida",
+    "noOutputHint": "Ejecutá este paso para ver la salida",
+    "parameters": "Parámetros",
+    "settings": "Configuración",
+    "continueOnError": "Continuar si hay error",
+    "continueOnErrorDesc": "El flujo continúa aunque este paso falle",
+    "notes": "Notas",
+    "notesPlaceholder": "Notas sobre este nodo...",
+    "dragHint": "Arrastrá un campo a un input del centro"
+  },
+
   "nodes": {
     "trigger":           "Trigger",
     "action":            "Acción",

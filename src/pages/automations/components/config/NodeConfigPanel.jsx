@@ -21,13 +21,22 @@ const glassSectionLabel = 'text-white/40 text-xs font-semibold uppercase trackin
  *   variables    — lista de variables disponibles para el VariablePicker
  *   automationId — para generar webhook
  */
-export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = [], automationId }) {
+export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = [], automationId, noContainer = false }) {
   const { t } = useTranslation('automations')
   const clearSelection = useAutomationsStore((s) => s.clearSelection)
 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   if (!node) {
+    if (noContainer) {
+      return (
+        <div className="flex-1 flex items-center justify-center p-5">
+          <p className="text-white/30 text-sm text-center">
+            {t('nodes.config.noNodeSelected')}
+          </p>
+        </div>
+      )
+    }
     return (
       <div className="w-[280px] shrink-0 bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full overflow-hidden">
         <div className="flex-1 flex items-center justify-center p-5">
@@ -46,6 +55,111 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
     if (!confirmDelete) { setConfirmDelete(true); return }
     onDelete(node.id)
     clearSelection()
+  }
+
+  const body = (
+    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+
+      {/* ── Trigger: schedule_once ── */}
+      {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_once' && (
+        <div className="pb-4 mb-0 border-b border-white/10">
+          <ScheduleOnceConfig config={config} onChange={setConfig} />
+        </div>
+      )}
+
+      {/* ── Trigger: schedule_interval ── */}
+      {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_interval' && (
+        <div className="pb-4 border-b border-white/10">
+          <ScheduleIntervalConfig config={config} onChange={setConfig} />
+        </div>
+      )}
+
+      {/* ── Trigger: webhook_inbound / nodo webhook_inbound ── */}
+      {(node.type === 'webhook_inbound' ||
+        (node.type === 'trigger' && node.data?.ref_id === 'system.webhook_inbound')) && (
+        <div className="pb-4 border-b border-white/10">
+          <WebhookInboundConfig webhookToken={node.data?.webhook_token} />
+        </div>
+      )}
+
+      {/* ── Acción: webhook saliente ── */}
+      {(node.type === 'outbound_webhook' || (node.type === 'action' && node.data?.ref_id === 'http.webhook_outbound')) && (
+        <div className="pb-4 border-b border-white/10">
+          <WebhookOutboundConfig config={config} onChange={setConfig} variables={variables} />
+        </div>
+      )}
+
+      {/* ── Condición ── */}
+      {node.type === 'condition' && (
+        <div className="pb-4 border-b border-white/10">
+          <ConditionConfig config={config} onChange={setConfig} variables={variables} />
+        </div>
+      )}
+
+      {/* ── Delay ── */}
+      {node.type === 'delay' && (
+        <div className="pb-4 border-b border-white/10">
+          <DelayConfig config={config} onChange={setConfig} />
+        </div>
+      )}
+
+      {/* ── Stop ── */}
+      {node.type === 'stop' && (
+        <div className="pb-4 border-b border-white/10">
+          <StopConfig config={config} onChange={setConfig} />
+        </div>
+      )}
+
+      {/* ── Acción genérica de módulo ── */}
+      {node.type === 'action' && node.data?.ref_id !== 'http.webhook_outbound' && node.data?.ref_id !== 'automations_engine.outbound_webhook' && node.data?.config_schema && (
+        <div className="pb-4 border-b border-white/10">
+          <GenericActionConfig
+            schema={node.data.config_schema}
+            config={config}
+            onChange={setConfig}
+            variables={variables}
+          />
+        </div>
+      )}
+
+      {/* ── Continue on error (todas las acciones) ── */}
+      {node.type === 'action' && (
+        <div className="pb-4 border-b border-white/10">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="accent-white/60"
+              checked={node.data?.continue_on_error ?? false}
+              onChange={e => onUpdate(node.id, { continue_on_error: e.target.checked })}
+            />
+            <span className="text-white/70 text-sm">
+              {t('nodes.config.continueOnError')}
+            </span>
+          </label>
+        </div>
+      )}
+
+      {/* ── Eliminar nodo ── */}
+      {node.type !== 'trigger' && (
+        <div className="mt-2">
+          <button
+            onClick={handleDelete}
+            onMouseLeave={() => setConfirmDelete(false)}
+            className={
+              confirmDelete
+                ? 'bg-red-500/40 hover:bg-red-500/50 border border-red-400/60 text-red-300 rounded-lg px-3 py-1.5 text-sm font-semibold transition-all'
+                : 'bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg px-3 py-1.5 text-sm font-medium transition-all'
+            }
+          >
+            {confirmDelete ? t('nodes.config.confirmDelete') : `🗑 ${t('nodes.config.delete')}`}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+
+  if (noContainer) {
+    return body
   }
 
   return (
@@ -67,106 +181,7 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
           ×
         </button>
       </div>
-
-      {/* Body */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-
-        {/* ── Trigger: schedule_once ── */}
-        {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_once' && (
-          <div className="pb-4 mb-0 border-b border-white/10">
-            <ScheduleOnceConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Trigger: schedule_interval ── */}
-        {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_interval' && (
-          <div className="pb-4 border-b border-white/10">
-            <ScheduleIntervalConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Trigger: webhook_inbound / nodo webhook_inbound ── */}
-        {(node.type === 'webhook_inbound' ||
-          (node.type === 'trigger' && node.data?.ref_id === 'system.webhook_inbound')) && (
-          <div className="pb-4 border-b border-white/10">
-            <WebhookInboundConfig webhookToken={node.data?.webhook_token} />
-          </div>
-        )}
-
-        {/* ── Acción: webhook saliente ── */}
-        {(node.type === 'outbound_webhook' || (node.type === 'action' && node.data?.ref_id === 'http.webhook_outbound')) && (
-          <div className="pb-4 border-b border-white/10">
-            <WebhookOutboundConfig config={config} onChange={setConfig} variables={variables} />
-          </div>
-        )}
-
-        {/* ── Condición ── */}
-        {node.type === 'condition' && (
-          <div className="pb-4 border-b border-white/10">
-            <ConditionConfig config={config} onChange={setConfig} variables={variables} />
-          </div>
-        )}
-
-        {/* ── Delay ── */}
-        {node.type === 'delay' && (
-          <div className="pb-4 border-b border-white/10">
-            <DelayConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Stop ── */}
-        {node.type === 'stop' && (
-          <div className="pb-4 border-b border-white/10">
-            <StopConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Acción genérica de módulo ── */}
-        {node.type === 'action' && node.data?.ref_id !== 'http.webhook_outbound' && node.data?.ref_id !== 'automations_engine.outbound_webhook' && node.data?.config_schema && (
-          <div className="pb-4 border-b border-white/10">
-            <GenericActionConfig
-              schema={node.data.config_schema}
-              config={config}
-              onChange={setConfig}
-              variables={variables}
-            />
-          </div>
-        )}
-
-        {/* ── Continue on error (todas las acciones) ── */}
-        {node.type === 'action' && (
-          <div className="pb-4 border-b border-white/10">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="accent-white/60"
-                checked={node.data?.continue_on_error ?? false}
-                onChange={e => onUpdate(node.id, { continue_on_error: e.target.checked })}
-              />
-              <span className="text-white/70 text-sm">
-                {t('nodes.config.continueOnError')}
-              </span>
-            </label>
-          </div>
-        )}
-
-        {/* ── Eliminar nodo ── */}
-        {node.type !== 'trigger' && (
-          <div className="mt-2">
-            <button
-              onClick={handleDelete}
-              onMouseLeave={() => setConfirmDelete(false)}
-              className={
-                confirmDelete
-                  ? 'bg-red-500/40 hover:bg-red-500/50 border border-red-400/60 text-red-300 rounded-lg px-3 py-1.5 text-sm font-semibold transition-all'
-                  : 'bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg px-3 py-1.5 text-sm font-medium transition-all'
-              }
-            >
-              {confirmDelete ? t('nodes.config.confirmDelete') : `🗑 ${t('nodes.config.delete')}`}
-            </button>
-          </div>
-        )}
-      </div>
+      {body}
     </div>
   )
 }
