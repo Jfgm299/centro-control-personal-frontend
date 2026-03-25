@@ -1,0 +1,151 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Animated Edge Styles
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Base Edge Styles ────────────────────────────────────────────────────── */
+
+.edge-path {
+  stroke: var(--edge-default);
+  stroke-width: 2;
+  fill: none;
+  transition: stroke 0.3s ease;
+}
+
+/* ── Edge States ─────────────────────────────────────────────────────────── */
+
+.edge-path--executing {
+  stroke: var(--edge-executing);
+  stroke-width: 2.5;
+}
+
+.edge-path--success {
+  stroke: var(--edge-success);
+}
+
+.edge-path--error {
+  stroke: var(--edge-error);
+}
+
+/* Condition edges */
+.edge-path--true {
+  stroke: var(--edge-true);
+}
+
+.edge-path--false {
+  stroke: var(--edge-false);
+}
+
+/* ── Edge Animation ──────────────────────────────────────────────────────── */
+
+.edge-path--animating {
+  stroke-dasharray: 8 4;
+  animation: edge-flow 0.6s linear infinite;
+}
+
+.edge-path--animating.edge-path--pulse {
+  animation: edge-flow 0.6s linear infinite, edge-pulse 1s ease-in-out infinite;
+}
+
+@keyframes edge-flow {
+  from {
+    stroke-dashoffset: 12;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Alternative pulse animation */
+.edge-path--pulse {
+  stroke-opacity: 0.9;
+}
+
+@keyframes edge-pulse {
+  0%, 100% {
+    stroke-opacity: 0.6;
+    stroke-width: 2;
+  }
+  50% {
+    stroke-opacity: 1;
+    stroke-width: 3;
+  }
+}
+
+/* ── Particle Effect (for advanced animations) ───────────────────────────── */
+
+.edge-particle {
+  fill: var(--edge-executing);
+  filter: drop-shadow(0 0 4px var(--edge-executing));
+}
+
+.edge-particle--moving {
+  animation: edge-particle-move var(--edge-duration, 1s) linear forwards;
+}
+
+@keyframes edge-particle-move {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* ── Condition Labels ────────────────────────────────────────────────────── */
+
+.edge-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.edge-label--true {
+  background: var(--edge-true);
+}
+
+.edge-label--false {
+  background: var(--edge-false);
+}
+
+.edge-label--default {
+  background: var(--edge-default);
+}
+
+/* ── Glow Effect ─────────────────────────────────────────────────────────── */
+
+.edge-glow {
+  stroke: var(--edge-executing);
+  stroke-width: 6;
+  stroke-opacity: 0.3;
+  fill: none;
+  filter: blur(4px);
+}
+
+/* ── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-path--animating {
+    animation: none;
+    stroke-dasharray: none;
+  }
+
+  .edge-path--pulse {
+    animation: none;
+    stroke-opacity: 1;
+  }
+
+  .edge-particle--moving {
+    animation: none;
+    offset-distance: 100%;
+  }
+
+  .edge-path {
+    transition: stroke 0.1s ease;
+  }
+}

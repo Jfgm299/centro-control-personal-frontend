@@ -17,12 +17,20 @@
     "deleting": "Eliminando..."
   },
 
+  "status": {
+    "loading": "Cargando..."
+  },
+
   "card": {
     "edit": "Editar",
     "duplicate": "Duplicar",
     "export": "Exportar JSON",
     "delete": "Eliminar",
     "confirmDelete": "Confirmar eliminación",
+    "now": "Ahora",
+    "agoMinutes": "Hace {{count}}m",
+    "agoHours": "Hace {{count}}h",
+    "agoDays": "Hace {{count}}d",
     "triggerType": {
       "manual": "Manual",
       "schedule_once": "Programada una vez",
@@ -67,7 +75,36 @@
     "triggers": "Triggers",
     "actions": "Acciones",
     "flowControl": "Control de flujo",
-    "noResults": "Sin resultados para \"{{query}}\""
+    "noResults": "Sin resultados para \"{{query}}\"",
+    "conditionDesc": "Ramifica el flujo según una condición",
+    "delayDesc": "Pausa la ejecución un tiempo determinado",
+    "stopDesc": "Finaliza el flujo en este punto"
+  },
+
+  "prevNode": {
+    "title": "Datos del paso anterior",
+    "empty": "Ejecutá el flujo primero para ver los datos de salida.",
+    "noParent": "Este nodo no tiene un paso anterior.",
+    "dragHint": "Arrastrá un campo a un input"
+  },
+
+  "ndv": {
+    "input": "INPUT",
+    "output": "OUTPUT",
+    "schema": "Schema",
+    "table": "Tabla",
+    "json": "JSON",
+    "executeStep": "Ejecutar paso",
+    "noInput": "Este nodo no tiene datos de entrada",
+    "noOutput": "Sin salida",
+    "noOutputHint": "Ejecutá este paso para ver la salida",
+    "parameters": "Parámetros",
+    "settings": "Configuración",
+    "continueOnError": "Continuar si hay error",
+    "continueOnErrorDesc": "El flujo continúa aunque este paso falle",
+    "notes": "Notas",
+    "notesPlaceholder": "Notas sobre este nodo...",
+    "dragHint": "Arrastrá un campo a un input del centro"
   },
 
   "nodes": {
@@ -79,6 +116,7 @@
     "webhookOutbound":   "Webhook (saliente)",
     "automationCall":    "Llamar automatización",
     "stop":              "Detener",
+    "continueOnError":   "Continúa si hay error",
 
     "system": {
       "manual":           "Manual",
@@ -92,7 +130,9 @@
       "delete":           "Eliminar nodo",
       "confirmDelete":    "Confirmar eliminación",
       "noNodeSelected":   "Selecciona un nodo para configurarlo"
-    }
+    },
+    "deleteTitle":          "Eliminar nodo",
+    "stopReasonPlaceholder": "Motivo opcional"
   },
 
   "condition": {
@@ -155,7 +195,8 @@
     "headers":       "Cabeceras",
     "addHeader":     "Añadir cabecera",
     "body":          "Plantilla de cuerpo",
-    "bodyHint":      "Usa {{variable}} para insertar valores del contexto"
+    "bodyHint":      "Usa {{variable}} para insertar valores del contexto",
+    "urlPendingSave": "(guardá para generar la URL)"
   },
 
   "variablePicker": {
@@ -191,7 +232,8 @@
       "duration":   "Duración",
       "status":     "Estado",
       "failedNode": "Nodo fallido"
-    }
+    },
+    "backToAll": "← Volver a todas"
   },
 
   "error": {
@@ -199,6 +241,50 @@
     "saveFailed":   "No se pudo guardar. Inténtalo de nuevo.",
     "runFailed":    "No se pudo iniciar la ejecución",
     "webhookError": "El endpoint de webhook puede no estar disponible todavía"
+  },
+
+  "registry": {
+    "modules": {
+      "system":           "Sistema",
+      "calendar_tracker": "Calendario",
+      "gym_tracker":      "Gimnasio",
+      "expenses_tracker": "Gastos",
+      "macro_tracker":    "Macros",
+      "flights_tracker":  "Vuelos",
+      "travels_tracker":  "Viajes",
+      "other":            "Otros"
+    },
+    "nodes": {
+      "system.manual":            "Manual",
+      "system.schedule_once":     "A una hora exacta",
+      "system.schedule_interval": "Cada X tiempo",
+      "system.webhook_inbound":   "Webhook entrante",
+
+      "calendar_tracker.event_start":              "Inicio de evento",
+      "calendar_tracker.event_end":                "Fin de evento",
+      "calendar_tracker.reminder_due":             "Recordatorio vencido",
+      "calendar_tracker.no_events_in_window":      "Sin eventos en la ventana",
+      "calendar_tracker.overdue_reminders_exist":  "Hay recordatorios atrasados",
+      "calendar_tracker.create_event":             "Crear evento",
+      "calendar_tracker.create_reminder":          "Crear recordatorio",
+      "calendar_tracker.mark_reminder_done":       "Marcar recordatorio como hecho",
+      "calendar_tracker.cancel_event":             "Cancelar evento",
+      "calendar_tracker.push_summary_overdue":     "Enviar resumen de atrasados",
+      "calendar_tracker.get_todays_schedule":      "Obtener agenda de hoy",
+      "calendar_tracker.bulk_mark_overdue_done":   "Marcar todos los atrasados como hechos",
+
+      "automations_engine.outbound_webhook":       "Webhook saliente",
+      "automations_engine.delay":                  "Esperar",
+      "automations_engine.stop":                   "Detener",
+
+      "expenses_tracker.large_expense_created":        "Gasto grande registrado",
+      "expenses_tracker.monthly_budget_exceeded":      "Presupuesto mensual superado",
+      "expenses_tracker.subscription_due_soon":        "Suscripción próxima a vencer",
+      "expenses_tracker.subscription_converted":       "Suscripción convertida",
+      "expenses_tracker.create_expense":               "Crear gasto",
+      "expenses_tracker.get_monthly_summary":          "Obtener resumen mensual",
+      "expenses_tracker.get_upcoming_subscriptions":   "Obtener próximas suscripciones"
+    }
   },
 
   "apiKeys": {

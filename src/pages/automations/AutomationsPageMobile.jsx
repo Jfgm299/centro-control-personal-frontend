@@ -28,46 +28,38 @@ export default function AutomationsPageMobile({ onEdit }) {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#fafafa',
-      fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
-      paddingBottom: 80,
-    }}>
-
+    <div
+      className="bg-transparent min-h-screen pb-20"
+      style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif' }}
+    >
       {/* ── Header ── */}
-      <div style={{
-        background: '#fff',
-        borderBottom: '1px solid #f0f0f0',
-        padding: '16px 16px 12px',
-        position: 'sticky', top: 0, zIndex: 10,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>
+      <div
+        className="sticky top-0 z-10"
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          padding: '16px 16px 12px',
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-white font-bold text-2xl">
             ⚡ {t('title')}
           </span>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="flex gap-2">
             <input
               ref={importRef} type="file" accept=".json"
               onChange={handleImportFile} style={{ display: 'none' }}
             />
             <button
               onClick={() => importRef.current?.click()}
-              style={{
-                padding: '6px 12px', borderRadius: 8,
-                border: '1px solid #e5e7eb', background: '#fff',
-                fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer',
-              }}
+              className="bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-xl px-3 py-2 text-xs transition-all"
             >
               {t('list.import')}
             </button>
             <button
               onClick={() => setCreateOpen(true)}
-              style={{
-                padding: '6px 14px', borderRadius: 8,
-                border: 'none', background: '#0f172a',
-                color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              }}
+              className="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
             >
               + {t('list.create')}
             </button>
@@ -76,17 +68,17 @@ export default function AutomationsPageMobile({ onEdit }) {
       </div>
 
       {/* ── Content ── */}
-      <div style={{ padding: '12px 12px 0' }}>
+      <div className="p-3">
 
         {isLoading && (
-          <div style={{ textAlign: 'center', paddingTop: 60 }}>
-            <span style={{ fontSize: 13, color: '#9ca3af' }}>Cargando...</span>
+          <div className="text-center pt-16">
+            <span className="text-white/30 text-sm">{t('status.loading')}</span>
           </div>
         )}
 
         {isError && (
-          <div style={{ textAlign: 'center', paddingTop: 60 }}>
-            <span style={{ fontSize: 13, color: '#ef4444' }}>{t('error.loadFailed')}</span>
+          <div className="text-center pt-16">
+            <span className="text-red-400 text-sm">{t('error.loadFailed')}</span>
           </div>
         )}
 
@@ -95,7 +87,7 @@ export default function AutomationsPageMobile({ onEdit }) {
         )}
 
         {!isLoading && !isError && automations.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="flex flex-col gap-2.5">
             {automations.map((a) => (
               <AutomationCard
                 key={a.id}

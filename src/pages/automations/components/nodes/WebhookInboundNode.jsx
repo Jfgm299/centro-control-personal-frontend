@@ -13,7 +13,7 @@ export default function WebhookInboundNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#ecfdf5',
+            background: 'rgba(5,150,105,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14,
           }}>
@@ -23,7 +23,7 @@ export default function WebhookInboundNode({ id, data, selected }) {
             <div style={{ fontSize: 9, fontWeight: 700, color: '#059669', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {t('nodes.trigger')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)' }}>
               {t('nodes.webhookInbound')}
             </div>
           </div>
@@ -31,8 +31,8 @@ export default function WebhookInboundNode({ id, data, selected }) {
 
         {data.webhook_url && (
           <div style={{
-            marginTop: 6, fontSize: 10, color: '#6b7280',
-            background: '#f9fafb', borderRadius: 6, padding: '2px 6px',
+            marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.45)',
+            background: 'rgba(255,255,255,0.06)', borderRadius: 6, padding: '2px 6px', border: '1px solid rgba(255,255,255,0.08)',
             fontFamily: 'monospace',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             maxWidth: 180,

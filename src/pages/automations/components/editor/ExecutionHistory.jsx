@@ -40,59 +40,58 @@ export default function ExecutionHistory({ automationId, isOpen, onClose }) {
   }
 
   return (
-    <div style={{
-      position: 'absolute', bottom: 0, left: 220, right: 280,
-      height: 220, zIndex: 50,
-      background: '#fff',
-      borderTop: '1px solid #f0f0f0',
-      display: 'flex', flexDirection: 'column',
-      boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
-    }}>
-
+    <div
+      className="absolute bottom-0 left-[220px] right-[280px] h-[220px] z-50 flex flex-col"
+      style={{ background: 'rgba(10,12,20,0.85)', backdropFilter: 'blur(16px)', borderTop: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 -4px 30px rgba(0,0,0,0.4)' }}
+    >
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 16px',
-        borderBottom: '1px solid #f0f0f0', flexShrink: 0,
-      }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#374151' }}>
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+        <span className="text-white/60 text-xs font-semibold uppercase tracking-wider">
           🕓 {t('editor.historyTitle')}
         </span>
-        {selectedId && (
-          <button onClick={() => { clearExecutionState(); setSelectedId(null) }} style={linkBtn}>
-            ← Volver a todas
+        <div className="flex items-center gap-2">
+          {selectedId && (
+            <button
+              onClick={() => { clearExecutionState(); setSelectedId(null) }}
+              className="text-indigo-400 hover:text-indigo-300 text-xs font-medium bg-transparent border-none cursor-pointer transition-colors"
+            >
+              {t('execution.backToAll')}
+            </button>
+          )}
+          <button
+            onClick={handleClose}
+            className="bg-black/20 hover:bg-white/10 border border-white/10 text-white/40 hover:text-white rounded-lg p-1 transition-all"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
-        )}
-        <button onClick={handleClose} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 16, color: '#9ca3af' }}>
-          ×
-        </button>
+        </div>
       </div>
 
       {/* Table */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="flex-1 overflow-y-auto">
         {isLoading && (
-          <div style={{ padding: 20, textAlign: 'center', fontSize: 12, color: '#9ca3af' }}>
-            Cargando...
+          <div className="p-5 text-center text-white/30 text-xs">
+            {t('status.loading')}
           </div>
         )}
 
         {!isLoading && executions.length === 0 && (
-          <div style={{ padding: 20, textAlign: 'center', fontSize: 12, color: '#9ca3af' }}>
+          <div className="p-5 text-center text-white/30 text-xs">
             {t('editor.noHistory')}
           </div>
         )}
 
         {!isLoading && executions.length > 0 && (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <table className="w-full border-collapse text-xs">
             <thead>
-              <tr style={{ background: '#f9fafb' }}>
+              <tr>
                 {['date', 'trigger', 'duration', 'status', 'failedNode'].map(col => (
-                  <th key={col} style={{
-                    padding: '6px 14px', textAlign: 'left',
-                    fontSize: 10, fontWeight: 700, color: '#9ca3af',
-                    textTransform: 'uppercase', letterSpacing: '0.06em',
-                    borderBottom: '1px solid #f0f0f0',
-                  }}>
+                  <th
+                    key={col}
+                    className="bg-white/5 text-white/40 text-xs font-semibold uppercase tracking-wider px-4 py-3 border-b border-white/10 text-left"
+                  >
                     {t(`execution.columns.${col}`)}
                   </th>
                 ))}
@@ -103,27 +102,21 @@ export default function ExecutionHistory({ automationId, isOpen, onClose }) {
                 <tr
                   key={ex.id}
                   onClick={() => handleSelectExecution(ex)}
-                  style={{
-                    cursor: 'pointer',
-                    background: selectedId === ex.id ? '#f0f9ff' : 'transparent',
-                    borderBottom: '1px solid #f9fafb',
-                  }}
-                  onMouseEnter={e => { if (selectedId !== ex.id) e.currentTarget.style.background = '#f9fafb' }}
-                  onMouseLeave={e => { if (selectedId !== ex.id) e.currentTarget.style.background = 'transparent' }}
+                  className={`cursor-pointer border-b border-white/8 last:border-0 transition-colors ${selectedId === ex.id ? 'bg-white/10' : 'hover:bg-white/5'}`}
                 >
-                  <td style={{ padding: '7px 14px', color: '#374151' }}>
+                  <td className="px-4 py-3 text-white/70 text-sm">
                     {formatDate(ex.created_at)}
                   </td>
-                  <td style={{ padding: '7px 14px', color: '#6b7280' }}>
+                  <td className="px-4 py-3 text-white/40 text-sm">
                     {ex.trigger_type ?? '—'}
                   </td>
-                  <td style={{ padding: '7px 14px', color: '#6b7280' }}>
+                  <td className="px-4 py-3 text-white/40 text-sm">
                     {ex.duration_ms != null ? `${ex.duration_ms}ms` : '—'}
                   </td>
-                  <td style={{ padding: '7px 14px' }}>
+                  <td className="px-4 py-3">
                     <StatusBadge status={ex.status} t={t} />
                   </td>
-                  <td style={{ padding: '7px 14px', color: '#ef4444', fontSize: 11 }}>
+                  <td className="px-4 py-3 text-red-400/70 text-xs">
                     {ex.error_message ? truncate(ex.error_message, 40) : '—'}
                   </td>
                 </tr>
@@ -139,29 +132,22 @@ export default function ExecutionHistory({ automationId, isOpen, onClose }) {
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function StatusBadge({ status, t }) {
-  const colors = {
-    completed: { bg: '#dcfce7', color: '#15803d' },
-    failed:    { bg: '#fee2e2', color: '#dc2626' },
-    running:   { bg: '#dbeafe', color: '#1d4ed8' },
-    cancelled: { bg: '#f3f4f6', color: '#6b7280' },
+  const classes = {
+    completed: 'bg-emerald-500/15 text-emerald-400 border-emerald-400/20',
+    success:   'bg-emerald-500/15 text-emerald-400 border-emerald-400/20',
+    failed:    'bg-red-500/15 text-red-400 border-red-400/20',
+    running:   'bg-blue-500/15 text-blue-400 border-blue-400/20',
+    cancelled: 'bg-white/8 text-white/40 border-white/10',
   }
-  const c = colors[status] ?? colors.cancelled
+  const cls = classes[status] ?? classes.cancelled
   return (
-    <span style={{
-      fontSize: 10, fontWeight: 700, padding: '2px 7px',
-      borderRadius: 6, background: c.bg, color: c.color,
-    }}>
+    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${cls}`}>
       {t(`execution.status.${status}`) ?? status}
     </span>
   )
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
-
-const linkBtn = {
-  border: 'none', background: 'none', cursor: 'pointer',
-  fontSize: 11, color: '#6366f1', fontWeight: 500, padding: 0,
-}
 
 function formatDate(iso) {
   if (!iso) return '—'

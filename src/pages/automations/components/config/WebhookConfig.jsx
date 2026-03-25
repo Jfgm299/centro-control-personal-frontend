@@ -3,17 +3,25 @@ import { useTranslation } from 'react-i18next'
 import { webhooksService } from '../../services/automationsApi'
 import VariablePicker, { insertAtCursor } from './VariablePicker'
 
-const inputStyle = {
-  width: '100%', boxSizing: 'border-box',
-  padding: '7px 10px', fontSize: 13,
-  border: '1px solid #e5e7eb', borderRadius: 8,
-  outline: 'none', color: '#111827',
-  fontFamily: 'inherit', background: '#fff',
-}
+const glassInput = 'w-full px-3 py-2 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all'
+const glassSelect = glassInput + ' appearance-none'
+const glassLabel = 'text-white/60 text-sm mb-1 block'
 
-const labelStyle = {
-  fontSize: 11, fontWeight: 600, color: '#6b7280',
-  marginBottom: 4, display: 'block',
+// Helper: drag-drop variable insertion for text inputs / textareas
+function makeDragHandlers(onChange) {
+  return {
+    onDragOver: (e) => e.preventDefault(),
+    onDrop: (e) => {
+      e.preventDefault()
+      const v = e.dataTransfer.getData('variable')
+      if (!v) return
+      const el = e.currentTarget
+      const start = el.selectionStart ?? el.value.length
+      const end   = el.selectionEnd   ?? el.value.length
+      const newVal = el.value.slice(0, start) + '{{' + v + '}}' + el.value.slice(end)
+      onChange(newVal)
+    },
+  }
 }
 
 // ── WebhookInboundConfig ──────────────────────────────────────────────────────
@@ -52,25 +60,21 @@ export function WebhookInboundConfig({ webhookToken }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="flex flex-col gap-3">
       <div>
-        <label style={labelStyle}>{t('webhook.urlLabel')}</label>
-        <div style={{ display: 'flex', gap: 6 }}>
+        <label className={glassLabel}>{t('webhook.urlLabel')}</label>
+        <div className="flex gap-1.5">
           <input
             readOnly
-            value={webhookUrl ?? '(guardar para generar URL)'}
-            style={{ ...inputStyle, flex: 1, fontSize: 11, fontFamily: 'monospace', background: '#f9fafb' }}
+            value={webhookUrl ?? t('webhook.urlPendingSave')}
+            className={glassInput + ' flex-1 !text-xs font-mono'}
           />
           <button
             onClick={handleCopy}
             disabled={!webhookUrl}
-            style={{
-              padding: '0 12px', borderRadius: 8, border: '1px solid #e5e7eb',
-              background: '#fff', fontSize: 12, fontWeight: 600,
-              cursor: webhookUrl ? 'pointer' : 'not-allowed',
-              color: copied ? '#15803d' : '#374151',
-              flexShrink: 0,
-            }}
+            className={`bg-white/10 hover:bg-white/20 border border-white/10 text-white/60 hover:text-white text-xs rounded-lg px-2 py-1 shrink-0 transition-all ${
+              !webhookUrl ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            } ${copied ? '!text-emerald-400' : ''}`}
           >
             {copied ? t('webhook.copied') : t('webhook.copy')}
           </button>
@@ -80,24 +84,19 @@ export function WebhookInboundConfig({ webhookToken }) {
       <button
         onClick={handleTest}
         disabled={testing || !webhookToken}
-        style={{
-          padding: '8px 14px', borderRadius: 8, border: '1px solid #e5e7eb',
-          background: testing ? '#f9fafb' : '#fff',
-          color: '#374151', fontSize: 13, fontWeight: 500,
-          cursor: testing || !webhookToken ? 'not-allowed' : 'pointer',
-          textAlign: 'left',
-        }}
+        className={`bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-3 py-1.5 text-sm font-medium transition-all active:scale-95 text-left ${
+          (testing || !webhookToken) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        }`}
       >
         {testing ? `⏳ ${t('webhook.sending')}` : `🧪 ${t('webhook.sendTest')}`}
       </button>
 
       {testResult && (
-        <div style={{
-          padding: '8px 12px', borderRadius: 8, fontSize: 12,
-          background: testResult.ok ? '#f0fdf4' : '#fef2f2',
-          color:      testResult.ok ? '#15803d' : '#dc2626',
-          fontWeight: 500,
-        }}>
+        <div className={`px-3 py-2 rounded-xl text-xs font-medium border ${
+          testResult.ok
+            ? 'bg-emerald-500/15 border-emerald-400/25 text-emerald-400'
+            : 'bg-red-500/15 border-red-400/25 text-red-400'
+        }`}>
           {testResult.ok
             ? t('webhook.testSuccess', { status: testResult.status, ms: testResult.ms })
             : t('webhook.testFailed',  { error: testResult.error })}
@@ -130,12 +129,12 @@ export function WebhookOutboundConfig({ config = {}, onChange, variables = [] })
   const removeHeader = (i) => set('headers', headers.filter((_, idx) => idx !== i))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div className="flex flex-col gap-3.5">
 
       {/* URL */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>{t('webhook.outboundUrl')}</label>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <div className="flex justify-between items-center mb-1">
+          <label className={glassLabel + ' mb-0'}>{t('webhook.outboundUrl')}</label>
           <VariablePicker variables={variables} onInsert={(v) => insertAtCursor(urlRef, v)} />
         </div>
         <input
@@ -144,55 +143,54 @@ export function WebhookOutboundConfig({ config = {}, onChange, variables = [] })
           value={config.url ?? ''}
           onChange={e => set('url', e.target.value)}
           placeholder="https://..."
-          style={inputStyle}
+          className={glassInput}
+          {...makeDragHandlers(v => set('url', v))}
         />
       </div>
 
       {/* Método */}
-      <div>
-        <label style={labelStyle}>{t('webhook.method')}</label>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <label className={glassLabel}>{t('webhook.method')}</label>
         <select
           value={config.method ?? 'POST'}
           onChange={e => set('method', e.target.value)}
-          style={inputStyle}
+          className={glassSelect}
         >
           {HTTP_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
       </div>
 
       {/* Headers */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>{t('webhook.headers')}</label>
-          <button onClick={addHeader} style={{
-            fontSize: 11, fontWeight: 600, color: '#6366f1',
-            border: 'none', background: 'none', cursor: 'pointer', padding: 0,
-          }}>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <div className="flex justify-between items-center mb-2">
+          <label className={glassLabel + ' mb-0'}>{t('webhook.headers')}</label>
+          <button
+            onClick={addHeader}
+            className="text-xs font-semibold text-white/50 hover:text-white/80 border-none bg-transparent cursor-pointer p-0 transition-colors"
+          >
             + {t('webhook.addHeader')}
           </button>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div className="flex flex-col gap-1.5">
           {headers.map((h, i) => (
-            <div key={i} style={{ display: 'flex', gap: 6 }}>
+            <div key={i} className="flex gap-1.5">
               <input
                 value={h.key}
                 onChange={e => setHeader(i, 'key', e.target.value)}
                 placeholder="Content-Type"
-                style={{ ...inputStyle, flex: 1 }}
+                className={glassInput + ' flex-1'}
+                {...makeDragHandlers(v => setHeader(i, 'key', v))}
               />
               <input
                 value={h.value}
                 onChange={e => setHeader(i, 'value', e.target.value)}
                 placeholder="application/json"
-                style={{ ...inputStyle, flex: 1 }}
+                className={glassInput + ' flex-1'}
+                {...makeDragHandlers(v => setHeader(i, 'value', v))}
               />
               <button
                 onClick={() => removeHeader(i)}
-                style={{
-                  padding: '0 8px', borderRadius: 8,
-                  border: '1px solid #fee2e2', background: '#fff',
-                  color: '#ef4444', cursor: 'pointer', fontSize: 14, flexShrink: 0,
-                }}
+                className="px-2 rounded-xl border border-red-400/30 bg-red-500/20 hover:bg-red-500/30 text-red-400 cursor-pointer text-sm shrink-0 transition-all"
               >
                 ×
               </button>
@@ -202,9 +200,9 @@ export function WebhookOutboundConfig({ config = {}, onChange, variables = [] })
       </div>
 
       {/* Body */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>{t('webhook.body')}</label>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <div className="flex justify-between items-center mb-1">
+          <label className={glassLabel + ' mb-0'}>{t('webhook.body')}</label>
           <VariablePicker variables={variables} onInsert={(v) => insertAtCursor(bodyRef, v)} />
         </div>
         <textarea
@@ -213,9 +211,10 @@ export function WebhookOutboundConfig({ config = {}, onChange, variables = [] })
           onChange={e => set('body', e.target.value)}
           placeholder={'{\n  "message": "{{payload.title}}"\n}'}
           rows={5}
-          style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }}
+          className={glassInput + ' resize-y font-mono !text-xs'}
+          {...makeDragHandlers(v => set('body', v))}
         />
-        <div style={{ fontSize: 10, color: '#9ca3af', marginTop: 3 }}>
+        <div className="text-white/30 text-xs mt-1">
           {t('webhook.bodyHint')}
         </div>
       </div>

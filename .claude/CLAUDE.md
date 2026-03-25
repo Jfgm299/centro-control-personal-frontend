@@ -32,6 +32,9 @@ React 18 · Vite · Tailwind CSS 4 · Zustand · React Query · Axios · React R
 @docs/modules/automations.md
 @docs/modules/home.md
 
+## Active Changes
+@docs/n8n-glass-redesign.md — n8n UI clone implementation guide (56 tasks, 8 phases)
+
 ## Quick Reference
 ```bash
 npm run dev          # dev server

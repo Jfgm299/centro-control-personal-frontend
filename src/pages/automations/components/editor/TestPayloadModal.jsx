@@ -39,87 +39,60 @@ export default function TestPayloadModal({ isOpen, onClose, onRun, isRunning, tr
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 2000,
-      background: 'rgba(0,0,0,0.4)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }} onClick={onClose}>
-      <div style={{
-        background: '#fff', borderRadius: 16,
-        width: '100%', maxWidth: 520,
-        boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
-        display: 'flex', flexDirection: 'column',
-        maxHeight: '80vh',
-      }} onClick={e => e.stopPropagation()}>
-
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[10000] p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{
-          padding: '18px 20px 14px',
-          borderBottom: '1px solid #f0f0f0',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        }}>
+        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
           <div>
-            <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#111827' }}>
+            <h2 className="text-white font-semibold text-lg m-0">
               {t('testPayload.title')}
             </h2>
-            <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6b7280' }}>
+            <p className="text-white/40 text-xs mt-0.5 mb-0">
               {t('testPayload.description')}
             </p>
           </div>
-          <button onClick={onClose} style={{
-            border: 'none', background: 'none', cursor: 'pointer',
-            fontSize: 20, color: '#9ca3af', lineHeight: 1, padding: 0,
-          }}>
-            ×
+          <button
+            onClick={onClose}
+            className="bg-black/20 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white rounded-lg p-1.5 transition-all"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
         {/* JSON Editor */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px' }}>
+        <div className="px-6 py-4 flex-1 overflow-y-auto">
           <textarea
             value={raw}
             onChange={e => { setRaw(e.target.value); setError(null) }}
             spellCheck={false}
-            style={{
-              width: '100%', boxSizing: 'border-box',
-              minHeight: 220, padding: '10px 12px',
-              fontFamily: '"SF Mono","Fira Code",monospace',
-              fontSize: 12, lineHeight: 1.6,
-              border: `1px solid ${error ? '#fca5a5' : '#e5e7eb'}`,
-              borderRadius: 10, outline: 'none',
-              color: '#111827', resize: 'vertical',
-              background: '#fafafa',
-            }}
+            className={`w-full px-4 py-3 text-sm bg-black/20 border rounded-xl text-white/85 placeholder-white/30 focus:outline-none focus:ring-1 transition-all resize-y min-h-[220px] font-mono ${error ? 'border-red-400/40 focus:border-red-400/60 focus:ring-red-400/20' : 'border-white/10 focus:border-white/30 focus:ring-white/20'}`}
+            style={{ fontFamily: '"SF Mono","Fira Code",monospace', fontSize: 12, lineHeight: 1.6 }}
           />
           {error && (
-            <p style={{ fontSize: 12, color: '#ef4444', margin: '4px 0 0' }}>{error}</p>
+            <p className="text-red-400 text-xs mt-1">{error}</p>
           )}
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '12px 20px 16px',
-          borderTop: '1px solid #f0f0f0',
-          display: 'flex', justifyContent: 'flex-end', gap: 8,
-        }}>
-          <button onClick={onClose} style={{
-            padding: '8px 16px', borderRadius: 10,
-            border: '1px solid #e5e7eb', background: '#fff',
-            color: '#374151', fontSize: 13, fontWeight: 500, cursor: 'pointer',
-          }}>
+        <div className="px-6 py-4 border-t border-white/10 flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-xl px-4 py-2.5 text-sm transition-all"
+          >
             {t('modal.cancel')}
           </button>
           <button
             onClick={handleRun}
             disabled={isRunning}
-            style={{
-              padding: '8px 20px', borderRadius: 10,
-              border: 'none',
-              background: isRunning ? '#9ca3af' : '#0f172a',
-              color: '#fff', fontSize: 13, fontWeight: 600,
-              cursor: isRunning ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}
+            className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-all active:scale-95 flex items-center gap-1.5 ${isRunning ? 'bg-white/10 border border-white/10 text-white/30 cursor-not-allowed' : 'bg-white/20 hover:bg-white/30 border border-white/30 text-white'}`}
           >
             {isRunning ? (
               <><Spinner />{t('testPayload.running')}</>

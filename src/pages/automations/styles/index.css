@@ -1,0 +1,10 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Automations Module - Glass Design System
+ * Aggregated stylesheet for n8n-style redesign
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+@import './glass.css';
+@import './nodes.css';
+@import './panels.css';
+@import './edges.css';
+@import './config.css';
