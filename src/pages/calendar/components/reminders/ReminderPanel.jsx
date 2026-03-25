@@ -33,7 +33,7 @@ function ScheduledCategoryGroup({ category, items, onTap }) {
       {/* Header del grupo */}
       <div className="flex items-center px-3 py-2 gap-2 group/header">
         {/* Flecha collapse */}
-        <button onClick={() => setOpen(o => !o)} className="w-5 h-5 flex items-center justify-center rounded-md hover:bg-white/5 transition-colors">
+        <button onClick={() => setOpen(o => !o)} className="w-5 h-5 flex items-center justify-center rounded-md hover:bg-white/5 transition-all active:scale-90">
           <span className={clsx(
             "text-[8px] text-white/30 transition-transform duration-200",
             open ? "rotate-90" : "rotate-0"
@@ -54,7 +54,7 @@ function ScheduledCategoryGroup({ category, items, onTap }) {
             onClick={() => toggleCategoryVisibility(catId)}
             title={visible ? t('categories.filter.hide') : t('categories.filter.show')}
             className={clsx(
-              "w-6 h-6 flex items-center justify-center rounded-lg transition-all",
+              "w-6 h-6 flex items-center justify-center rounded-lg transition-all active:scale-90",
               visible ? "text-white/40 hover:text-white hover:bg-white/10" : "text-white/20 hover:text-white/40"
             )}
           >
@@ -141,13 +141,13 @@ export default function ReminderPanel({ onReminderTap }) {
           <button
             onClick={() => setSearch(s => !s)}
             className={clsx(
-              "w-8 h-8 flex items-center justify-center rounded-xl transition-all border",
+              "w-8 h-8 flex items-center justify-center rounded-xl transition-all active:scale-90 border",
               search ? "bg-white/20 text-white border-white/30" : "bg-white/5 text-white/50 border-white/5 hover:bg-white/10"
             )}
           >🔍</button>
           <button
             onClick={() => setCreateOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white text-[11px] font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all shadow-sm"
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white text-[11px] font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all active:scale-95 shadow-sm"
           >
             {t('reminders.add')}
           </button>

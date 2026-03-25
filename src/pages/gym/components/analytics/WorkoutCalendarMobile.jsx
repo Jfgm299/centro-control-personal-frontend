@@ -31,9 +31,9 @@ export default function WorkoutCalendarMobile({ workoutDays = new Set() }) {
         <span className="text-sm font-bold text-white capitalize">{monthLabel}</span>
         <div className="flex gap-2">
           <button onClick={() => setOffset(o => o + 1)}
-            className="w-7 h-7 flex items-center justify-center rounded-xl bg-black/20 text-white/70 hover:bg-white/20 hover:text-white transition-all text-sm border border-white/5 shadow-inner">‹</button>
+            className="w-7 h-7 flex items-center justify-center rounded-xl bg-black/20 text-white/70 hover:bg-white/20 hover:text-white transition-all active:scale-90 text-sm border border-white/5 shadow-inner">‹</button>
           <button onClick={() => setOffset(o => Math.max(0, o - 1))} disabled={offset === 0}
-            className="w-7 h-7 flex items-center justify-center rounded-xl bg-black/20 text-white/70 hover:bg-white/20 hover:text-white disabled:opacity-30 disabled:hover:bg-black/20 transition-all text-sm border border-white/5 shadow-inner">›</button>
+            className="w-7 h-7 flex items-center justify-center rounded-xl bg-black/20 text-white/70 hover:bg-white/20 hover:text-white disabled:opacity-30 disabled:hover:bg-black/20 transition-all active:scale-90 text-sm border border-white/5 shadow-inner">›</button>
         </div>
       </div>
 

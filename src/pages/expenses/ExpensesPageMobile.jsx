@@ -74,7 +74,7 @@ export default function ExpensesPageMobile() {
             <button
               key={tabKey}
               onClick={() => setTab(tabKey)}
-              className="relative flex-1 py-2 rounded-full text-sm font-semibold transition-colors text-white/80 hover:text-white"
+              className="relative flex-1 py-2 rounded-full text-sm font-semibold transition-all text-white/80 hover:text-white active:scale-95"
             >
               {tab === tabKey && (
                 <motion.div

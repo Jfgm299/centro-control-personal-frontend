@@ -18,7 +18,7 @@ export default function RoutineCard({ routine, onEdit }) {
   return (
     <div
       onClick={() => onEdit?.(routine)}
-      className="group flex items-start gap-4 px-5 py-4 rounded-3xl cursor-pointer bg-white/5 backdrop-blur-sm border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-lg relative overflow-hidden"
+      className="group flex items-start gap-4 px-5 py-4 rounded-3xl cursor-pointer bg-white/5 backdrop-blur-sm border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 active:scale-[0.98] shadow-lg relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 w-1.5 h-full opacity-60" style={{ backgroundColor: color }} />
 

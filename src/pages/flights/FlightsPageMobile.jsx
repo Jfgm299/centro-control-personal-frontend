@@ -34,7 +34,7 @@ export default function FlightsPageMobile() {
                 key={tabId}
                 onClick={() => setTab(tabId)}
                 className={clsx(
-                  'px-4 py-1.5 text-sm font-medium rounded-full transition-all relative',
+                  'px-4 py-1.5 text-sm font-medium rounded-full transition-all active:scale-95 relative',
                   tab === tabId ? 'text-white' : 'text-white/60 hover:text-white'
                 )}
               >
@@ -59,7 +59,7 @@ export default function FlightsPageMobile() {
           {tab === 'upcoming' && (
             <button
               onClick={() => setShowAdd(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white text-sm font-semibold rounded-xl shadow-sm backdrop-blur-sm hover:bg-white/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white text-sm font-semibold rounded-xl shadow-sm backdrop-blur-sm hover:bg-white/20 active:scale-95 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

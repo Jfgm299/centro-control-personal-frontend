@@ -62,7 +62,7 @@ export default function StatsView() {
               <button
                 key={d}
                 onClick={() => setDays(d)}
-                className="relative px-4 py-1.5 rounded-full text-xs font-semibold transition-colors text-white/60 hover:text-white"
+                className="relative px-4 py-1.5 rounded-full text-xs font-semibold transition-all text-white/60 hover:text-white active:scale-95"
               >
                 {days === d && (
                   <motion.div
@@ -77,7 +77,7 @@ export default function StatsView() {
           <div className="flex gap-2 p-1 rounded-full bg-black/20 backdrop-blur-sm">
             <button
               onClick={() => setGoalsOpen(true)}
-              className="relative px-3 py-1 rounded-full text-xs font-semibold transition-colors text-white/60 hover:text-white flex items-center gap-2"
+              className="relative px-3 py-1 rounded-full text-xs font-semibold transition-all text-white/60 hover:text-white active:scale-95 flex items-center gap-2"
             >
                             <span className="relative z-10">{t('stats.editGoals')}</span>
             </button>

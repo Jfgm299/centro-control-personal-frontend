@@ -37,7 +37,7 @@ export default function MacroPage() {
               onClick={() => setActiveTab(tab)}
                             className="
                 relative flex-1 py-2 rounded-full text-sm font-semibold
-                transition-colors text-white/80 hover:text-white
+                transition-all text-white/80 hover:text-white active:scale-95
               "
             >
               {activeTab === tab && (

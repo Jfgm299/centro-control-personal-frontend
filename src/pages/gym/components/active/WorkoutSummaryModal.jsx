@@ -148,7 +148,7 @@ export default function WorkoutSummaryModal({ workout, onClose }) {
         <div className="px-6 py-5 border-t border-white/10 flex-shrink-0 bg-black/20">
           <button
             onClick={() => onClose(notes)}
-            className="w-full py-4 text-sm font-bold bg-white/20 text-white rounded-2xl hover:bg-white/30 transition-all border border-white/20 shadow-lg drop-shadow-sm"
+            className="w-full py-4 text-sm font-bold bg-white/20 text-white rounded-2xl hover:bg-white/30 transition-all active:scale-95 border border-white/20 shadow-lg drop-shadow-sm"
           >
             {t('summary.close')}
           </button>

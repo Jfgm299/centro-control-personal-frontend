@@ -95,7 +95,7 @@ export default function ProductRow({ entry, date }) {
             onClick={handleDelete}
             disabled={del.isPending}
                         className={`
-              w-full h-full rounded-full flex items-center justify-center transition-colors
+              w-full h-full rounded-full flex items-center justify-center transition-all active:scale-90
               ${isDeleting
                 ? 'bg-red-500/80 text-white'
                 : 'bg-white/5 text-white/50 group-hover:bg-white/10 group-hover:text-white'
