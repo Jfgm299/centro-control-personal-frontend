@@ -79,7 +79,7 @@ export default function CalendarPageMobile() {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className="relative w-9 h-8 flex items-center justify-center rounded-full transition-all"
+              className="relative w-9 h-8 flex items-center justify-center rounded-full transition-all active:scale-95"
             >
               {tab === key && (
                 <motion.div
@@ -109,7 +109,7 @@ export default function CalendarPageMobile() {
           </div>
           <button
             onClick={() => setPendingReminder(null)}
-            className="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors border border-white/20"
+            className="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-all active:scale-95 border border-white/20"
           >
             {t('common.cancel')}
           </button>
@@ -176,7 +176,7 @@ export default function CalendarPageMobile() {
       {tab === 'calendar' && (
         <button
           onClick={() => setPanelOpen(o => !o)}
-          className={`absolute top-[68px] right-4 z-20 w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-lg
+          className={`absolute top-[68px] right-4 z-20 w-10 h-10 flex items-center justify-center rounded-xl border transition-all active:scale-90 shadow-lg
             ${panelOpen 
               ? 'bg-white text-slate-900 border-white rotate-0' 
               : 'bg-white/10 text-white border-white/20 backdrop-blur-md'}`}

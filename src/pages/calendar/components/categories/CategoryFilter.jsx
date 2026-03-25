@@ -37,7 +37,7 @@ export default function CategoryFilter() {
                 onClick={() => toggleCategoryVisibility(cat.id)}
                 title={visible ? t('categories.filter.hide') : t('categories.filter.show')}
                 className={clsx(
-                  "w-6 h-6 flex items-center justify-center rounded-lg transition-all",
+                  "w-6 h-6 flex items-center justify-center rounded-lg transition-all active:scale-90",
                   visible ? "text-white/40 hover:text-white hover:bg-white/10" : "text-white/20 hover:text-white/40"
                 )}
               >

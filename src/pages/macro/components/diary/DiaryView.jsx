@@ -131,7 +131,7 @@ export default function DiaryView({ date, onDateChange }) {
           onClick={() => onDateChange(addDays(date, -1))}
                     className="
             w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/80
-            transition-colors flex items-center justify-center
+            transition-all active:scale-90 flex items-center justify-center
           "
         >
           ‹
@@ -146,7 +146,7 @@ export default function DiaryView({ date, onDateChange }) {
           disabled={isFuture}
                     className="
             w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/80
-            disabled:opacity-30 disabled:cursor-not-allowed transition-colors
+            disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90
             flex items-center justify-center
           "
         >

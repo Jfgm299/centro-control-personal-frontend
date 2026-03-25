@@ -64,7 +64,7 @@ export default function GymPageMobile() {
         {!activeWorkout && (
           <button
             onClick={() => setShowStartModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white/10 text-white text-sm font-semibold rounded-xl flex-shrink-0 backdrop-blur-md shadow-sm border border-white/10 hover:bg-white/20 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-white/10 text-white text-sm font-semibold rounded-xl flex-shrink-0 backdrop-blur-md shadow-sm border border-white/10 hover:bg-white/20 active:scale-95 transition-all"
           >
             <span className="text-lg leading-none mb-0.5">+</span> {t('start.cta')}
           </button>
@@ -85,7 +85,7 @@ export default function GymPageMobile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`relative flex-1 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
                 activeTab === tab
                   ? 'text-white'
                   : 'text-white/50 hover:text-white/80'

@@ -92,7 +92,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
           <h2 className="text-base font-bold text-white">
             {showCreate ? t('exercise.createTitle', { defaultValue: 'Nuevo ejercicio' }) : t('exercise.addTitle')}
           </h2>
-          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
+          <button onClick={onClose} className="text-white/40 hover:text-white transition-all active:scale-90 bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -117,7 +117,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
               <div className="flex gap-2 bg-black/20 p-1 rounded-xl border border-white/5">
                 {Object.values(EXERCISE_TYPES).map(et => (
                   <button key={et} type="button" onClick={() => setCustomType(et)}
-                    className={`flex-1 py-2.5 rounded-lg text-[11px] font-bold transition-all border
+                    className={`flex-1 py-2.5 rounded-lg text-[11px] font-bold transition-all active:scale-95 border
                       ${customType === et ? 'bg-white/20 text-white border-white/30 shadow-sm' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'}`}>
                     {TYPE_LABELS[et]} {et === EXERCISE_TYPES.WEIGHT_REPS ? t('exercise.typeWeights') : et === EXERCISE_TYPES.BODYWEIGHT ? t('exercise.typeBodyweight', { defaultValue: 'Bodyweight' }) : t('exercise.typeCardio')}
                   </button>
@@ -131,7 +131,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
                 <div className="flex flex-wrap gap-2">
                   {ALL_MUSCLES.filter(m => m !== 'Cardio').map(m => (
                     <button key={m} type="button" onClick={() => toggleMuscle(m)}
-                      className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all shadow-sm
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all active:scale-95 shadow-sm
                         ${customMuscles.includes(m) ? 'text-white border-white/30' : 'bg-black/20 border-white/10 text-white/50 hover:border-white/20 hover:text-white'}`}
                       style={customMuscles.includes(m) ? { background: MUSCLE_GROUP_COLORS[m] ?? '#818cf8' } : {}}>
                       {m}
@@ -143,11 +143,11 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
 
             <div className="flex gap-3 pt-4 border-t border-white/10 mt-2">
               <button type="button" onClick={() => setShowCreate(false)}
-                className="flex-1 py-3 text-sm font-bold text-white/70 border border-white/20 rounded-xl hover:bg-white/10 hover:text-white transition-all">
+                className="flex-1 py-3 text-sm font-bold text-white/70 border border-white/20 rounded-xl hover:bg-white/10 hover:text-white transition-all active:scale-95">
                 {t('common.cancel')}
               </button>
               <button type="submit" disabled={!customName.trim() || isLoading}
-                className="flex-1 py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all border border-white/30 shadow-md">
+                className="flex-1 py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all active:scale-95 border border-white/30 shadow-md">
                 {t('common.add')}
               </button>
             </div>
@@ -166,13 +166,13 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
               {/* Muscle filter pills */}
               <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 no-scrollbar">
                 <button onClick={() => setFilter(null)}
-                  className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all whitespace-nowrap
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all active:scale-95 whitespace-nowrap
                     ${!filterMuscle ? 'bg-white/20 text-white border-white/30 shadow-sm' : 'bg-black/20 border-white/10 text-white/50'}`}>
                   {t('exercise.filterAll', { defaultValue: 'All' })}
                 </button>
                 {ALL_MUSCLES.map(m => (
                   <button key={m} onClick={() => setFilter(m === filterMuscle ? null : m)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all whitespace-nowrap shadow-sm
+                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all active:scale-95 whitespace-nowrap shadow-sm
                       ${filterMuscle === m ? 'text-white border-white/30' : 'bg-black/20 border-white/10 text-white/50'}`}
                     style={filterMuscle === m ? { background: MUSCLE_GROUP_COLORS[m] ?? '#818cf8' } : {}}>
                     {m}
@@ -195,7 +195,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
                     <button
                       key={ex.id}
                       onClick={() => handleSelect(ex)}
-                      className="flex items-center gap-4 w-full px-4 py-3 rounded-2xl bg-black/10 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all text-left group"
+                      className="flex items-center gap-4 w-full px-4 py-3 rounded-2xl bg-black/10 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all active:scale-[0.98] text-left group"
                     >
                       <span className="text-2xl drop-shadow-md">{TYPE_LABELS[ex.exercise_type]}</span>
                       <div className="flex-1 min-w-0">
@@ -223,7 +223,7 @@ export default function AddExerciseModal({ onAdd, onClose, isLoading }) {
             {/* Create custom button */}
             <div className="px-5 py-4 border-t border-white/10 bg-black/20 flex-shrink-0">
               <button onClick={() => setShowCreate(true)}
-                className="w-full py-3 text-sm font-bold text-white/80 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:text-white transition-all shadow-sm">
+                className="w-full py-3 text-sm font-bold text-white/80 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:text-white transition-all active:scale-95 shadow-sm">
                 + {t('exercise.createCustom', { defaultValue: 'Crear ejercicio personalizado' })}
               </button>
             </div>

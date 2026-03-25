@@ -203,7 +203,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between">
           <span className="text-white/80 text-sm font-medium">{t('add.title')}</span>
-          <button onClick={onClose} className="text-white/30 hover:text-white text-lg leading-none">×</button>
+          <button onClick={onClose} className="text-white/30 hover:text-white text-lg leading-none transition-all active:scale-90">×</button>
         </div>
         
 {error && (
@@ -214,7 +214,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {(step === STEP.UPLOAD || step === STEP.LOADING) && (
           <div className="space-y-3">
             <button onClick={handleScanPress} disabled={step === STEP.LOADING}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-colors">
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95">
               {step === STEP.LOADING
                 ? <><span className="animate-spin text-lg">⟳</span>{t('add.decoding')}</>
                 : <><span className="text-xl">📷</span>Escanear código de barras</>}
@@ -223,7 +223,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
               <div className="flex-1 h-px bg-white/10" /><span className="text-white/40 text-xs">o</span><div className="flex-1 h-px bg-white/10" />
             </div>
             <div
-              className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-colors ${dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-white/20 hover:border-white/40'} ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
+              className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all active:scale-[0.98] ${dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-white/20 hover:border-white/40'} ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)} onDrop={onDrop}
               onClick={() => fileRef.current?.click()}>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
@@ -231,11 +231,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             </div>
             <div className="flex gap-2">
               <button onClick={() => { setStep(STEP.SEARCH); setError(null) }}
-                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors">
+                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all active:scale-95">
                 🔍 Buscar por nombre
               </button>
               <button onClick={() => { setStep(STEP.CREATE); setError(null); setCreateForm(emptyCreate()) }}
-                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors">
+                className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all active:scale-95">
                 ✏️ Crear producto
               </button>
             </div>
@@ -256,7 +256,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
               <div className="bg-black/20 border border-white/20 rounded-xl overflow-hidden shadow-sm divide-y divide-white/10">
                 {searchResults.map((p) => (
                   <button key={p.id} onClick={() => selectProduct(p)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 text-left transition-colors">
+                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 text-left transition-all active:opacity-80">
                     <div className="w-9 h-9 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
                       {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-cover" />
                         : <span className="w-full h-full flex items-center justify-center text-white/40">🍽</span>}
@@ -324,11 +324,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
 
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setError(null) }}
-                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-colors">
+                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-all active:scale-95">
                 Cancelar
               </button>
               <button onClick={handleCreate} disabled={creating || !createForm.product_name.trim()}
-                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-95">
                 {creating ? '…' : 'Crear y añadir'}
               </button>
             </div>
@@ -418,11 +418,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             {/* Actions */}
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setProduct(null); setError(null) }}
-                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-colors">
+                className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-all active:scale-95">
                 Cancelar
               </button>
               <button onClick={handleConfirm} disabled={addEntry.isPending || !amountG || parseFloat(amountG) <= 0}
-                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-95">
                 {addEntry.isPending ? 'Guardando…' : 'Añadir al diario'}
               </button>
             </div>

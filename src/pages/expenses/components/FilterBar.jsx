@@ -17,7 +17,7 @@ export default function FilterBar({ months, selectedMonth, drilldownWeek, onSele
           <button
             key={m.monthKey}
             onClick={() => onSelectMonth(m.monthKey)}
-            className="relative px-4 py-1.5 rounded-full text-sm font-semibold transition-colors text-white/60 hover:text-white"
+            className="relative px-4 py-1.5 rounded-full text-sm font-semibold transition-all text-white/60 hover:text-white active:scale-95"
           >
             {selectedMonth === m.monthKey && (
               <motion.div
@@ -34,7 +34,7 @@ export default function FilterBar({ months, selectedMonth, drilldownWeek, onSele
       {drilldownWeek && (
         <button
           onClick={onClearDrilldown}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/20 text-sky-200 text-sm font-medium border border-sky-500/30 hover:bg-sky-500/30 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/20 text-sky-200 text-sm font-medium border border-sky-500/30 hover:bg-sky-500/30 transition-all active:scale-95"
         >
           <span>← {t('filter.backToMonth')}</span>
           <span className="font-bold">{drilldownWeek}</span>
