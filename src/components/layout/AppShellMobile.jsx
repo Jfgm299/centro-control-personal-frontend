@@ -36,16 +36,9 @@ export default function AppShellMobile() {
     )
   }
 
-  const hour = new Date().getHours()
-  const darkBgGradient = hour > 5 && hour < 18
-    ? 'from-sky-500/30 to-blue-600/30' // Day
-    : 'from-slate-900/50 to-indigo-900/50' // Night
-
-  const backgroundClass = `bg-gradient-to-br ${darkBgGradient}`
-
   return (
     <div
-      className={`relative w-full flex flex-col ${backgroundClass}`}
+      className="relative w-full flex flex-col bg-gradient-to-br from-slate-900/50 to-indigo-900/50"
       style={{
         height: '100vh',
         maxHeight: '-webkit-fill-available',

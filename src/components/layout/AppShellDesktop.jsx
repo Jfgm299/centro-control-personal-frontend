@@ -27,14 +27,8 @@ export default function AppShellDesktop() {
     )
   }
 
-  // Background gradient based on time of day
-  const hour = new Date().getHours()
-  const bgGradient = hour > 5 && hour < 18
-    ? 'from-sky-500/30 to-blue-600/30' // Day
-    : 'from-slate-900/50 to-indigo-900/50' // Night
-
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex flex-col`}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900/50 to-indigo-900/50 flex flex-col">
       <DotBackground />
       {!user && <LoginPopup />}
       {user && <UserMenu />}
