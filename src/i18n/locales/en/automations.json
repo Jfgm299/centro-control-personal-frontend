@@ -243,6 +243,50 @@
     "webhookError": "Webhook endpoint may not be available yet"
   },
 
+  "registry": {
+    "modules": {
+      "system":           "System",
+      "calendar_tracker": "Calendar",
+      "gym_tracker":      "Gym",
+      "expenses_tracker": "Expenses",
+      "macro_tracker":    "Macros",
+      "flights_tracker":  "Flights",
+      "travels_tracker":  "Travels",
+      "other":            "Others"
+    },
+    "nodes": {
+      "system.manual":            "Manual",
+      "system.schedule_once":     "At exact time",
+      "system.schedule_interval": "Every X time",
+      "system.webhook_inbound":   "Inbound Webhook",
+
+      "calendar_tracker.event_start":              "Event starts",
+      "calendar_tracker.event_end":                "Event ends",
+      "calendar_tracker.reminder_due":             "Reminder due",
+      "calendar_tracker.no_events_in_window":      "No events in window",
+      "calendar_tracker.overdue_reminders_exist":  "Overdue reminders exist",
+      "calendar_tracker.create_event":             "Create event",
+      "calendar_tracker.create_reminder":          "Create reminder",
+      "calendar_tracker.mark_reminder_done":       "Mark reminder as done",
+      "calendar_tracker.cancel_event":             "Cancel event",
+      "calendar_tracker.push_summary_overdue":     "Push overdue summary",
+      "calendar_tracker.get_todays_schedule":      "Get today's schedule",
+      "calendar_tracker.bulk_mark_overdue_done":   "Mark all overdue as done",
+
+      "automations_engine.outbound_webhook":       "Outbound webhook",
+      "automations_engine.delay":                  "Delay",
+      "automations_engine.stop":                   "Stop",
+
+      "expenses_tracker.large_expense_created":        "Large expense created",
+      "expenses_tracker.monthly_budget_exceeded":      "Monthly budget exceeded",
+      "expenses_tracker.subscription_due_soon":        "Subscription due soon",
+      "expenses_tracker.subscription_converted":       "Subscription converted",
+      "expenses_tracker.create_expense":               "Create expense",
+      "expenses_tracker.get_monthly_summary":          "Get monthly summary",
+      "expenses_tracker.get_upcoming_subscriptions":   "Get upcoming subscriptions"
+    }
+  },
+
   "apiKeys": {
     "title":          "API Keys",
     "description":    "Manage keys for accessing the API from external applications",

@@ -1,0 +1,249 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Floating Panel Styles
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Panel Container ─────────────────────────────────────────────────────── */
+
+.floating-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 32px);
+  overflow: hidden;
+}
+
+.floating-panel--collapsed {
+  height: auto !important;
+  max-height: none;
+}
+
+/* ── Panel Header ────────────────────────────────────────────────────────── */
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--glass-border-default);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.panel-header:active {
+  cursor: grabbing;
+}
+
+.panel-header__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.panel-header__btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.panel-header__btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.panel-header__btn--close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* ── Panel Body ──────────────────────────────────────────────────────────── */
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.panel-body--collapsed {
+  display: none;
+}
+
+/* ── Resize Handle ───────────────────────────────────────────────────────── */
+
+.panel-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.floating-panel:hover .panel-resize-handle {
+  opacity: 1;
+}
+
+.panel-resize-handle::before {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ── Resize Edge Handles ─────────────────────────────────────────────────── */
+
+.panel-resize-edge {
+  position: absolute;
+  opacity: 0;
+}
+
+.panel-resize-edge--right {
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.panel-resize-edge--bottom {
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+.panel-resize-edge--corner {
+  bottom: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  cursor: se-resize;
+}
+
+/* ── Panel Scrollbar Styling ─────────────────────────────────────────────── */
+
+.panel-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.panel-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Panel Animations ────────────────────────────────────────────────────── */
+
+.floating-panel--entering {
+  animation: panel-enter 0.2s ease-out;
+}
+
+.floating-panel--exiting {
+  animation: panel-exit 0.15s ease-in;
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes panel-exit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+}
+
+/* ── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-panel--entering,
+  .floating-panel--exiting {
+    animation: none;
+  }
+
+  .panel-header__btn,
+  .panel-resize-handle {
+    transition: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Floating NDV (Node Details View) Specific Styles
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* NDV default size ~88vw — set dynamically in editorStore */
+.floating-ndv {
+  min-width: min(90vw, 900px);
+}
+
+.floating-ndv .panel-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* ── NDV Tabs ────────────────────────────────────────────────────────────── */
+
+.floating-ndv .panel-body > div:first-child {
+  /* Tab container styling is handled inline, this is for overrides */
+}
+
+/* ── Input/Output Preview Panels ─────────────────────────────────────────── */
+
+.input-preview-panel,
+.output-preview-panel {
+  min-width: 200px;
+}
+
+.input-preview-panel .panel-body,
+.output-preview-panel .panel-body {
+  padding: 0;
+}

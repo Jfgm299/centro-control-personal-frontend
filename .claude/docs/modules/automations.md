@@ -4,6 +4,8 @@ id: `automations_engine` | Path: `/automations` | Mobile: ✅ | Desktop: ✅
 
 Editor visual de flujos de automatización. Usa **XYFlow** (`@xyflow/react`) para el canvas de nodos y edges. Es el módulo más complejo del frontend.
 
+> **🚧 Active Redesign:** Ver @docs/n8n-glass-redesign.md para el plan de rediseño estilo n8n.
+
 ## Structure
 
 ```

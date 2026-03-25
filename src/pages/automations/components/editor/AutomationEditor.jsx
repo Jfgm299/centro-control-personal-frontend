@@ -1,23 +1,33 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence } from 'framer-motion'
 import {
   ReactFlow, Background, MiniMap, Controls,
   useReactFlow,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
+// Glass design system styles
+import '../../styles/index.css'
+
 import { useAutomation } from '../../hooks/useAutomations'
 import { useAutomationMutations } from '../../hooks/useAutomationMutations'
 import { useFlowEditor }       from '../../hooks/useFlowEditor'
 import { useAutomationsStore } from '../../store/editorStore'
 import { nodeTypes, edgeTypes, refIdToNodeType } from './nodeTypes'
+import { FEATURES } from '@/config/features'
 
 import EditorToolbar      from './EditorToolbar'
 import NodeSidebar        from './NodeSidebar'
 import NodeDetailsView    from './NodeDetailsView'
 import TestPayloadModal   from './TestPayloadModal'
 import ExecutionHistory   from './ExecutionHistory'
+import NodePickerPanel    from '../panels/NodePickerPanel'
+import FloatingNDV        from '../panels/FloatingNDV'
+
+// Feature flag check for n8n-style panels
+const useN8nPanels = () => FEATURES.N8N_PANELS || FEATURES.N8N_STYLE
 
 export default function AutomationEditor({ automationId, onClose }) {
   const id    = automationId
@@ -35,10 +45,20 @@ export default function AutomationEditor({ automationId, onClose }) {
   const setEditorNameSilent    = useAutomationsStore(s => s.setEditorNameSilent)
   const isExecuting            = useAutomationsStore(s => s.isExecuting)
   const testPayloadOpen        = useAutomationsStore(s => s.testPayloadOpen)
+  const executionState         = useAutomationsStore(s => s.executionState)
   const openTestPayload        = useAutomationsStore(s => s.openTestPayload)
   const closeTestPayload       = useAutomationsStore(s => s.closeTestPayload)
   const resetEditor            = useAutomationsStore(s => s.resetEditor)
   const [showHistory, setShowHistory] = useState(false)
+
+  // Floating panels state (n8n-style)
+  const nodePickerOpen = useAutomationsStore(s => s.panels.nodePicker?.open)
+  const openPanel      = useAutomationsStore(s => s.openPanel)
+  const closePanel     = useAutomationsStore(s => s.closePanel)
+
+  // Check if we should use n8n-style panels
+  const n8nPanelsEnabled = useN8nPanels()
+  const n8nAnimationsEnabled = FEATURES.N8N_STYLE || FEATURES.N8N_ANIMATIONS
 
   // ── Datos del backend ─────────────────────────────────────────────────────
   const { data: automation, isLoading } = useAutomation(id)
@@ -74,13 +94,47 @@ export default function AutomationEditor({ automationId, onClose }) {
       if (e.key === 'z' &&  e.shiftKey) { e.preventDefault(); redo() }
       if (e.key === 'y')                { e.preventDefault(); redo() }
       if (e.key === 's')                { e.preventDefault(); handleSave() }
+      // Ctrl+N to toggle node picker (n8n-style only)
+      if (e.key === 'n' && n8nPanelsEnabled) {
+        e.preventDefault()
+        if (nodePickerOpen) closePanel('nodePicker')
+        else openPanel('nodePicker')
+      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty])
+  }, [isDirty, n8nPanelsEnabled, nodePickerOpen])
 
   const contextVariables = buildContextVariables(automation?.trigger_type)
+
+  const edgesWithAnimationState = useMemo(() => {
+    if (!n8nAnimationsEnabled) return edges
+
+    return edges.map((edge) => {
+      const sourceStatus = executionState[edge.source]?.status
+      const targetStatus = executionState[edge.target]?.status
+
+      let executionStatus = 'default'
+      if (sourceStatus === 'running' || targetStatus === 'running') executionStatus = 'running'
+      else if (targetStatus === 'failed' || targetStatus === 'error') executionStatus = 'error'
+      else if (targetStatus === 'success' || targetStatus === 'completed') executionStatus = 'success'
+
+      const shouldAnimate = executionStatus === 'running'
+
+      return {
+        ...edge,
+        data: {
+          ...(edge.data ?? {}),
+          executionStatus,
+          status: executionStatus,
+          isAnimating: shouldAnimate,
+          showLabel: Boolean(edge.data?.when),
+          label: edge.data?.when ?? null,
+        },
+      }
+    })
+  }, [edges, executionState, n8nAnimationsEnabled])
 
   // ── Guardar ───────────────────────────────────────────────────────────────
   const handleSave = useCallback(async () => {
@@ -117,6 +171,10 @@ export default function AutomationEditor({ automationId, onClose }) {
       })
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+      if (!response.body) {
+        throw new Error('STREAM_BODY_MISSING')
+      }
 
       const reader  = response.body.getReader()
       const decoder = new TextDecoder()
@@ -173,6 +231,12 @@ export default function AutomationEditor({ automationId, onClose }) {
       }
     } catch (err) {
       console.error('Execution error:', err)
+      store.setLastExecutionResult({
+        status: 'failed',
+        duration_ms: null,
+        error_message: t('editor.executionStreamUnavailable', 'Could not read execution stream. Please try again.'),
+        failed_node_id: null,
+      })
       nodes.forEach(n => store.setNodeExecutionState(n.id, null))
     } finally {
       store.setIsExecuting(false)
@@ -216,10 +280,11 @@ export default function AutomationEditor({ automationId, onClose }) {
 
   const onPaneClick = useCallback(() => clearSelection(), [clearSelection])
 
+
   // ── Loading ───────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div style={fullscreenStyle}>
+      <div style={getContainerStyle()}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           <span style={{ fontSize: 13, color: '#9ca3af' }}>{t('status.loading')}</span>
         </div>
@@ -229,7 +294,7 @@ export default function AutomationEditor({ automationId, onClose }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div style={fullscreenStyle}>
+    <div style={getContainerStyle()}>
 
       <EditorToolbar
         isActive={automation?.is_active ?? false}
@@ -251,18 +316,20 @@ export default function AutomationEditor({ automationId, onClose }) {
 
       <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
 
-        {/* CANVAS VIEW — hidden when a node is selected for editing */}
+        {/* CANVAS VIEW — hidden when a node is selected for editing (legacy only) */}
         <div style={{
-          display: selectedNodeId ? 'none' : 'flex',
+          display: selectedNodeId && !n8nPanelsEnabled ? 'none' : 'flex',
           flex: 1,
           minHeight: 0,
           position: 'relative',
         }}>
-          <NodeSidebar />
+          {/* Legacy fixed sidebar - only when n8n panels disabled */}
+          {!n8nPanelsEnabled && <NodeSidebar />}
+          
           <div style={{ flex: 1, position: 'relative' }}>
             <ReactFlow
               nodes={nodes}
-              edges={edges}
+              edges={edgesWithAnimationState}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
@@ -285,6 +352,28 @@ export default function AutomationEditor({ automationId, onClose }) {
               />
               <Controls style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }} />
             </ReactFlow>
+
+            {/* Floating Panels - n8n style (render over canvas) */}
+            {n8nPanelsEnabled && (
+              <>
+                {/* NodePicker Panel */}
+                <AnimatePresence>
+                  {nodePickerOpen && <NodePickerPanel />}
+                </AnimatePresence>
+
+                {/* Floating NDV - auto-opens when node selected */}
+                <FloatingNDV
+                  nodes={nodes}
+                  edges={edges}
+                  onUpdateNode={updateNodeData}
+                  onDeleteNode={(nodeId) => onNodesChange([{ type: 'remove', id: nodeId }])}
+                  onExecuteStep={() => handleConfirmRun({})}
+                  variables={contextVariables}
+                  automationId={id}
+                />
+
+              </>
+            )}
           </div>
 
           <ExecutionHistory
@@ -294,8 +383,8 @@ export default function AutomationEditor({ automationId, onClose }) {
           />
         </div>
 
-        {/* NDV — shown when a node is selected, replaces canvas */}
-        {selectedNodeId && (
+        {/* Legacy NDV — shown when a node is selected, replaces canvas (legacy mode only) */}
+        {selectedNodeId && !n8nPanelsEnabled && (
           <NodeDetailsView
             nodeId={selectedNodeId}
             nodes={nodes}
@@ -324,12 +413,25 @@ export default function AutomationEditor({ automationId, onClose }) {
 
 // ── Estilos ───────────────────────────────────────────────────────────────────
 
+// Legacy fullscreen style (position: fixed)
 const fullscreenStyle = {
   position: 'fixed', inset: 0, zIndex: 100,
-  background: 'rgba(0,0,0,0.7)',
-  backdropFilter: 'blur(40px)',
   display: 'flex', flexDirection: 'column',
   fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+}
+
+// New inline style (fills available space in parent container)
+const inlineStyle = {
+  height: '100%',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+}
+
+// Use inline layout when N8N_LAYOUT is enabled
+const getContainerStyle = () => {
+  return (FEATURES.N8N_LAYOUT || FEATURES.N8N_STYLE) ? inlineStyle : fullscreenStyle
 }
 
 // ── Utilidades ────────────────────────────────────────────────────────────────

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import { Plus } from 'lucide-react'
 import { useAutomationsStore } from '../../store/editorStore'
+import { FEATURES } from '@/config/features'
 
 /**
  * Toolbar superior del editor fullscreen.
@@ -36,6 +38,13 @@ export default function EditorToolbar({
   const editorName    = useAutomationsStore((s) => s.editorName)
   const setEditorName = useAutomationsStore((s) => s.setEditorName)
   const lastResult    = useAutomationsStore((s) => s.lastExecutionResult)
+  
+  // Floating panels state (n8n-style)
+  const togglePanel   = useAutomationsStore((s) => s.togglePanel)
+  const nodePickerOpen = useAutomationsStore((s) => s.panels.nodePicker?.open)
+  
+  // Check if n8n-style panels are enabled
+  const n8nPanelsEnabled = FEATURES.N8N_PANELS || FEATURES.N8N_STYLE
 
   const saveLabel = isSaving   ? t('editor.saving')
                   : isDirty    ? t('editor.unsavedChanges')
@@ -46,7 +55,7 @@ export default function EditorToolbar({
                      : '#22c55e'
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2.5 bg-black/30 backdrop-blur-xl border-b border-white/10" style={{ height: 52, flexShrink: 0, zIndex: 10 }}>
+    <div className="flex items-center gap-2 px-4 py-2.5 glass-toolbar" style={{ height: 52, flexShrink: 0, zIndex: 10 }}>
 
       {/* ── Back ── */}
       <button
@@ -57,6 +66,24 @@ export default function EditorToolbar({
       </button>
 
       <div className="w-px h-5 bg-white/10 flex-shrink-0" />
+
+      {/* ── Add Node button (n8n-style only) ── */}
+      {n8nPanelsEnabled && (
+        <button
+          onClick={() => togglePanel('nodePicker')}
+          title="Add Node (Ctrl+N)"
+          className={`border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            nodePickerOpen 
+              ? 'bg-white/15 text-white' 
+              : 'bg-black/20 hover:bg-white/10 text-white/70 hover:text-white'
+          }`}
+        >
+          <Plus size={14} />
+          {t('sidebar.addNode', 'Add Node')}
+        </button>
+      )}
+
+      {n8nPanelsEnabled && <div className="w-px h-5 bg-white/10 flex-shrink-0" />}
 
       {/* ── Nombre editable ── */}
       <input

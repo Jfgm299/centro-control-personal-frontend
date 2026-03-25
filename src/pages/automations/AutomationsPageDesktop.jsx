@@ -42,8 +42,8 @@ export default function AutomationsPageDesktop({ onEdit }) {
     <div
       className="bg-transparent flex flex-col"
       style={{
-        margin: '-32px',
-        height: 'calc(100vh - 52px)',
+        margin: 0,
+        height: 'calc(100vh - 64px)',
         fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
       }}
     >

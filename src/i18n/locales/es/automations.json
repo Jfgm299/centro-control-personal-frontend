@@ -243,6 +243,50 @@
     "webhookError": "El endpoint de webhook puede no estar disponible todavía"
   },
 
+  "registry": {
+    "modules": {
+      "system":           "Sistema",
+      "calendar_tracker": "Calendario",
+      "gym_tracker":      "Gimnasio",
+      "expenses_tracker": "Gastos",
+      "macro_tracker":    "Macros",
+      "flights_tracker":  "Vuelos",
+      "travels_tracker":  "Viajes",
+      "other":            "Otros"
+    },
+    "nodes": {
+      "system.manual":            "Manual",
+      "system.schedule_once":     "A una hora exacta",
+      "system.schedule_interval": "Cada X tiempo",
+      "system.webhook_inbound":   "Webhook entrante",
+
+      "calendar_tracker.event_start":              "Inicio de evento",
+      "calendar_tracker.event_end":                "Fin de evento",
+      "calendar_tracker.reminder_due":             "Recordatorio vencido",
+      "calendar_tracker.no_events_in_window":      "Sin eventos en la ventana",
+      "calendar_tracker.overdue_reminders_exist":  "Hay recordatorios atrasados",
+      "calendar_tracker.create_event":             "Crear evento",
+      "calendar_tracker.create_reminder":          "Crear recordatorio",
+      "calendar_tracker.mark_reminder_done":       "Marcar recordatorio como hecho",
+      "calendar_tracker.cancel_event":             "Cancelar evento",
+      "calendar_tracker.push_summary_overdue":     "Enviar resumen de atrasados",
+      "calendar_tracker.get_todays_schedule":      "Obtener agenda de hoy",
+      "calendar_tracker.bulk_mark_overdue_done":   "Marcar todos los atrasados como hechos",
+
+      "automations_engine.outbound_webhook":       "Webhook saliente",
+      "automations_engine.delay":                  "Esperar",
+      "automations_engine.stop":                   "Detener",
+
+      "expenses_tracker.large_expense_created":        "Gasto grande registrado",
+      "expenses_tracker.monthly_budget_exceeded":      "Presupuesto mensual superado",
+      "expenses_tracker.subscription_due_soon":        "Suscripción próxima a vencer",
+      "expenses_tracker.subscription_converted":       "Suscripción convertida",
+      "expenses_tracker.create_expense":               "Crear gasto",
+      "expenses_tracker.get_monthly_summary":          "Obtener resumen mensual",
+      "expenses_tracker.get_upcoming_subscriptions":   "Obtener próximas suscripciones"
+    }
+  },
+
   "apiKeys": {
     "title":          "API Keys",
     "description":    "Gestiona las claves para acceder a la API desde aplicaciones externas",

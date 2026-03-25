@@ -1,28 +1,50 @@
+import { isFeatureEnabled } from '@/config/features'
+
+// Legacy nodes (original components)
 import TriggerNode        from '../nodes/TriggerNode'
 import ActionNode         from '../nodes/ActionNode'
 import ConditionNode      from '../nodes/ConditionNode'
 import DelayNode          from '../nodes/DelayNode'
 import WebhookInboundNode from '../nodes/WebhookInboundNode'
 import StopNode           from '../nodes/StopNode'
-import ConditionEdge           from '../edges/ConditionEdge'
 import OutboundWebhookNode     from '../nodes/OutboundWebhookNode'
+
+// N8n-style nodes (new design)
+import N8nTriggerNode     from '../nodes/N8nTriggerNode'
+import N8nActionNode      from '../nodes/N8nActionNode'
+import N8nConditionNode   from '../nodes/N8nConditionNode'
+import N8nDelayNode       from '../nodes/N8nDelayNode'
+import N8nStopNode        from '../nodes/N8nStopNode'
+import N8nWebhookInboundNode  from '../nodes/N8nWebhookInboundNode'
+import N8nOutboundWebhookNode from '../nodes/N8nOutboundWebhookNode'
+
+// Edges
+import AnimatedEdge            from '../edges/AnimatedEdge'
+import LegacyConditionEdge     from '../edges/LegacyConditionEdge'
 
 /**
  * Mapeado tipo → componente para <ReactFlow nodeTypes={nodeTypes} />.
  * Los tipos coinciden con el campo `type` del modelo de nodo en el backend.
+ * 
+ * When N8N_NODES feature is enabled, uses new n8n-style node components.
+ * Otherwise, uses legacy node components.
  */
+const useN8nNodes = isFeatureEnabled('N8N_NODES')
+const useN8nAnimations = isFeatureEnabled('N8N_ANIMATIONS')
+
 export const nodeTypes = {
-  trigger:         TriggerNode,
-  action:          ActionNode,
-  condition:       ConditionNode,
-  delay:           DelayNode,
-  webhook_inbound:  WebhookInboundNode,
-  outbound_webhook: OutboundWebhookNode,
-  stop:             StopNode,
+  trigger:          useN8nNodes ? N8nTriggerNode : TriggerNode,
+  action:           useN8nNodes ? N8nActionNode : ActionNode,
+  condition:        useN8nNodes ? N8nConditionNode : ConditionNode,
+  delay:            useN8nNodes ? N8nDelayNode : DelayNode,
+  webhook_inbound:  useN8nNodes ? N8nWebhookInboundNode : WebhookInboundNode,
+  outbound_webhook: useN8nNodes ? N8nOutboundWebhookNode : OutboundWebhookNode,
+  stop:             useN8nNodes ? N8nStopNode : StopNode,
 }
 
 export const edgeTypes = {
-  condition: ConditionEdge,
+  ...(useN8nAnimations ? { default: AnimatedEdge } : {}),
+  condition: useN8nAnimations ? AnimatedEdge : LegacyConditionEdge,
 }
 
 /**
