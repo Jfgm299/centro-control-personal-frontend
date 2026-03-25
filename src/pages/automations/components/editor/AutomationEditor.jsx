@@ -13,12 +13,13 @@ import { useFlowEditor }       from '../../hooks/useFlowEditor'
 import { useAutomationsStore } from '../../store/editorStore'
 import { nodeTypes, edgeTypes, refIdToNodeType } from './nodeTypes'
 
-import EditorToolbar    from './EditorToolbar'
-import NodeSidebar      from './NodeSidebar'
-import NodeConfigPanel  from '../config/NodeConfigPanel'
-import NodeOutputPanel  from './NodeOutputPanel'
-import TestPayloadModal from './TestPayloadModal'
-import ExecutionHistory from './ExecutionHistory'
+import EditorToolbar      from './EditorToolbar'
+import NodeSidebar        from './NodeSidebar'
+import PrevNodeOutputPanel from './PrevNodeOutputPanel'
+import NodeConfigPanel    from '../config/NodeConfigPanel'
+import NodeOutputPanel    from './NodeOutputPanel'
+import TestPayloadModal   from './TestPayloadModal'
+import ExecutionHistory   from './ExecutionHistory'
 
 export default function AutomationEditor({ automationId, onClose }) {
   const id    = automationId
@@ -265,7 +266,10 @@ export default function AutomationEditor({ automationId, onClose }) {
 
       <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
 
-        <NodeSidebar />
+        {selectedNodeId
+          ? <PrevNodeOutputPanel nodeId={selectedNodeId} nodes={nodes} edges={edges} />
+          : <NodeSidebar />
+        }
 
         <div style={{ flex: 1, position: 'relative' }}>
           <ReactFlow

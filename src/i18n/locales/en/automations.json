@@ -17,12 +17,20 @@
     "deleting": "Deleting..."
   },
 
+  "status": {
+    "loading": "Loading..."
+  },
+
   "card": {
     "edit": "Edit",
     "duplicate": "Duplicate",
     "export": "Export JSON",
     "delete": "Delete",
     "confirmDelete": "Confirm delete",
+    "now": "Just now",
+    "agoMinutes": "{{count}}m ago",
+    "agoHours": "{{count}}h ago",
+    "agoDays": "{{count}}d ago",
     "triggerType": {
       "manual": "Manual",
       "schedule_once": "Scheduled once",
@@ -67,7 +75,17 @@
     "triggers": "Triggers",
     "actions": "Actions",
     "flowControl": "Flow control",
-    "noResults": "No results for \"{{query}}\""
+    "noResults": "No results for \"{{query}}\"",
+    "conditionDesc": "Branch flow based on a condition",
+    "delayDesc": "Pause execution for a set time",
+    "stopDesc": "Stop flow execution at this point"
+  },
+
+  "prevNode": {
+    "title": "Input data from previous step",
+    "empty": "Run the flow first to see output data.",
+    "noParent": "This node has no previous step.",
+    "dragHint": "Drag a field to an input"
   },
 
   "nodes": {
@@ -79,6 +97,7 @@
     "webhookOutbound":    "Webhook (outbound)",
     "automationCall":     "Call automation",
     "stop":               "Stop",
+    "continueOnError":    "Continue on error",
 
     "system": {
       "manual":            "Manual",
@@ -92,7 +111,9 @@
       "delete":            "Delete node",
       "confirmDelete":     "Confirm delete",
       "noNodeSelected":    "Select a node to configure it"
-    }
+    },
+    "deleteTitle":           "Delete node",
+    "stopReasonPlaceholder": "Optional reason"
   },
 
   "condition": {
@@ -155,7 +176,8 @@
     "headers":       "Headers",
     "addHeader":     "Add header",
     "body":          "Body template",
-    "bodyHint":      "Use {{variable}} to insert context values"
+    "bodyHint":      "Use {{variable}} to insert context values",
+    "urlPendingSave": "(save to generate URL)"
   },
 
   "variablePicker": {
@@ -191,7 +213,8 @@
       "duration":   "Duration",
       "status":     "Status",
       "failedNode": "Failed node"
-    }
+    },
+    "backToAll": "← Back to all"
   },
 
   "error": {

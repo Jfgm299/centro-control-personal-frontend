@@ -9,26 +9,17 @@ export default function NodeSidebarSection({ sectionKey, icon, label, items, onD
   if (!items?.length) return null
 
   return (
-    <div style={{ marginBottom: 4 }}>
+    <div className="mb-1">
       {/* Section header */}
       <button
         onClick={() => toggleSection(sectionKey)}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          width: '100%', padding: '5px 10px',
-          border: 'none', background: 'none', cursor: 'pointer',
-          borderRadius: 6,
-        }}
-        onMouseEnter={e => { e.currentTarget.style.background = '#f3f4f6' }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+        className="text-white/60 hover:text-white/90 flex items-center justify-between gap-1.5 px-3 py-1.5 w-full text-xs font-semibold uppercase tracking-wider transition-colors rounded-lg border-none bg-transparent cursor-pointer"
       >
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#374151' }}>
+        <span className="flex items-center gap-1.5">
           {icon} {label}
         </span>
-        <span style={{
-          fontSize: 10, color: '#9ca3af',
+        <span className="text-white/40 inline-block transition-transform duration-150" style={{
           transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
-          transition: 'transform 0.15s', display: 'inline-block',
         }}>
           ▾
         </span>
@@ -36,7 +27,7 @@ export default function NodeSidebarSection({ sectionKey, icon, label, items, onD
 
       {/* Items */}
       {!isCollapsed && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '2px 4px 4px' }}>
+        <div className="flex flex-col gap-0 pt-0.5 pb-1">
           {items.map((item) => (
             <NodeSidebarItem key={item.ref_id ?? item.label} item={item} onDragStart={onDragStart} nodeCategory={nodeCategory} />
           ))}

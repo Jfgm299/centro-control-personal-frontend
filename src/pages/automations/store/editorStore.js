@@ -1,5 +1,20 @@
 import { create } from 'zustand'
 
+// ── Utility: upstream node lookup ─────────────────────────────────────────────
+
+/**
+ * Returns the id of the upstream (source) node connected to nodeId.
+ * Finds the first edge where edge.target === nodeId and returns edge.source.
+ */
+export function getPrevNodeId(nodeId, nodes, edges) {
+  if (!nodeId || !edges) return null
+  const incoming = edges.find(e => e.target === nodeId)
+  if (!incoming) return null
+  return incoming.source
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const useAutomationsStore = create((set, get) => ({
 
   // ── Editor: estado del canvas ─────────────────────────────────────────────

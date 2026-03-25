@@ -1,16 +1,24 @@
 import { useTranslation } from 'react-i18next'
 
-const inputStyle = {
-  width: '100%', boxSizing: 'border-box',
-  padding: '7px 10px', fontSize: 13,
-  border: '1px solid #e5e7eb', borderRadius: 8,
-  outline: 'none', color: '#111827',
-  fontFamily: 'inherit', background: '#fff',
-}
+const glassInput = 'w-full px-3 py-2 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all'
+const glassSelect = glassInput + ' appearance-none'
+const glassLabel = 'text-white/60 text-sm mb-1 block'
 
-const labelStyle = {
-  fontSize: 11, fontWeight: 600, color: '#6b7280',
-  marginBottom: 4, display: 'block',
+// Helper: drag-drop variable insertion for text inputs
+function makeDragHandlers(onChange, getValue) {
+  return {
+    onDragOver: (e) => e.preventDefault(),
+    onDrop: (e) => {
+      e.preventDefault()
+      const v = e.dataTransfer.getData('variable')
+      if (!v) return
+      const el = e.currentTarget
+      const start = el.selectionStart ?? el.value.length
+      const end   = el.selectionEnd   ?? el.value.length
+      const newVal = el.value.slice(0, start) + '{{' + v + '}}' + el.value.slice(end)
+      onChange(newVal)
+    },
+  }
 }
 
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -22,12 +30,12 @@ export function ScheduleOnceConfig({ config = {}, onChange }) {
 
   return (
     <div>
-      <label style={labelStyle}>{t('schedule.runAt')}</label>
+      <label className={glassLabel}>{t('schedule.runAt')}</label>
       <input
         type="datetime-local"
         value={config.run_at ? toDatetimeLocal(config.run_at) : ''}
         onChange={e => onChange({ ...config, run_at: new Date(e.target.value).toISOString() })}
-        style={inputStyle}
+        className={glassInput}
       />
     </div>
   )
@@ -50,22 +58,23 @@ export function ScheduleIntervalConfig({ config = {}, onChange }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div className="flex flex-col gap-3.5">
 
       {/* Intervalo */}
-      <div>
-        <label style={labelStyle}>{t('schedule.every')}</label>
-        <div style={{ display: 'flex', gap: 8 }}>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <label className={glassLabel}>{t('schedule.every')}</label>
+        <div className="flex gap-2">
           <input
             type="number" min={1}
             value={config.interval_value ?? ''}
             onChange={e => set('interval_value', Number(e.target.value))}
-            style={{ ...inputStyle, width: 80 }}
+            className={glassInput + ' !w-20'}
+            {...makeDragHandlers(v => set('interval_value', v), () => config.interval_value ?? '')}
           />
           <select
             value={config.interval_unit ?? 'minutes'}
             onChange={e => set('interval_unit', e.target.value)}
-            style={{ ...inputStyle, flex: 1 }}
+            className={glassSelect + ' flex-1'}
           >
             {['minutes', 'hours', 'days'].map(u => (
               <option key={u} value={u}>{t(`schedule.units.${u}`)}</option>
@@ -75,43 +84,40 @@ export function ScheduleIntervalConfig({ config = {}, onChange }) {
       </div>
 
       {/* Horario activo */}
-      <div>
-        <label style={labelStyle}>{t('schedule.activeFrom')}</label>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <label className={glassLabel}>{t('schedule.activeFrom')}</label>
+        <div className="flex gap-2 items-center">
           <input
             type="time"
             value={config.active_from ?? ''}
             onChange={e => set('active_from', e.target.value)}
-            style={{ ...inputStyle, flex: 1 }}
+            className={glassInput + ' flex-1'}
           />
-          <span style={{ fontSize: 12, color: '#9ca3af' }}>—</span>
+          <span className="text-white/30 text-xs">—</span>
           <input
             type="time"
             value={config.active_until ?? ''}
             onChange={e => set('active_until', e.target.value)}
-            style={{ ...inputStyle, flex: 1 }}
+            className={glassInput + ' flex-1'}
           />
         </div>
       </div>
 
       {/* Días activos */}
-      <div>
-        <label style={labelStyle}>{t('schedule.activeDays')}</label>
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+      <div className="bg-white/5 rounded-xl p-3 border border-white/[0.08]">
+        <label className={glassLabel}>{t('schedule.activeDays')}</label>
+        <div className="flex gap-1.5 flex-wrap">
           {WEEKDAYS.map(day => {
             const active = activeWeekdays.includes(day)
             return (
               <button
                 key={day}
                 onClick={() => toggleDay(day)}
-                style={{
-                  padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600,
-                  border: '1px solid',
-                  borderColor: active ? '#0f172a' : '#e5e7eb',
-                  background:  active ? '#0f172a' : '#fff',
-                  color:       active ? '#fff'    : '#6b7280',
-                  cursor: 'pointer',
-                }}
+                className={`px-2 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                  active
+                    ? 'bg-white/20 border-white/30 text-white'
+                    : 'bg-transparent border-white/10 text-white/50 hover:text-white/80 hover:bg-white/5'
+                }`}
               >
                 {t(`schedule.days.${day}`)}
               </button>

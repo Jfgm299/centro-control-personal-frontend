@@ -25,7 +25,7 @@ export default function ActionNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#f8fafc',
+            background: 'rgba(99,102,241,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14, flexShrink: 0,
           }}>
@@ -35,7 +35,7 @@ export default function ActionNode({ id, data, selected }) {
             <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {t('nodes.action')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1.2 }}>
               {label}
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function ActionNode({ id, data, selected }) {
 
         {data.continue_on_error && (
           <div style={{ marginTop: 6, fontSize: 10, color: '#f59e0b', fontWeight: 500 }}>
-            ⚠️ Continúa si hay error
+            ⚠️ {t('nodes.continueOnError')}
           </div>
         )}
       </div>

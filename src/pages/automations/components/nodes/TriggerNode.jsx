@@ -27,7 +27,7 @@ export default function TriggerNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#f0fdf4',
+            background: 'rgba(34,197,94,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14, flexShrink: 0,
           }}>
@@ -37,7 +37,7 @@ export default function TriggerNode({ id, data, selected }) {
             <div style={{ fontSize: 9, fontWeight: 700, color: '#22c55e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {t('nodes.trigger')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1.2 }}>
               {label}
             </div>
           </div>
@@ -46,11 +46,11 @@ export default function TriggerNode({ id, data, selected }) {
         {/* Subtítulo config resumida */}
         {data.config && Object.keys(data.config).length > 0 && (
           <div style={{
-            fontSize: 11, color: '#6b7280',
-            background: '#f9fafb', borderRadius: 6,
-            padding: '3px 8px',
+            fontSize: 11, color: 'rgba(255,255,255,0.45)',
+            background: 'rgba(255,255,255,0.06)', borderRadius: 6,
+            padding: '3px 8px', border: '1px solid rgba(255,255,255,0.08)',
           }}>
-            {summarizeConfig(data.config)}
+            {summarizeConfig(data.config, t)}
           </div>
         )}
       </div>
@@ -65,9 +65,9 @@ export default function TriggerNode({ id, data, selected }) {
   )
 }
 
-function summarizeConfig(config) {
+function summarizeConfig(config, t) {
   if (config.interval_value && config.interval_unit) {
-    return `Cada ${config.interval_value} ${config.interval_unit}`
+    return `${t('schedule.every')} ${config.interval_value} ${config.interval_unit}`
   }
   if (config.run_at) {
     return new Date(config.run_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })

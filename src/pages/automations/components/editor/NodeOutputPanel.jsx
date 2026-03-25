@@ -16,69 +16,49 @@ export default function NodeOutputPanel({ node, onClose, inline = false }) {
   const data   = nodeOutputData[node.id]
   const hasRun = !!data
 
-  // Si el nodo no tiene datos de ejecución, mostrar panel de config normal
-  // (esto lo gestiona AutomationEditor — aquí asumimos que hay datos)
-
   const nodeLabel = node.data?.label ?? node.type ?? 'Nodo'
   const status    = data?.status
   const isSuccess = status === 'success'
   const isFailed  = status === 'failed'
 
   return (
-    <div style={{
-      width: inline ? '100%' : 340,
-      height: '100%',
-      background: '#1a1a2e',
-      display: 'flex',
-      flexDirection: 'column',
-      borderLeft: '1px solid #2d2d4e',
-      fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
-      flexShrink: 0,
-    }}>
+    <div
+      className="bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full shrink-0"
+      style={{ width: inline ? '100%' : 340 }}
+    >
 
       {/* ── Header ── */}
-      <div style={{
-        padding: '14px 16px 12px',
-        borderBottom: '1px solid #2d2d4e',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-      }}>
-        <div style={{
-          width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-          background: isSuccess ? '#22c55e' : isFailed ? '#ef4444' : '#6b7280',
-          boxShadow: isSuccess ? '0 0 6px #22c55e' : isFailed ? '0 0 6px #ef4444' : 'none',
-        }} />
-        <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+        <div
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{
+            background: isSuccess ? '#22c55e' : isFailed ? '#ef4444' : 'rgba(255,255,255,0.2)',
+            boxShadow: isSuccess ? '0 0 6px #22c55e' : isFailed ? '0 0 6px #ef4444' : 'none',
+          }}
+        />
+        <span className="flex-1 text-white/85 text-sm font-semibold overflow-hidden text-ellipsis whitespace-nowrap">
           {nodeLabel}
         </span>
         {data?.duration_ms != null && (
-          <span style={{
-            fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
-            background: isSuccess ? '#14532d' : '#7f1d1d',
-            color: isSuccess ? '#4ade80' : '#fca5a5',
-          }}>
+          <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+            isSuccess
+              ? 'bg-emerald-500/15 text-emerald-400 border-emerald-400/25'
+              : 'bg-red-500/15 text-red-400 border-red-400/25'
+          }`}>
             {data.duration_ms}ms
           </span>
         )}
-        <button onClick={onClose} style={{
-          border: 'none', background: 'none', cursor: 'pointer',
-          color: '#6b7280', fontSize: 18, padding: '0 2px', lineHeight: 1,
-        }}>×</button>
+        <button
+          onClick={onClose}
+          className="border-none bg-transparent cursor-pointer text-white/40 hover:text-white/70 text-lg px-0.5 leading-none transition-colors"
+        >
+          ×
+        </button>
       </div>
 
       {/* ── Error banner ── */}
       {isFailed && data?.error && (
-        <div style={{
-          margin: '10px 12px 0',
-          padding: '8px 12px',
-          background: '#450a0a',
-          border: '1px solid #7f1d1d',
-          borderRadius: 8,
-          fontSize: 12,
-          color: '#fca5a5',
-          lineHeight: 1.5,
-        }}>
+        <div className="mx-3 mt-3 px-3 py-2 bg-red-500/15 border border-red-400/25 rounded-xl text-xs text-red-400 leading-relaxed">
           ❌ {data.error}
         </div>
       )}
@@ -86,50 +66,31 @@ export default function NodeOutputPanel({ node, onClose, inline = false }) {
       {/* ── Tabs ── */}
       {hasRun && (
         <>
-          <div style={{
-            display: 'flex',
-            padding: '10px 12px 0',
-            gap: 4,
-            borderBottom: '1px solid #2d2d4e',
-          }}>
-            {['input', 'output'].map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{
-                padding: '6px 14px',
-                borderRadius: '6px 6px 0 0',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 11.5,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                background: tab === t ? '#2d2d4e' : 'transparent',
-                color: tab === t ? '#a5b4fc' : '#6b7280',
-                borderBottom: tab === t ? '2px solid #6366f1' : '2px solid transparent',
-                transition: 'all 0.15s',
-              }}>
-                {t === 'input' ? 'INPUT' : 'OUTPUT'}
+          <div className="flex px-3 pt-2.5 gap-1 border-b border-white/10">
+            {['input', 'output'].map(tabKey => (
+              <button
+                key={tabKey}
+                onClick={() => setTab(tabKey)}
+                className={`px-3.5 py-1.5 rounded-t-lg border-b-2 text-xs font-semibold uppercase tracking-wider transition-all ${
+                  tab === tabKey
+                    ? 'bg-white/15 border-white/40 text-white'
+                    : 'bg-transparent border-transparent text-white/50 hover:text-white/80 hover:bg-white/5'
+                }`}
+              >
+                {tabKey === 'input' ? 'INPUT' : 'OUTPUT'}
               </button>
             ))}
           </div>
 
           {/* ── JSON body ── */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: 12 }}>
+          <div className="flex-1 overflow-y-auto p-3">
             <JsonViewer data={tab === 'input' ? data.input : data.output} />
           </div>
         </>
       )}
 
       {!hasRun && (
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#4b5563',
-          fontSize: 12,
-          textAlign: 'center',
-          padding: 24,
-        }}>
+        <div className="flex-1 flex items-center justify-center text-white/30 text-sm text-center p-6">
           Ejecuta el flujo para ver<br />los datos de este nodo
         </div>
       )}
@@ -143,21 +104,14 @@ export default function NodeOutputPanel({ node, onClose, inline = false }) {
 function JsonViewer({ data }) {
   if (data === null || data === undefined) {
     return (
-      <div style={{ color: '#4b5563', fontSize: 12, fontStyle: 'italic', padding: 8 }}>
+      <div className="text-white/30 text-xs italic p-2">
         Sin datos
       </div>
     )
   }
 
   return (
-    <div style={{
-      background: '#0f172a',
-      borderRadius: 8,
-      padding: '10px 12px',
-      fontSize: 12,
-      lineHeight: 1.7,
-      overflowX: 'auto',
-    }}>
+    <div className="bg-black/40 border border-white/10 rounded-xl font-mono text-xs text-green-400/80 p-3 overflow-auto leading-relaxed">
       <JsonNode value={data} indent={0} />
     </div>
   )
@@ -165,23 +119,22 @@ function JsonViewer({ data }) {
 
 function JsonNode({ value, indent }) {
   const [collapsed, setCollapsed] = useState(false)
-  const pad = '  '.repeat(indent)
 
-  if (value === null) return <span style={{ color: '#94a3b8' }}>null</span>
-  if (typeof value === 'boolean') return <span style={{ color: '#f472b6' }}>{String(value)}</span>
-  if (typeof value === 'number') return <span style={{ color: '#fb923c' }}>{value}</span>
-  if (typeof value === 'string') return <span style={{ color: '#4ade80' }}>"{value}"</span>
+  if (value === null) return <span className="text-white/40">null</span>
+  if (typeof value === 'boolean') return <span className="text-pink-400">{String(value)}</span>
+  if (typeof value === 'number') return <span className="text-orange-400">{value}</span>
+  if (typeof value === 'string') return <span className="text-green-400/80">"{value}"</span>
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return <span style={{ color: '#94a3b8' }}>[]</span>
+    if (value.length === 0) return <span className="text-white/40">[]</span>
     return (
       <span>
         <button onClick={() => setCollapsed(v => !v)} style={collapseBtn}>
           {collapsed ? '▶' : '▼'}
         </button>
-        <span style={{ color: '#94a3b8' }}>[</span>
+        <span className="text-white/40">[</span>
         {collapsed
-          ? <span style={{ color: '#6b7280', cursor: 'pointer' }} onClick={() => setCollapsed(false)}>
+          ? <span className="text-white/30 cursor-pointer" onClick={() => setCollapsed(false)}>
               {' '}{value.length} items{' '}
             </span>
           : (
@@ -189,14 +142,14 @@ function JsonNode({ value, indent }) {
               {value.map((item, i) => (
                 <div key={i}>
                   <JsonNode value={item} indent={indent + 1} />
-                  {i < value.length - 1 && <span style={{ color: '#4b5563' }}>,</span>}
+                  {i < value.length - 1 && <span className="text-white/20">,</span>}
                 </div>
               ))}
             </div>
           )
         }
-        <span style={{ color: '#94a3b8' }}>]</span>
-        <span style={{ color: '#6b7280', fontSize: 10, marginLeft: 8 }}>
+        <span className="text-white/40">]</span>
+        <span className="text-white/20 text-[10px] ml-2">
           // {value.length} item{value.length !== 1 ? 's' : ''}
         </span>
       </span>
@@ -205,43 +158,43 @@ function JsonNode({ value, indent }) {
 
   if (typeof value === 'object') {
     const keys = Object.keys(value)
-    if (keys.length === 0) return <span style={{ color: '#94a3b8' }}>{'{}'}</span>
+    if (keys.length === 0) return <span className="text-white/40">{'{}'}</span>
     return (
       <span>
         <button onClick={() => setCollapsed(v => !v)} style={collapseBtn}>
           {collapsed ? '▶' : '▼'}
         </button>
-        <span style={{ color: '#94a3b8' }}>{'{'}</span>
+        <span className="text-white/40">{'{'}</span>
         {collapsed
-          ? <span style={{ color: '#6b7280', cursor: 'pointer' }} onClick={() => setCollapsed(false)}>
+          ? <span className="text-white/30 cursor-pointer" onClick={() => setCollapsed(false)}>
               {' '}{keys.length} keys{' '}
             </span>
           : (
             <div style={{ marginLeft: 16 }}>
               {keys.map((key, i) => (
                 <div key={key}>
-                  <span style={{ color: '#93c5fd' }}>"{key}"</span>
-                  <span style={{ color: '#94a3b8' }}>: </span>
+                  <span className="text-blue-300/80">"{key}"</span>
+                  <span className="text-white/40">: </span>
                   <JsonNode value={value[key]} indent={indent + 1} />
-                  {i < keys.length - 1 && <span style={{ color: '#4b5563' }}>,</span>}
+                  {i < keys.length - 1 && <span className="text-white/20">,</span>}
                 </div>
               ))}
             </div>
           )
         }
-        <span style={{ color: '#94a3b8' }}>{'}'}</span>
+        <span className="text-white/40">{'}'}</span>
       </span>
     )
   }
 
-  return <span style={{ color: '#e2e8f0' }}>{String(value)}</span>
+  return <span className="text-white/70">{String(value)}</span>
 }
 
 const collapseBtn = {
   border: 'none',
   background: 'none',
   cursor: 'pointer',
-  color: '#6366f1',
+  color: 'rgba(99,102,241,0.8)',
   fontSize: 9,
   padding: '0 3px 0 0',
   lineHeight: 1,

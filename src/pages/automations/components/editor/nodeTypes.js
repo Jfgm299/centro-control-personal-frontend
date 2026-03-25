@@ -48,9 +48,10 @@ export function refIdToNodeType(refId, isAction = false) {
 /**
  * Items de control de flujo — hardcoded, no vienen del backend.
  * Se muestran en la sidebar bajo la sección "Control de flujo".
+ * labelKey/descKey son claves i18n resueltas por NodeSidebar.
  */
 export const FLOW_CONTROL_ITEMS = [
-  { ref_id: 'flow.condition', type: 'condition', label: 'Condición', icon: '🔀', description: 'Ramifica el flujo según una condición' },
-  { ref_id: 'flow.delay',     type: 'delay',     label: 'Espera',    icon: '⏳', description: 'Pausa la ejecución un tiempo determinado' },
-  { ref_id: 'flow.stop',      type: 'stop',      label: 'Detener',   icon: '🛑', description: 'Finaliza el flujo en este punto' },
+  { ref_id: 'flow.condition', type: 'condition', labelKey: 'nodes.condition', icon: '🔀', descKey: 'sidebar.conditionDesc' },
+  { ref_id: 'flow.delay',     type: 'delay',     labelKey: 'nodes.delay',     icon: '⏳', descKey: 'sidebar.delayDesc' },
+  { ref_id: 'flow.stop',      type: 'stop',      labelKey: 'nodes.stop',      icon: '🛑', descKey: 'sidebar.stopDesc' },
 ]

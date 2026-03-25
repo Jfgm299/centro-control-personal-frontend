@@ -22,7 +22,7 @@ export default function OutboundWebhookNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#fff7ed',
+            background: 'rgba(234,88,12,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14, flexShrink: 0,
           }}>
@@ -30,13 +30,13 @@ export default function OutboundWebhookNode({ id, data, selected }) {
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#ea580c', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              HTTP Request
+              {t('nodes.webhookOutbound', 'HTTP Request')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1.2 }}>
               {label}
             </div>
             {url && (
-              <div style={{ fontSize: 10, color: '#6b7280', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.40)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
                 {method} {url}
               </div>
             )}

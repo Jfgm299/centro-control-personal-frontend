@@ -17,12 +17,20 @@
     "deleting": "Eliminando..."
   },
 
+  "status": {
+    "loading": "Cargando..."
+  },
+
   "card": {
     "edit": "Editar",
     "duplicate": "Duplicar",
     "export": "Exportar JSON",
     "delete": "Eliminar",
     "confirmDelete": "Confirmar eliminación",
+    "now": "Ahora",
+    "agoMinutes": "Hace {{count}}m",
+    "agoHours": "Hace {{count}}h",
+    "agoDays": "Hace {{count}}d",
     "triggerType": {
       "manual": "Manual",
       "schedule_once": "Programada una vez",
@@ -67,7 +75,17 @@
     "triggers": "Triggers",
     "actions": "Acciones",
     "flowControl": "Control de flujo",
-    "noResults": "Sin resultados para \"{{query}}\""
+    "noResults": "Sin resultados para \"{{query}}\"",
+    "conditionDesc": "Ramifica el flujo según una condición",
+    "delayDesc": "Pausa la ejecución un tiempo determinado",
+    "stopDesc": "Finaliza el flujo en este punto"
+  },
+
+  "prevNode": {
+    "title": "Datos del paso anterior",
+    "empty": "Ejecutá el flujo primero para ver los datos de salida.",
+    "noParent": "Este nodo no tiene un paso anterior.",
+    "dragHint": "Arrastrá un campo a un input"
   },
 
   "nodes": {
@@ -79,6 +97,7 @@
     "webhookOutbound":   "Webhook (saliente)",
     "automationCall":    "Llamar automatización",
     "stop":              "Detener",
+    "continueOnError":   "Continúa si hay error",
 
     "system": {
       "manual":           "Manual",
@@ -92,7 +111,9 @@
       "delete":           "Eliminar nodo",
       "confirmDelete":    "Confirmar eliminación",
       "noNodeSelected":   "Selecciona un nodo para configurarlo"
-    }
+    },
+    "deleteTitle":          "Eliminar nodo",
+    "stopReasonPlaceholder": "Motivo opcional"
   },
 
   "condition": {
@@ -155,7 +176,8 @@
     "headers":       "Cabeceras",
     "addHeader":     "Añadir cabecera",
     "body":          "Plantilla de cuerpo",
-    "bodyHint":      "Usa {{variable}} para insertar valores del contexto"
+    "bodyHint":      "Usa {{variable}} para insertar valores del contexto",
+    "urlPendingSave": "(guardá para generar la URL)"
   },
 
   "variablePicker": {
@@ -191,7 +213,8 @@
       "duration":   "Duración",
       "status":     "Estado",
       "failedNode": "Nodo fallido"
-    }
+    },
+    "backToAll": "← Volver a todas"
   },
 
   "error": {

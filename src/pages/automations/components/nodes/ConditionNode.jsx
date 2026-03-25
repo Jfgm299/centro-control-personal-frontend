@@ -25,7 +25,7 @@ export default function ConditionNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: hasConfig ? 8 : 0 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#fffbeb',
+            background: 'rgba(245,158,11,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14, flexShrink: 0,
           }}>
@@ -35,7 +35,7 @@ export default function ConditionNode({ id, data, selected }) {
             <div style={{ fontSize: 9, fontWeight: 700, color: '#d97706', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {t('nodes.condition')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1.2 }}>
               {hasConfig
                 ? `${field} ${operator} ${value ?? ''}`
                 : t('nodes.condition')}

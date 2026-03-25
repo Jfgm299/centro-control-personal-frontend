@@ -48,84 +48,78 @@ export default function CreateAutomationModal({ isOpen, onClose, onCreated }) {
   const handleKey = (e) => { if (e.key === 'Enter') handleSubmit() }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(0,0,0,0.35)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }} onClick={onClose}>
-      <div style={{
-        background: '#fff', borderRadius: 16, padding: 28,
-        width: '100%', maxWidth: 420,
-        boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-      }} onClick={e => e.stopPropagation()}>
-
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 20px' }}>
-          {t('modal.createTitle')}
-        </h2>
-
-        {/* Nombre */}
-        <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, fontWeight: 500, color: '#6b7280', marginBottom: 4, display: 'block' }}>
-            {t('modal.name')}
-          </label>
-          <input
-            autoFocus
-            value={name}
-            onChange={e => setName(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder={t('modal.namePlaceholder')}
-            style={{
-              width: '100%', boxSizing: 'border-box',
-              padding: '8px 12px', fontSize: 13,
-              border: '1px solid #e5e7eb', borderRadius: 10,
-              outline: 'none', color: '#111827',
-              fontFamily: 'inherit',
-            }}
-          />
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[10000] p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+          <h2 className="text-white font-semibold text-lg">
+            {t('modal.createTitle')}
+          </h2>
+          <button
+            onClick={onClose}
+            className="bg-black/20 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white rounded-lg p-1.5 transition-all"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* Descripción */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 500, color: '#6b7280', marginBottom: 4, display: 'block' }}>
-            {t('modal.description')}
-          </label>
-          <textarea
-            value={description}
-            onChange={e => setDesc(e.target.value)}
-            placeholder={t('modal.descriptionPlaceholder')}
-            rows={2}
-            style={{
-              width: '100%', boxSizing: 'border-box',
-              padding: '8px 12px', fontSize: 13,
-              border: '1px solid #e5e7eb', borderRadius: 10,
-              outline: 'none', color: '#111827', resize: 'none',
-              fontFamily: 'inherit',
-            }}
-          />
+        {/* Body */}
+        <div className="px-6 py-4 flex-1 overflow-y-auto">
+
+          {/* Nombre */}
+          <div className="mb-4">
+            <label className="text-white/60 text-sm font-medium mb-1.5 block">
+              {t('modal.name')}
+            </label>
+            <input
+              autoFocus
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder={t('modal.namePlaceholder')}
+              className="w-full px-4 py-3 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
+            />
+          </div>
+
+          {/* Descripción */}
+          <div className="mb-4">
+            <label className="text-white/60 text-sm font-medium mb-1.5 block">
+              {t('modal.description')}
+            </label>
+            <textarea
+              value={description}
+              onChange={e => setDesc(e.target.value)}
+              placeholder={t('modal.descriptionPlaceholder')}
+              rows={2}
+              className="w-full px-4 py-3 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all resize-none"
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-400 text-sm mb-3">{error}</p>
+          )}
         </div>
 
-        {error && (
-          <p style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{error}</p>
-        )}
-
-        {/* Botones */}
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={{
-            padding: '8px 16px', borderRadius: 10, border: '1px solid #e5e7eb',
-            background: '#fff', color: '#374151', fontSize: 13, fontWeight: 500,
-            cursor: 'pointer',
-          }}>
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-white/10 flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-xl px-4 py-2.5 text-sm transition-all"
+          >
             {t('modal.cancel')}
           </button>
           <button
             onClick={handleSubmit}
             disabled={create.isPending || !name.trim()}
-            style={{
-              padding: '8px 16px', borderRadius: 10, border: 'none',
-              background: create.isPending || !name.trim() ? '#9ca3af' : '#0f172a',
-              color: '#fff', fontSize: 13, fontWeight: 600,
-              cursor: create.isPending || !name.trim() ? 'not-allowed' : 'pointer',
-            }}
+            className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-all active:scale-95 ${create.isPending || !name.trim() ? 'bg-white/10 border border-white/10 text-white/30 cursor-not-allowed' : 'bg-white/20 hover:bg-white/30 border border-white/30 text-white'}`}
           >
             {create.isPending ? t('modal.creating') : t('modal.create')}
           </button>

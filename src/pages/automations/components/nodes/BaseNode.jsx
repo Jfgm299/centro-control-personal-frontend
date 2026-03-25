@@ -1,4 +1,5 @@
 import { useReactFlow } from '@xyflow/react'
+import { useTranslation } from 'react-i18next'
 import { useAutomationsStore } from '../../store/editorStore'
 
 // Keyframes inyectados una sola vez globalmente
@@ -24,6 +25,7 @@ function injectStyles() {
 export default function BaseNode({ id, children, minWidth = 220, selected = false }) {
   injectStyles()
 
+  const { t } = useTranslation('automations')
   const { deleteElements } = useReactFlow()
   const executionState = useAutomationsStore((s) => s.executionState[id])
   const status = executionState?.status
@@ -40,16 +42,17 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
   const isSkipped  = status === 'skipped'
   const isSelected = !status && selected
 
-  const borderColor = isSuccess  ? '#22c55e'
-                    : isFailed   ? '#ef4444'
-                    : isSkipped  ? '#d1d5db'
-                    : isSelected ? '#0f172a'
-                    :              '#e5e7eb'
+  const borderColor = isSuccess  ? 'rgba(34,197,94,0.5)'
+                    : isFailed   ? 'rgba(239,68,68,0.5)'
+                    : isSkipped  ? 'rgba(255,255,255,0.08)'
+                    : isSelected ? 'rgba(255,255,255,0.4)'
+                    :              'rgba(255,255,255,0.15)'
 
-  const bgColor = isSuccess ? '#f0fdf4'
-                : isFailed  ? '#fef2f2'
-                : isSkipped ? '#f9fafb'
-                :             '#ffffff'
+  const bgColor = isSuccess ? 'rgba(34,197,94,0.10)'
+                : isFailed  ? 'rgba(239,68,68,0.10)'
+                : isSkipped ? 'rgba(255,255,255,0.04)'
+                : isSelected ? 'rgba(255,255,255,0.12)'
+                :             'rgba(255,255,255,0.08)'
 
   const borderWidth = isSuccess || isFailed || isSelected ? 2 : 1.5
 
@@ -60,13 +63,13 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
       {(selected || isRunning === false) && !isRunning && (
         <button
           onClick={handleDelete}
-          title="Eliminar nodo"
+          title={t('nodes.deleteTitle')}
           style={{
             position: 'absolute', top: -8, right: -8,
             width: 18, height: 18,
             borderRadius: '50%',
             background: selected ? '#ef4444' : '#9ca3af',
-            border: '2px solid #fff',
+            border: '2px solid rgba(255,255,255,0.5)',
             color: '#fff',
             fontSize: 10, fontWeight: 700, lineHeight: 1,
             cursor: 'pointer',
@@ -95,7 +98,7 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
           <div style={{
             position: 'absolute', inset: 0,
             borderRadius: 14,
-            border: '2px solid #e5e7eb',
+            border: '2px solid rgba(255,255,255,0.08)',
           }} />
           {/* Spinner giratorio */}
           <div style={{
@@ -109,7 +112,7 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
             position: 'absolute',
             inset: 2,
             borderRadius: 12,
-            background: '#eff6ff',
+            background: 'rgba(15,23,42,0.85)',
           }} />
         </div>
       )}
@@ -119,10 +122,10 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
         minWidth,
         borderRadius: 12,
         border: `${borderWidth}px solid ${isRunning ? 'transparent' : borderColor}`,
-        background: isRunning ? '#eff6ff' : bgColor,
-        boxShadow: isSelected || isRunning
-          ? '0 0 0 3px rgba(99,102,241,0.12), 0 2px 8px rgba(0,0,0,0.06)'
-          : '0 2px 8px rgba(0,0,0,0.06)',
+        background: isRunning ? 'rgba(15,23,42,0.85)' : bgColor,
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
         fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
         position: 'relative',
         zIndex: 1,
@@ -137,12 +140,12 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
           position: 'absolute', bottom: -20, left: '50%',
           transform: 'translateX(-50%)',
           fontSize: 10, fontWeight: 700,
-          color:      isSuccess ? '#15803d' : isFailed ? '#dc2626' : '#6b7280',
-          background: isSuccess ? '#dcfce7' : isFailed ? '#fee2e2' : '#f3f4f6',
+          color:      isSuccess ? '#4ade80' : isFailed ? '#f87171' : 'rgba(255,255,255,0.45)',
+          background: isSuccess ? 'rgba(34,197,94,0.15)' : isFailed ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.06)',
           padding: '2px 7px', borderRadius: 6,
           whiteSpace: 'nowrap',
           animation: 'cc-fade-in 0.2s ease',
-          border: `1px solid ${isSuccess ? '#bbf7d0' : isFailed ? '#fca5a5' : '#e5e7eb'}`,
+          border: `1px solid ${isSuccess ? 'rgba(34,197,94,0.25)' : isFailed ? 'rgba(239,68,68,0.25)' : 'rgba(255,255,255,0.08)'}`,
         }}>
           {isSuccess ? '✓' : '✗'} {executionState.duration_ms}ms
         </div>
@@ -153,7 +156,7 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
         <div style={{
           position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%',
           transform: 'translateX(-50%)',
-          background: '#1f2937', color: '#fff',
+          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', color: '#fff',
           fontSize: 11, padding: '5px 10px', borderRadius: 7,
           whiteSpace: 'nowrap', maxWidth: 280,
           overflow: 'hidden', textOverflow: 'ellipsis',
@@ -167,7 +170,7 @@ export default function BaseNode({ id, children, minWidth = 220, selected = fals
             transform: 'translateX(-50%)',
             borderLeft: '5px solid transparent',
             borderRight: '5px solid transparent',
-            borderTop: '5px solid #1f2937',
+            borderTop: '5px solid rgba(0,0,0,0.85)',
           }} />
         </div>
       )}

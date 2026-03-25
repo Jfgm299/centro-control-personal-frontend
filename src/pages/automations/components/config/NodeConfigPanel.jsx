@@ -5,23 +5,10 @@ import VariablePicker, { insertAtCursor } from './VariablePicker'
 import { ScheduleOnceConfig, ScheduleIntervalConfig } from './ScheduleConfig'
 import { WebhookInboundConfig, WebhookOutboundConfig } from './WebhookConfig'
 
-const inputStyle = {
-  width: '100%', boxSizing: 'border-box',
-  padding: '7px 10px', fontSize: 13,
-  border: '1px solid #e5e7eb', borderRadius: 8,
-  outline: 'none', color: '#111827',
-  fontFamily: 'inherit', background: '#fff',
-}
-
-const labelStyle = {
-  fontSize: 11, fontWeight: 600, color: '#6b7280',
-  marginBottom: 4, display: 'block',
-}
-
-const sectionStyle = {
-  paddingBottom: 16, marginBottom: 16,
-  borderBottom: '1px solid #f0f0f0',
-}
+const glassInput = 'w-full px-3 py-2 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all'
+const glassSelect = glassInput + ' appearance-none'
+const glassLabel = 'text-white/60 text-sm mb-1 block'
+const glassSectionLabel = 'text-white/40 text-xs font-semibold uppercase tracking-wider mb-2'
 
 /**
  * Panel lateral derecho del editor.
@@ -42,9 +29,9 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
 
   if (!node) {
     return (
-      <div style={panelWrapStyle}>
-        <div style={{ padding: 20, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: '#9ca3af', margin: 0 }}>
+      <div className="w-[280px] shrink-0 bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full overflow-hidden">
+        <div className="flex-1 flex items-center justify-center p-5">
+          <p className="text-white/30 text-sm text-center">
             {t('nodes.config.noNodeSelected')}
           </p>
         </div>
@@ -62,42 +49,38 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
   }
 
   return (
-    <div style={panelWrapStyle}>
+    <div className="w-[280px] shrink-0 bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div style={{
-        padding: '14px 16px 12px',
-        borderBottom: '1px solid #f0f0f0',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2">
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          <div className="text-white/40 text-xs font-semibold uppercase tracking-wider">
             {typeLabel(node.type, t)}
           </div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginTop: 1 }}>
+          <div className="text-white/85 text-sm font-semibold mt-0.5">
             {node.data?.label ?? node.type}
           </div>
         </div>
         <button
           onClick={() => { clearSelection(); setConfirmDelete(false) }}
-          style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 18, color: '#9ca3af', lineHeight: 1 }}
+          className="border-none bg-transparent cursor-pointer text-lg text-white/40 hover:text-white/70 leading-none transition-colors"
         >
           ×
         </button>
       </div>
 
       {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
 
         {/* ── Trigger: schedule_once ── */}
         {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_once' && (
-          <div style={sectionStyle}>
+          <div className="pb-4 mb-0 border-b border-white/10">
             <ScheduleOnceConfig config={config} onChange={setConfig} />
           </div>
         )}
 
         {/* ── Trigger: schedule_interval ── */}
         {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_interval' && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <ScheduleIntervalConfig config={config} onChange={setConfig} />
           </div>
         )}
@@ -105,42 +88,42 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
         {/* ── Trigger: webhook_inbound / nodo webhook_inbound ── */}
         {(node.type === 'webhook_inbound' ||
           (node.type === 'trigger' && node.data?.ref_id === 'system.webhook_inbound')) && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <WebhookInboundConfig webhookToken={node.data?.webhook_token} />
           </div>
         )}
 
         {/* ── Acción: webhook saliente ── */}
         {(node.type === 'outbound_webhook' || (node.type === 'action' && node.data?.ref_id === 'http.webhook_outbound')) && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <WebhookOutboundConfig config={config} onChange={setConfig} variables={variables} />
           </div>
         )}
 
         {/* ── Condición ── */}
         {node.type === 'condition' && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <ConditionConfig config={config} onChange={setConfig} variables={variables} />
           </div>
         )}
 
         {/* ── Delay ── */}
         {node.type === 'delay' && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <DelayConfig config={config} onChange={setConfig} />
           </div>
         )}
 
         {/* ── Stop ── */}
         {node.type === 'stop' && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <StopConfig config={config} onChange={setConfig} />
           </div>
         )}
 
         {/* ── Acción genérica de módulo ── */}
         {node.type === 'action' && node.data?.ref_id !== 'http.webhook_outbound' && node.data?.ref_id !== 'automations_engine.outbound_webhook' && node.data?.config_schema && (
-          <div style={sectionStyle}>
+          <div className="pb-4 border-b border-white/10">
             <GenericActionConfig
               schema={node.data.config_schema}
               config={config}
@@ -152,14 +135,15 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
 
         {/* ── Continue on error (todas las acciones) ── */}
         {node.type === 'action' && (
-          <div style={sectionStyle}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+          <div className="pb-4 border-b border-white/10">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
+                className="accent-white/60"
                 checked={node.data?.continue_on_error ?? false}
                 onChange={e => onUpdate(node.id, { continue_on_error: e.target.checked })}
               />
-              <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>
+              <span className="text-white/70 text-sm">
                 {t('nodes.config.continueOnError')}
               </span>
             </label>
@@ -168,18 +152,15 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
 
         {/* ── Eliminar nodo ── */}
         {node.type !== 'trigger' && (
-          <div style={{ marginTop: 8 }}>
+          <div className="mt-2">
             <button
               onClick={handleDelete}
               onMouseLeave={() => setConfirmDelete(false)}
-              style={{
-                fontSize: 12, fontWeight: confirmDelete ? 700 : 500,
-                padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
-                border: '1px solid',
-                borderColor: confirmDelete ? '#ef4444' : '#fca5a5',
-                background:  confirmDelete ? '#ef4444' : '#fff',
-                color:       confirmDelete ? '#fff'    : '#ef4444',
-              }}
+              className={
+                confirmDelete
+                  ? 'bg-red-500/40 hover:bg-red-500/50 border border-red-400/60 text-red-300 rounded-lg px-3 py-1.5 text-sm font-semibold transition-all'
+                  : 'bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg px-3 py-1.5 text-sm font-medium transition-all'
+              }
             >
               {confirmDelete ? t('nodes.config.confirmDelete') : `🗑 ${t('nodes.config.delete')}`}
             </button>
@@ -201,10 +182,10 @@ function ConditionConfig({ config, onChange, variables }) {
   const hideValue = ['exists', 'not_exists'].includes(config.operator)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div className="flex flex-col gap-3">
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>{t('condition.field')}</label>
+        <div className="flex justify-between items-center mb-1">
+          <label className={glassLabel + ' mb-0'}>{t('condition.field')}</label>
           <VariablePicker variables={variables} onInsert={(v) => insertAtCursor(fieldRef, v)} />
         </div>
         <input
@@ -212,12 +193,12 @@ function ConditionConfig({ config, onChange, variables }) {
           value={config.field ?? ''}
           onChange={e => set('field', e.target.value)}
           placeholder="payload.status"
-          style={inputStyle}
+          className={glassInput}
         />
       </div>
       <div>
-        <label style={labelStyle}>{t('condition.operator')}</label>
-        <select value={config.operator ?? 'eq'} onChange={e => set('operator', e.target.value)} style={inputStyle}>
+        <label className={glassLabel}>{t('condition.operator')}</label>
+        <select value={config.operator ?? 'eq'} onChange={e => set('operator', e.target.value)} className={glassSelect}>
           {OPERATORS.map(op => (
             <option key={op} value={op}>{t(`condition.operators.${op}`)}</option>
           ))}
@@ -225,12 +206,12 @@ function ConditionConfig({ config, onChange, variables }) {
       </div>
       {!hideValue && (
         <div>
-          <label style={labelStyle}>{t('condition.value')}</label>
+          <label className={glassLabel}>{t('condition.value')}</label>
           <input
             value={config.value ?? ''}
             onChange={e => set('value', e.target.value)}
             placeholder="completed"
-            style={inputStyle}
+            className={glassInput}
           />
         </div>
       )}
@@ -242,19 +223,19 @@ function DelayConfig({ config, onChange }) {
   const { t } = useTranslation('automations')
   const set = (k, v) => onChange({ ...config, [k]: v })
   return (
-    <div style={{ display: 'flex', gap: 8 }}>
-      <div style={{ flex: 1 }}>
-        <label style={labelStyle}>{t('delay.label')}</label>
+    <div className="flex gap-2">
+      <div className="flex-1">
+        <label className={glassLabel}>{t('delay.label')}</label>
         <input
           type="number" min={1}
           value={config.delay_value ?? ''}
           onChange={e => set('delay_value', Number(e.target.value))}
-          style={inputStyle}
+          className={glassInput}
         />
       </div>
-      <div style={{ flex: 1 }}>
-        <label style={labelStyle}>&nbsp;</label>
-        <select value={config.delay_unit ?? 'minutes'} onChange={e => set('delay_unit', e.target.value)} style={inputStyle}>
+      <div className="flex-1">
+        <label className={glassLabel}>&nbsp;</label>
+        <select value={config.delay_unit ?? 'minutes'} onChange={e => set('delay_unit', e.target.value)} className={glassSelect}>
           {['seconds', 'minutes', 'hours', 'days'].map(u => (
             <option key={u} value={u}>{t(`delay.${u}`)}</option>
           ))}
@@ -268,12 +249,12 @@ function StopConfig({ config, onChange }) {
   const { t } = useTranslation('automations')
   return (
     <div>
-      <label style={labelStyle}>{t('nodes.stop')}</label>
+      <label className={glassLabel}>{t('nodes.stop')}</label>
       <input
         value={config.reason ?? ''}
         onChange={e => onChange({ ...config, reason: e.target.value })}
-        placeholder="Motivo opcional"
-        style={inputStyle}
+        placeholder={t('nodes.stopReasonPlaceholder')}
+        className={glassInput}
       />
     </div>
   )
@@ -288,15 +269,15 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
   const set  = (k, v) => onChange({ ...config, [k]: v })
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="flex flex-col gap-3">
       {Object.entries(schema).map(([key, field]) => {
         const value = config[key] ?? field.default ?? ''
 
         if (field.type === 'bool') {
           return (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <input type="checkbox" checked={!!value} onChange={e => set(key, e.target.checked)} />
-              <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>{field.label}</span>
+            <label key={key} className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="accent-white/60" checked={!!value} onChange={e => set(key, e.target.checked)} />
+              <span className="text-white/70 text-sm">{field.label}</span>
             </label>
           )
         }
@@ -304,8 +285,8 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
         if (field.type === 'enum') {
           return (
             <div key={key}>
-              <label style={labelStyle}>{field.label}{field.required && ' *'}</label>
-              <select value={value} onChange={e => set(key, e.target.value)} style={inputStyle}>
+              <label className={glassLabel}>{field.label}{field.required && ' *'}</label>
+              <select value={value} onChange={e => set(key, e.target.value)} className={glassSelect}>
                 {(field.options ?? []).map(opt => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
@@ -317,8 +298,8 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
         if (field.type === 'datetime') {
           return (
             <div key={key}>
-              <label style={labelStyle}>{field.label}{field.required && ' *'}</label>
-              <input type="datetime-local" value={value} onChange={e => set(key, e.target.value)} style={inputStyle} />
+              <label className={glassLabel}>{field.label}{field.required && ' *'}</label>
+              <input type="datetime-local" value={value} onChange={e => set(key, e.target.value)} className={glassInput} />
             </div>
           )
         }
@@ -328,8 +309,8 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
 
         return (
           <div key={key}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-              <label style={{ ...labelStyle, marginBottom: 0 }}>
+            <div className="flex justify-between items-center mb-1">
+              <label className={glassLabel + ' mb-0'}>
                 {field.label}{field.required && ' *'}
               </label>
               {variables.length > 0 && (
@@ -346,7 +327,7 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
                 onChange={e => set(key, e.target.value)}
                 placeholder={field.placeholder ?? ''}
                 rows={3}
-                style={{ ...inputStyle, resize: 'vertical' }}
+                className={glassInput + ' resize-y'}
               />
             ) : (
               <input
@@ -355,7 +336,7 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
                 value={value}
                 onChange={e => set(key, field.type === 'int' ? Number(e.target.value) : e.target.value)}
                 placeholder={field.placeholder ?? ''}
-                style={inputStyle}
+                className={glassInput}
               />
             )}
           </div>
@@ -366,14 +347,6 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-const panelWrapStyle = {
-  width: 280, flexShrink: 0,
-  borderLeft: '1px solid #f0f0f0',
-  background: '#fff',
-  display: 'flex', flexDirection: 'column',
-  height: '100%', overflowY: 'hidden',
-}
 
 function typeLabel(type, t) {
   const map = {

@@ -24,34 +24,29 @@ export default function NodeSidebar({ onDragStart }) {
     )
   }
 
-  const filteredFlowControl = filterItems(FLOW_CONTROL_ITEMS)
+  const resolvedFlowControl = FLOW_CONTROL_ITEMS.map((item) => ({
+    ...item,
+    label: t(item.labelKey),
+    description: t(item.descKey),
+  }))
+
+  const filteredFlowControl = filterItems(resolvedFlowControl)
 
   return (
-    <div style={{
-      width: 220, flexShrink: 0,
-      borderRight: '1px solid #f0f0f0',
-      background: '#fafafa',
-      display: 'flex', flexDirection: 'column',
-      height: '100%', overflowY: 'hidden',
-    }}>
+    <div className="bg-black/20 backdrop-blur-xl border-r border-white/10 flex flex-col h-full overflow-hidden" style={{ width: 220, flexShrink: 0 }}>
 
       {/* Search */}
-      <div style={{ padding: '10px 10px 6px' }}>
+      <div className="px-2.5 pt-2.5 pb-1.5">
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder={t('sidebar.search')}
-          style={{
-            width: '100%', boxSizing: 'border-box',
-            padding: '6px 10px', fontSize: 12,
-            border: '1px solid #e5e7eb', borderRadius: 8,
-            outline: 'none', background: '#fff', color: '#111827',
-          }}
+          className="w-full bg-black/20 border border-white/10 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 text-white placeholder-white/30 rounded-xl px-3 py-2 text-sm box-border"
         />
       </div>
 
       {/* Scrollable list */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '4px 6px 12px' }}>
+      <div className="flex-1 overflow-y-auto px-1.5 pb-3 pt-1">
 
         {/* ── Triggers ── */}
         <SectionHeader label={t('sidebar.triggers')} />
@@ -76,7 +71,7 @@ export default function NodeSidebar({ onDragStart }) {
         )}
 
         {/* ── Acciones ── */}
-        <SectionHeader label={t('sidebar.actions')} style={{ marginTop: 12 }} />
+        <SectionHeader label={t('sidebar.actions')} className="mt-3" />
 
         {/* Control de flujo — siempre presente */}
         <NodeSidebarSection
@@ -111,8 +106,8 @@ export default function NodeSidebar({ onDragStart }) {
         {search && filteredFlowControl.length === 0 &&
           Object.values(triggerGroups).every(g => !filterItems(g.items).length) &&
           Object.values(actionGroups).every(g => !filterItems(g.items).length) && (
-          <div style={{ padding: '20px 10px', textAlign: 'center' }}>
-            <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>
+          <div className="py-8 text-center">
+            <p className="text-white/30 text-sm m-0">
               {t('sidebar.noResults', { query: search })}
             </p>
           </div>
@@ -122,13 +117,9 @@ export default function NodeSidebar({ onDragStart }) {
   )
 }
 
-function SectionHeader({ label, style }) {
+function SectionHeader({ label, className }) {
   return (
-    <div style={{
-      fontSize: 10, fontWeight: 700, color: '#9ca3af',
-      textTransform: 'uppercase', letterSpacing: '0.08em',
-      padding: '6px 10px 4px', ...style,
-    }}>
+    <div className={`text-white/40 text-xs font-semibold uppercase tracking-wider px-3 py-2 ${className ?? ''}`}>
       {label}
     </div>
   )
@@ -136,11 +127,11 @@ function SectionHeader({ label, style }) {
 
 function LoadingRows() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '2px 4px' }}>
+    <div className="flex flex-col gap-1 px-1 py-0.5">
       {[1, 2, 3].map(i => (
         <div key={i} style={{
-          height: 40, borderRadius: 8,
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)',
+          height: 40, borderRadius: 10,
+          background: 'linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.06) 75%)',
           backgroundSize: '200% 100%',
           animation: 'shimmer 1.4s infinite',
         }} />

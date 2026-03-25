@@ -46,61 +46,52 @@ export default function EditorToolbar({
                      : '#22c55e'
 
   return (
-    <div style={{
-      height: 52, flexShrink: 0,
-      display: 'flex', alignItems: 'center',
-      padding: '0 16px', gap: 10,
-      background: '#fff',
-      borderBottom: '1px solid #f0f0f0',
-      zIndex: 10,
-    }}>
+    <div className="flex items-center gap-2 px-4 py-2.5 bg-black/30 backdrop-blur-xl border-b border-white/10" style={{ height: 52, flexShrink: 0, zIndex: 10 }}>
 
       {/* ── Back ── */}
-      <button onClick={onBack} style={ghostBtn}>
+      <button
+        onClick={onBack}
+        className="bg-black/20 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer flex items-center gap-1"
+      >
         ← {t('editor.back')}
       </button>
 
-      <div style={{ width: 1, height: 20, background: '#e5e7eb' }} />
+      <div className="w-px h-5 bg-white/10 flex-shrink-0" />
 
       {/* ── Nombre editable ── */}
       <input
         value={editorName}
         onChange={e => setEditorName(e.target.value)}
-        style={{
-          border: 'none', outline: 'none',
-          fontSize: 14, fontWeight: 600, color: '#111827',
-          background: 'transparent', width: 220,
-          fontFamily: 'inherit',
-        }}
+        className="bg-transparent border-none outline-none text-white font-medium text-sm placeholder-white/30 min-w-0 flex-1"
+        style={{ width: 220, fontFamily: 'inherit' }}
         onBlur={onSave}
       />
 
       {/* ── Indicador guardado ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+      <div className="flex items-center gap-1.5 flex-shrink-0">
         <div style={{
           width: 7, height: 7, borderRadius: '50%',
           background: saveDotColor, flexShrink: 0,
         }} />
-        <span style={{ fontSize: 11, color: '#9ca3af' }}>{saveLabel}</span>
+        <span className="text-white/50 text-xs">{saveLabel}</span>
       </div>
 
       {/* Spacer */}
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
 
       {/* ── Resultado última ejecución ── */}
       {lastResult && !isExecuting && (
-        <div style={{
-          fontSize: 12, fontWeight: 500, padding: '3px 10px',
-          borderRadius: 8,
-          background: lastResult.status === 'success' ? '#f0fdf4' : '#fef2f2',
-          color:      lastResult.status === 'success' ? '#15803d' : '#dc2626',
-        }}>
+        <div className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${
+          lastResult.status === 'success'
+            ? 'bg-emerald-500/15 border-emerald-400/25 text-emerald-400'
+            : 'bg-red-500/15 border-red-400/25 text-red-400'
+        }`}>
           {lastResult.status === 'success'
             ? t('editor.executionSuccess', { ms: lastResult.duration_ms })
             : (<>
                 {t('editor.executionFailed', { node: lastResult.failed_node_id ?? '?' })}
                 {lastResult.error_message && (
-                  <span style={{ display: 'block', fontSize: 11, color: '#b91c1c', marginTop: 2, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className="block text-[11px] text-red-400/80 mt-0.5 max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap">
                     {lastResult.error_message}
                   </span>
                 )}
@@ -109,30 +100,42 @@ export default function EditorToolbar({
       )}
 
       {/* ── Undo / Redo ── */}
-      <button onClick={onUndo} disabled={!canUndo} title="Ctrl+Z" style={{ ...ghostBtn, opacity: canUndo ? 1 : 0.3 }}>
+      <button
+        onClick={onUndo}
+        disabled={!canUndo}
+        title="Ctrl+Z"
+        className={`bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-lg px-3 py-1.5 text-sm transition-all cursor-pointer flex items-center gap-1 ${!canUndo ? 'opacity-30 cursor-not-allowed' : ''}`}
+      >
         ↩
       </button>
-      <button onClick={onRedo} disabled={!canRedo} title="Ctrl+Y" style={{ ...ghostBtn, opacity: canRedo ? 1 : 0.3 }}>
+      <button
+        onClick={onRedo}
+        disabled={!canRedo}
+        title="Ctrl+Y"
+        className={`bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-lg px-3 py-1.5 text-sm transition-all cursor-pointer flex items-center gap-1 ${!canRedo ? 'opacity-30 cursor-not-allowed' : ''}`}
+      >
         ↪
       </button>
 
       {/* ── Historial ── */}
       <button
         onClick={onToggleHistory}
-        style={{ ...ghostBtn, background: showHistory ? '#f3f4f6' : '#fff' }}
         title={t('editor.historyTitle')}
+        className={`border border-white/10 text-white/70 hover:text-white rounded-lg px-3 py-1.5 text-sm transition-all cursor-pointer flex items-center gap-1 ${showHistory ? 'bg-white/15' : 'bg-black/20 hover:bg-black/40'}`}
       >
         🕓
       </button>
 
-      <div style={{ width: 1, height: 20, background: '#e5e7eb' }} />
+      <div className="w-px h-5 bg-white/10 flex-shrink-0" />
+
+      {/* ── Toggle activo ── */}
       <div
         onClick={() => onToggleActive(!isActive)}
-        style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}
+        className="flex items-center gap-1.5 cursor-pointer"
       >
         <div style={{
           width: 34, height: 19, borderRadius: 10,
-          background: isActive ? '#22c55e' : '#d1d5db',
+          background: isActive ? '#22c55e' : 'rgba(255,255,255,0.15)',
           position: 'relative', transition: 'background 0.2s', flexShrink: 0,
         }}>
           <div style={{
@@ -140,26 +143,25 @@ export default function EditorToolbar({
             left: isActive ? 17 : 2,
             width: 15, height: 15, borderRadius: '50%',
             background: '#fff', transition: 'left 0.2s',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
           }} />
         </div>
-        <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>
+        <span className="text-xs font-medium text-white/70">
           {isActive ? t('list.active') : t('list.inactive')}
         </span>
       </div>
 
-      <div style={{ width: 1, height: 20, background: '#e5e7eb' }} />
+      <div className="w-px h-5 bg-white/10 flex-shrink-0" />
 
       {/* ── Guardar ── */}
       <button
         onClick={onSave}
         disabled={!isDirty || isSaving}
-        style={{
-          ...solidBtn,
-          background: isDirty && !isSaving ? '#0f172a' : '#e5e7eb',
-          color:      isDirty && !isSaving ? '#fff'    : '#9ca3af',
-          cursor:     isDirty && !isSaving ? 'pointer' : 'not-allowed',
-        }}
+        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all flex items-center border ${
+          isDirty && !isSaving
+            ? 'bg-white/20 hover:bg-white/30 border-white/30 text-white cursor-pointer'
+            : 'bg-white/5 border-white/10 text-white/30 cursor-not-allowed'
+        }`}
       >
         {isSaving ? t('editor.saving') : t('editor.save')}
       </button>
@@ -168,16 +170,14 @@ export default function EditorToolbar({
       <button
         onClick={onRun}
         disabled={isExecuting}
-        style={{
-          ...solidBtn,
-          background: isExecuting ? '#f0fdf4' : '#16a34a',
-          color:      isExecuting ? '#15803d' : '#fff',
-          cursor:     isExecuting ? 'not-allowed' : 'pointer',
-          gap: 5,
-        }}
+        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all flex items-center gap-1.5 border ${
+          isExecuting
+            ? 'bg-emerald-500/10 border-emerald-400/20 text-emerald-400/60 cursor-not-allowed'
+            : 'bg-emerald-500/20 hover:bg-emerald-500/30 border-emerald-400/40 text-emerald-400 cursor-pointer'
+        }`}
       >
         {isExecuting ? (
-          <><Spinner color="#15803d" /> {t('editor.running')}</>
+          <><Spinner color="#4ade80" /> {t('editor.running')}</>
         ) : (
           `▶ ${t('editor.run')}`
         )}
@@ -187,22 +187,7 @@ export default function EditorToolbar({
   )
 }
 
-// ── Styles ─────────────────────────────────────────────────────────────────────
-
-const ghostBtn = {
-  padding: '5px 10px', borderRadius: 8,
-  border: '1px solid #e5e7eb', background: '#fff',
-  color: '#374151', fontSize: 12, fontWeight: 500,
-  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-}
-
-const solidBtn = {
-  padding: '6px 14px', borderRadius: 8,
-  border: 'none', fontSize: 13, fontWeight: 600,
-  display: 'flex', alignItems: 'center',
-}
-
-function Spinner({ color = '#fff' }) {
+function Spinner({ color = '#4ade80' }) {
   return (
     <span style={{
       display: 'inline-block', width: 11, height: 11,
