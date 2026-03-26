@@ -109,6 +109,40 @@ const CALENDAR_CSS = `
   /* Header border */
   .fc-planner .fc-scrollgrid-section-header > td { border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; }
 
+  /* ── Resize handle ── */
+  /* ── Resize handle ── */
+  .fc-planner .fc-event-resizer-end {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 14px !important;
+    width: 100% !important;
+    cursor: s-resize;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .fc-planner .fc-event:hover .fc-event-resizer-end {
+    opacity: 1;
+  }
+  .fc-planner .fc-event-resizer-end::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 4px rgba(255,255,255,0.4);
+  }
+  .fc-planner .fc-event-resizer-end:hover::after {
+    width: 36px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 8px rgba(255,255,255,0.6);
+  }
+
   @keyframes fc-spin { to { transform: rotate(360deg); } }
 `
 
