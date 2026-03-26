@@ -1,44 +1,24 @@
 /**
- * Feature flags for gradual rollout and A/B testing.
- * Read from environment variables with sensible defaults.
+ * Feature flags for the automations n8n-style redesign.
+ * These are hardcoded — not read from env vars.
+ * To disable a feature, change the value here and redeploy.
  */
 
 export const FEATURES = {
-  /**
-   * Enable n8n-style floating panels for automations editor.
-   * When true: NodePicker and NDV render as floating panels.
-   * When false: Original fixed sidebar/full-screen NDV.
-   */
-  N8N_PANELS: import.meta.env.VITE_ENABLE_N8N_PANELS === 'true',
+  /** Floating panels for NodePicker and NDV */
+  N8N_PANELS: true,
 
-  /**
-   * Enable n8n-style node visual redesign.
-   * When true: Use N8nBaseNode with new shapes and styles.
-   * When false: Use legacy BaseNode components.
-   */
-  N8N_NODES: import.meta.env.VITE_ENABLE_N8N_NODES === 'true',
+  /** n8n-style node visual redesign (N8nBaseNode with shapes per category) */
+  N8N_NODES: true,
 
-  /**
-   * Enable inline editor layout (not fullscreen overlay).
-   * When true: Editor renders inside page layout, tabs visible.
-   * When false: Editor is fullscreen overlay.
-   */
-  N8N_LAYOUT: import.meta.env.VITE_ENABLE_N8N_LAYOUT === 'true',
+  /** Inline editor layout — editor renders inside page layout, tabs visible */
+  N8N_LAYOUT: true,
 
-  /**
-   * Enable animated edges and execution-aware edge states.
-   */
-  N8N_ANIMATIONS: import.meta.env.VITE_ENABLE_N8N_ANIMATIONS === 'true',
+  /** Animated edges and execution-aware edge states */
+  N8N_ANIMATIONS: false,
 
-  /**
-   * Master kill switch for all n8n-style features.
-   * When true: All n8n features enabled (overrides individual flags).
-   * When false: Respects individual feature flags.
-   * Supports VITE_ENABLE_N8N_GLASS as compatibility alias.
-   */
-  N8N_STYLE:
-    import.meta.env.VITE_ENABLE_N8N_STYLE === 'true'
-    || import.meta.env.VITE_ENABLE_N8N_GLASS === 'true',
+  /** Master switch — enables all N8N_* features when true */
+  N8N_STYLE: true,
 }
 
 /**
