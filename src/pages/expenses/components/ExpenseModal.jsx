@@ -11,6 +11,9 @@ import { useTranslation } from 'react-i18next'
 
 const ACCOUNTS = ['Revolut', 'Imagin']
 
+const inputCls = 'w-full px-3 py-2.5 text-sm bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all'
+const labelCls = 'text-xs font-medium text-white/60'
+
 export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
   const { t } = useTranslation('expenses')
   const isEditing = !!expense
@@ -48,19 +51,19 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="relative overflow-hidden rounded-2xl backdrop-blur-xl backdrop-saturate-150 bg-white/10 border border-white/15 shadow-2xl w-full max-w-md mx-4">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <h2 className="text-base font-semibold text-white">
             {isEditing ? t('modal.titleEdit') : t('modal.titleCreate')}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-300 hover:text-gray-500 transition-colors"
+            className="text-white/50 hover:text-white transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -73,7 +76,7 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
 
           {/* Name */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-500">{t('modal.name')}</label>
+            <label className={labelCls}>{t('modal.name')}</label>
             <input
               type="text"
               required
@@ -82,15 +85,15 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('modal.namePlaceholder')}
-              className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all"
+              className={inputCls}
             />
           </div>
 
           {/* Quantity */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-500">{t('modal.quantity')}</label>
+            <label className={labelCls}>{t('modal.quantity')}</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">€</span>
               <input
                 type="number"
                 required
@@ -99,27 +102,25 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="0.00"
-                className="w-full pl-7 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 transition-all"
+                className="w-full pl-7 pr-3 py-2.5 text-sm bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all"
               />
             </div>
           </div>
 
           {/* Account */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-500">{t('modal.account')}</label>
+            <label className={labelCls}>{t('modal.account')}</label>
             <div className="flex gap-2">
               {ACCOUNTS.map((acc) => (
                 <button
                   key={acc}
                   type="button"
                   onClick={() => setAccount(acc)}
-                  className={`
-                    flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all
                     ${account === acc
-                      ? 'bg-gray-900/10 text-gray-900 border-gray-900/20'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                    }
-                  `}
+                      ? 'bg-white/20 text-white border-white/30'
+                      : 'bg-white/5 text-white/50 border-white/10 hover:border-white/25 hover:bg-white/10'
+                    }`}
                 >
                   {acc}
                 </button>
@@ -128,7 +129,7 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
           </div>
 
           {error && (
-            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+            <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg">{error}</p>
           )}
 
           {/* Actions */}
@@ -136,14 +137,14 @@ export default function ExpenseModal({ expense, onClose, onCreate, onUpdate }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+              className="flex-1 py-2.5 text-sm font-medium text-white/70 border border-white/15 rounded-xl hover:bg-white/10 transition-all"
             >
               {t('modal.cancel')}
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex-1 py-2.5 text-sm font-semibold bg-white/20 hover:bg-white/30 border border-white/25 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading
                 ? t('modal.saving')
