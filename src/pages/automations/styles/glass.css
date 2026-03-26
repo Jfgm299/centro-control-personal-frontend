@@ -1,0 +1,205 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Glass Design System for Automations Module
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Glass Tokens ────────────────────────────────────────────────────────── */
+
+:root {
+  /* Blur levels */
+  --glass-blur-sm: 8px;
+  --glass-blur-md: 16px;
+  --glass-blur-lg: 40px;
+
+  /* Background variants */
+  --glass-bg-base: rgba(0, 0, 0, 0.7);
+  --glass-bg-panel: rgba(0, 0, 0, 0.8);
+  --glass-bg-node: rgba(30, 30, 46, 0.95);
+  --glass-bg-light: rgba(255, 255, 255, 0.08);
+  --glass-bg-dark: rgba(0, 0, 0, 0.4);
+
+  /* Borders */
+  --glass-border-default: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(255, 255, 255, 0.2);
+  --glass-border-active: rgba(255, 255, 255, 0.4);
+  --glass-border-focus: rgba(255, 255, 255, 0.25);
+
+  /* Shadows */
+  --glass-shadow-panel: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --glass-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --glass-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+  --glass-shadow-node: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  /* Node category colors */
+  --node-trigger: #22c55e;
+  --node-action: #f97316;
+  --node-condition: #3b82f6;
+  --node-delay: #a855f7;
+  --node-stop: #ef4444;
+
+  /* Edge colors */
+  --edge-default: #64748b;
+  --edge-executing: #3b82f6;
+  --edge-true: #22c55e;
+  --edge-false: #ef4444;
+  --edge-success: #22c55e;
+  --edge-error: #ef4444;
+
+  /* Z-index layers */
+  --z-canvas: 1;
+  --z-panel-base: 100;
+  --z-modal: 1000;
+  --z-tooltip: 1100;
+}
+
+/* ── Utility Classes ─────────────────────────────────────────────────────── */
+
+/* Panel glass effect */
+.glass-panel {
+  background: var(--glass-bg-panel);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(180%);
+  border: 1px solid var(--glass-border-default);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow-panel);
+}
+
+/* Node glass effect */
+.glass-node {
+  background: var(--glass-bg-node);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid var(--glass-border-default);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow-node);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.glass-node:hover {
+  border-color: var(--glass-border-hover);
+}
+
+.glass-node--selected {
+  border-width: 2px;
+  border-color: var(--glass-border-active);
+  transform: scale(1.02);
+}
+
+/* Input glass effect */
+.glass-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border-default);
+  border-radius: 10px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.glass-input:focus {
+  border-color: var(--glass-border-focus);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.glass-input:hover:not(:focus) {
+  border-color: var(--glass-border-hover);
+}
+
+/* Button glass effect */
+.glass-button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border-default);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--glass-border-hover);
+}
+
+.glass-button:active {
+  background: rgba(255, 255, 255, 0.06);
+  transform: scale(0.98);
+}
+
+.glass-button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.glass-button--primary {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+.glass-button--primary:hover {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Modal glass effect */
+.glass-modal {
+  background: var(--glass-bg-panel);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(180%);
+  border: 1px solid var(--glass-border-default);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow-lg);
+  z-index: var(--z-modal);
+}
+
+/* Modal backdrop */
+.glass-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: calc(var(--z-modal) - 1);
+}
+
+/* ── Reduced Motion Support ──────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel,
+  .glass-node,
+  .glass-modal {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(15, 23, 42, 0.95);
+  }
+
+  .glass-node,
+  .glass-input,
+  .glass-button {
+    transition: none;
+  }
+
+  .glass-node--selected {
+    transform: none;
+  }
+}
+
+/* ── Editor Toolbar ──────────────────────────────────────────────────────── */
+
+.glass-toolbar {
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Hide XYFlow attribution ─────────────────────────────────────────────── */
+
+.react-flow__attribution {
+  display: none !important;
+}

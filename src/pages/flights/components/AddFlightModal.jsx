@@ -45,7 +45,7 @@ export default function AddFlightModal({ onClose }) {
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-bold text-gray-800">{t('upcoming.addFlight')}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl transition-all active:scale-90">✕</button>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -94,14 +94,14 @@ export default function AddFlightModal({ onClose }) {
           <div className="flex gap-3 mt-1">
             <button
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-all active:scale-95"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50"
             >
               {loading ? 'Adding...' : t('upcoming.addFlight')}
             </button>

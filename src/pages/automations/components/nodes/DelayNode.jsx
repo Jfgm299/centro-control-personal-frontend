@@ -23,7 +23,7 @@ export default function DelayNode({ id, data, selected }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
             width: 28, height: 28, borderRadius: 8,
-            background: '#f5f3ff',
+            background: 'rgba(124,58,237,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14,
           }}>
@@ -33,7 +33,7 @@ export default function DelayNode({ id, data, selected }) {
             <div style={{ fontSize: 9, fontWeight: 700, color: '#7c3aed', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {t('nodes.delay')}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.90)' }}>
               {summary ? `${t('delay.label')} ${summary}` : t('nodes.delay')}
             </div>
           </div>

@@ -72,7 +72,7 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
             <h2 className="text-lg font-bold text-white">{t('set.addTitle')}</h2>
             <p className="text-xs text-white/60 mt-0.5">{exercise.name}</p>
           </div>
-          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
+          <button onClick={onClose} className="text-white/40 hover:text-white transition-all active:scale-90 bg-white/5 hover:bg-white/10 p-1.5 rounded-xl border border-transparent hover:border-white/10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -112,7 +112,7 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
                     const val = i + 1
                     return (
                       <button key={val} type="button" onClick={() => setRpe(String(val))}
-                        className={`py-2 text-[11px] font-bold rounded-lg border transition-all shadow-sm
+                        className={`py-2 text-[11px] font-bold rounded-lg border transition-all active:scale-95 shadow-sm
                           ${rpe === String(val) ? 'bg-white/20 text-white border-white/40 shadow-inner' : 'bg-black/20 border-white/5 text-white/50 hover:border-white/20 hover:text-white'}`}>
                         {val}
                       </button>
@@ -139,7 +139,7 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
                     const val = i + 1
                     return (
                       <button key={val} type="button" onClick={() => setRpe(String(val))}
-                        className={`py-2 text-[11px] font-bold rounded-lg border transition-all shadow-sm
+                        className={`py-2 text-[11px] font-bold rounded-lg border transition-all active:scale-95 shadow-sm
                           ${rpe === String(val) ? 'bg-white/20 text-white border-white/40 shadow-inner' : 'bg-black/20 border-white/5 text-white/50 hover:border-white/20 hover:text-white'}`}>
                         {val}
                       </button>
@@ -152,12 +152,12 @@ export default function AddSetModal({ exercise, onAdd, onClose, isLoading }) {
 
           <div className="flex gap-3 pt-3 border-t border-white/10 mt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 text-sm font-bold text-white/70 border border-white/20 rounded-xl hover:bg-white/10 hover:text-white transition-all shadow-sm"
+              className="flex-1 py-3 text-sm font-bold text-white/70 border border-white/20 rounded-xl hover:bg-white/10 hover:text-white transition-all active:scale-95 shadow-sm"
             >
               {t('common.cancel')}
             </button>
             <button type="submit" disabled={isLoading}
-              className="flex-1 py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all border border-white/30 shadow-md"
+              className="flex-1 py-3 text-sm font-bold bg-white/20 text-white rounded-xl hover:bg-white/30 disabled:opacity-40 transition-all active:scale-95 border border-white/30 shadow-md"
             >
               {t('common.add')}
             </button>

@@ -1,26 +1,101 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAutomationsStore } from '../../store/editorStore'
 import VariablePicker, { insertAtCursor } from './VariablePicker'
+import ExpressionEditorModal from './ExpressionEditorModal'
 import { ScheduleOnceConfig, ScheduleIntervalConfig } from './ScheduleConfig'
 import { WebhookInboundConfig, WebhookOutboundConfig } from './WebhookConfig'
 
-const inputStyle = {
-  width: '100%', boxSizing: 'border-box',
-  padding: '7px 10px', fontSize: 13,
-  border: '1px solid #e5e7eb', borderRadius: 8,
-  outline: 'none', color: '#111827',
-  fontFamily: 'inherit', background: '#fff',
+const glassInput = 'w-full px-3 py-2 text-sm bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all'
+const glassSelect = glassInput + ' appearance-none'
+const glassLabel = 'text-white/60 text-sm mb-1 block'
+const glassSectionLabel = 'text-white/40 text-xs font-semibold uppercase tracking-wider mb-2'
+
+function makeDropZoneHandlers(onChange) {
+  return {
+    onDragOver: (e) => e.preventDefault(),
+    onDrop: (e) => {
+      e.preventDefault()
+      const variablePath = e.dataTransfer.getData('variable')
+      if (!variablePath) return
+      const el = e.currentTarget
+      const token = `{{${variablePath}}}`
+      const currentValue = String(el.value ?? '')
+      const start = el.selectionStart ?? currentValue.length
+      const end = el.selectionEnd ?? currentValue.length
+      const nextValue = currentValue.slice(0, start) + token + currentValue.slice(end)
+      onChange(nextValue)
+    },
+  }
 }
 
-const labelStyle = {
-  fontSize: 11, fontWeight: 600, color: '#6b7280',
-  marginBottom: 4, display: 'block',
+function ExpressionFxButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="bg-white/10 hover:bg-white/20 border border-white/15 text-white/65 hover:text-white rounded-md px-2 py-1 text-[10px] font-semibold tracking-wide transition-colors"
+      title="Open expression editor"
+    >
+      fx
+    </button>
+  )
 }
 
-const sectionStyle = {
-  paddingBottom: 16, marginBottom: 16,
-  borderBottom: '1px solid #f0f0f0',
+function ExpressionInput({ value, onChange, onFxClick, placeholder, dropZoneHandlers = {}, fieldId }) {
+  const [dragOver, setDragOver] = useState(false)
+  const isExpr = typeof value === 'string' && value.includes('{{')
+
+  const dzHandlers = {
+    ...dropZoneHandlers,
+    onDragOver: (e) => { e.preventDefault(); setDragOver(true); dropZoneHandlers.onDragOver?.(e) },
+    onDragLeave: () => { setDragOver(false); dropZoneHandlers.onDragLeave?.() },
+    onDrop: (e) => { setDragOver(false); dropZoneHandlers.onDrop?.(e) },
+  }
+
+  if (isExpr) {
+    return (
+      <div
+        className={`ndv-field-wrapper ndv-expr-container${dragOver ? ' drag-over' : ''}`}
+        {...dzHandlers}
+        onClick={onFxClick}
+      >
+        <span className="ndv-expr-pill">{value}</span>
+        <button className="ndv-fx-btn" onClick={(e) => { e.stopPropagation(); onFxClick(e) }}>fx</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className={`ndv-field-wrapper${dragOver ? ' drag-over' : ''}`} {...dzHandlers}>
+      <input
+        className="ndv-field-input"
+        value={value || ''}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
+      <button className="ndv-fx-btn" onClick={onFxClick}>fx</button>
+    </div>
+  )
+}
+
+function coerceMaybeNumber(rawValue, fieldType) {
+  if (fieldType !== 'int' && fieldType !== 'float') return rawValue
+  const text = String(rawValue ?? '')
+  if (text.includes('{{') || text.trim() === '') return text
+  const parsed = Number(text)
+  return Number.isNaN(parsed) ? text : parsed
+}
+
+/**
+ * Map of ref_id → specific config component.
+ * Add entries here only for nodes that need custom UI beyond the generic schema renderer.
+ */
+const SPECIFIC_CONFIGS = {
+  'system.schedule_once':                ScheduleOnceConfig,
+  'system.schedule_interval':            ScheduleIntervalConfig,
+  'system.webhook_inbound':              WebhookInboundConfig,
+  'automations_engine.outbound_webhook': WebhookOutboundConfig,
 }
 
 /**
@@ -34,17 +109,27 @@ const sectionStyle = {
  *   variables    — lista de variables disponibles para el VariablePicker
  *   automationId — para generar webhook
  */
-export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = [], automationId }) {
+export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = [], automationId, noContainer = false }) {
   const { t } = useTranslation('automations')
   const clearSelection = useAutomationsStore((s) => s.clearSelection)
 
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [expressionEditor, setExpressionEditor] = useState(null)
 
   if (!node) {
+    if (noContainer) {
+      return (
+        <div className="flex-1 flex items-center justify-center p-5">
+          <p className="text-white/30 text-sm text-center">
+            {t('nodes.config.noNodeSelected')}
+          </p>
+        </div>
+      )
+    }
     return (
-      <div style={panelWrapStyle}>
-        <div style={{ padding: 20, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: '#9ca3af', margin: 0 }}>
+      <div className="w-[280px] shrink-0 bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full overflow-hidden">
+        <div className="flex-1 flex items-center justify-center p-5">
+          <p className="text-white/30 text-sm text-center">
             {t('nodes.config.noNodeSelected')}
           </p>
         </div>
@@ -61,176 +146,226 @@ export default function NodeConfigPanel({ node, onUpdate, onDelete, variables = 
     clearSelection()
   }
 
+  const body = (
+    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+
+      {/* ── Flow-control nodes — identified by node.type ── */}
+      {node.type === 'condition' && (
+        <div className="pb-4 border-b border-white/10">
+          <ConditionConfig
+            node={node}
+            config={config}
+            onChange={setConfig}
+            variables={variables}
+            onOpenExpression={setExpressionEditor}
+          />
+        </div>
+      )}
+      {node.type === 'delay' && (
+        <div className="pb-4 border-b border-white/10">
+          <DelayConfig
+            node={node}
+            config={config}
+            onChange={setConfig}
+          />
+        </div>
+      )}
+      {node.type === 'stop' && (
+        <div className="pb-4 border-b border-white/10">
+          <StopConfig
+            node={node}
+            config={config}
+            onChange={setConfig}
+          />
+        </div>
+      )}
+
+      {/* ── Nodes with specific custom UI — identified by ref_id ── */}
+      {node.type !== 'condition' && node.type !== 'delay' && node.type !== 'stop' &&
+       SPECIFIC_CONFIGS[node.data?.ref_id] && (
+        <div className="pb-4 border-b border-white/10">
+          {React.createElement(SPECIFIC_CONFIGS[node.data.ref_id], {
+            node,
+            config,
+            onChange: setConfig,
+            variables,
+            onOpenExpression: setExpressionEditor,
+            webhookToken: node.data?.webhook_token,
+          })}
+        </div>
+      )}
+
+      {/* ── Generic fallback — any node with config_schema (action OR trigger) ── */}
+      {node.type !== 'condition' && node.type !== 'delay' && node.type !== 'stop' &&
+       !SPECIFIC_CONFIGS[node.data?.ref_id] &&
+       node.data?.config_schema && Object.keys(node.data.config_schema).length > 0 && (
+        <div className="pb-4 border-b border-white/10">
+          <GenericNodeConfig
+            schema={node.data.config_schema}
+            config={config}
+            onChange={setConfig}
+            variables={variables}
+            onOpenExpression={setExpressionEditor}
+          />
+        </div>
+      )}
+
+      {/* ── No parameters ── */}
+      {node.type !== 'condition' && node.type !== 'delay' && node.type !== 'stop' &&
+       !SPECIFIC_CONFIGS[node.data?.ref_id] &&
+       (!node.data?.config_schema || Object.keys(node.data.config_schema).length === 0) && (
+        <div className="ndv-empty-state">
+          <span className="ndv-empty-icon">⚙️</span>
+          <span>{t('nodes.config.noParams', { defaultValue: 'This node has no parameters' })}</span>
+        </div>
+      )}
+
+      {/* ── Continue on error (todas las acciones) ── */}
+      {node.type === 'action' && (
+        <div className="pb-4 border-b border-white/10">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="accent-white/60"
+              checked={node.data?.continue_on_error ?? false}
+              onChange={e => onUpdate(node.id, { continue_on_error: e.target.checked })}
+            />
+            <span className="text-white/70 text-sm">
+              {t('nodes.config.continueOnError')}
+            </span>
+          </label>
+        </div>
+      )}
+
+      {/* ── Eliminar nodo ── */}
+      {node.type !== 'trigger' && (
+        <div className="mt-2">
+          <button
+            onClick={handleDelete}
+            onMouseLeave={() => setConfirmDelete(false)}
+            className={
+              confirmDelete
+                ? 'bg-red-500/40 hover:bg-red-500/50 border border-red-400/60 text-red-300 rounded-lg px-3 py-1.5 text-sm font-semibold transition-all'
+                : 'bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg px-3 py-1.5 text-sm font-medium transition-all'
+            }
+          >
+            {confirmDelete ? t('nodes.config.confirmDelete') : `🗑 ${t('nodes.config.delete')}`}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+
+  if (noContainer) {
+    return (
+      <>
+        {body}
+        <ExpressionEditorModal
+          isOpen={Boolean(expressionEditor)}
+          title={expressionEditor?.label ?? 'Expression Editor'}
+          value={expressionEditor?.value ?? ''}
+          variables={variables}
+          previewContext={node?.data?.last_input ?? {}}
+          onClose={() => setExpressionEditor(null)}
+          onApply={(nextValue) => {
+            expressionEditor?.onApply?.(nextValue)
+            setExpressionEditor(null)
+          }}
+        />
+      </>
+    )
+  }
+
   return (
-    <div style={panelWrapStyle}>
+    <div className="w-[280px] shrink-0 bg-black/20 backdrop-blur-xl border-l border-white/10 flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div style={{
-        padding: '14px 16px 12px',
-        borderBottom: '1px solid #f0f0f0',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2">
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          <div className="text-white/40 text-xs font-semibold uppercase tracking-wider">
             {typeLabel(node.type, t)}
           </div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginTop: 1 }}>
+          <div className="text-white/85 text-sm font-semibold mt-0.5">
             {node.data?.label ?? node.type}
           </div>
         </div>
         <button
           onClick={() => { clearSelection(); setConfirmDelete(false) }}
-          style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 18, color: '#9ca3af', lineHeight: 1 }}
+          className="border-none bg-transparent cursor-pointer text-lg text-white/40 hover:text-white/70 leading-none transition-colors"
         >
           ×
         </button>
       </div>
+      {body}
 
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
-
-        {/* ── Trigger: schedule_once ── */}
-        {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_once' && (
-          <div style={sectionStyle}>
-            <ScheduleOnceConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Trigger: schedule_interval ── */}
-        {node.type === 'trigger' && node.data?.ref_id === 'system.schedule_interval' && (
-          <div style={sectionStyle}>
-            <ScheduleIntervalConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Trigger: webhook_inbound / nodo webhook_inbound ── */}
-        {(node.type === 'webhook_inbound' ||
-          (node.type === 'trigger' && node.data?.ref_id === 'system.webhook_inbound')) && (
-          <div style={sectionStyle}>
-            <WebhookInboundConfig webhookToken={node.data?.webhook_token} />
-          </div>
-        )}
-
-        {/* ── Acción: webhook saliente ── */}
-        {(node.type === 'outbound_webhook' || (node.type === 'action' && node.data?.ref_id === 'http.webhook_outbound')) && (
-          <div style={sectionStyle}>
-            <WebhookOutboundConfig config={config} onChange={setConfig} variables={variables} />
-          </div>
-        )}
-
-        {/* ── Condición ── */}
-        {node.type === 'condition' && (
-          <div style={sectionStyle}>
-            <ConditionConfig config={config} onChange={setConfig} variables={variables} />
-          </div>
-        )}
-
-        {/* ── Delay ── */}
-        {node.type === 'delay' && (
-          <div style={sectionStyle}>
-            <DelayConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Stop ── */}
-        {node.type === 'stop' && (
-          <div style={sectionStyle}>
-            <StopConfig config={config} onChange={setConfig} />
-          </div>
-        )}
-
-        {/* ── Acción genérica de módulo ── */}
-        {node.type === 'action' && node.data?.ref_id !== 'http.webhook_outbound' && node.data?.ref_id !== 'automations_engine.outbound_webhook' && node.data?.config_schema && (
-          <div style={sectionStyle}>
-            <GenericActionConfig
-              schema={node.data.config_schema}
-              config={config}
-              onChange={setConfig}
-              variables={variables}
-            />
-          </div>
-        )}
-
-        {/* ── Continue on error (todas las acciones) ── */}
-        {node.type === 'action' && (
-          <div style={sectionStyle}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={node.data?.continue_on_error ?? false}
-                onChange={e => onUpdate(node.id, { continue_on_error: e.target.checked })}
-              />
-              <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>
-                {t('nodes.config.continueOnError')}
-              </span>
-            </label>
-          </div>
-        )}
-
-        {/* ── Eliminar nodo ── */}
-        {node.type !== 'trigger' && (
-          <div style={{ marginTop: 8 }}>
-            <button
-              onClick={handleDelete}
-              onMouseLeave={() => setConfirmDelete(false)}
-              style={{
-                fontSize: 12, fontWeight: confirmDelete ? 700 : 500,
-                padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
-                border: '1px solid',
-                borderColor: confirmDelete ? '#ef4444' : '#fca5a5',
-                background:  confirmDelete ? '#ef4444' : '#fff',
-                color:       confirmDelete ? '#fff'    : '#ef4444',
-              }}
-            >
-              {confirmDelete ? t('nodes.config.confirmDelete') : `🗑 ${t('nodes.config.delete')}`}
-            </button>
-          </div>
-        )}
-      </div>
+      <ExpressionEditorModal
+        isOpen={Boolean(expressionEditor)}
+        title={expressionEditor?.label ?? 'Expression Editor'}
+        value={expressionEditor?.value ?? ''}
+        variables={variables}
+        previewContext={node?.data?.last_input ?? {}}
+        onClose={() => setExpressionEditor(null)}
+        onApply={(nextValue) => {
+          expressionEditor?.onApply?.(nextValue)
+          setExpressionEditor(null)
+        }}
+      />
     </div>
   )
 }
 
 // ── Sub-configs ───────────────────────────────────────────────────────────────
 
-function ConditionConfig({ config, onChange, variables }) {
+function ConditionConfig({ config, onChange, variables, onOpenExpression }) {
   const { t } = useTranslation('automations')
   const fieldRef = useRef(null)
+  const valueRef = useRef(null)
   const set = (k, v) => onChange({ ...config, [k]: v })
 
   const OPERATORS = ['eq', 'neq', 'gt', 'lt', 'contains', 'exists', 'not_exists']
   const hideValue = ['exists', 'not_exists'].includes(config.operator)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <label style={{ ...labelStyle, marginBottom: 0 }}>{t('condition.field')}</label>
+    <div className="flex flex-col gap-3">
+      <div className="ndv-field-group">
+        <div className="flex justify-between items-center" style={{ marginBottom: 4 }}>
+          <label className="ndv-field-label" style={{ marginBottom: 0 }}>{t('condition.field')}</label>
           <VariablePicker variables={variables} onInsert={(v) => insertAtCursor(fieldRef, v)} />
         </div>
-        <input
-          ref={fieldRef}
+        <ExpressionInput
           value={config.field ?? ''}
           onChange={e => set('field', e.target.value)}
+          onFxClick={() => onOpenExpression?.({
+            key: 'field',
+            label: t('condition.field'),
+            value: config.field ?? '',
+            onApply: (next) => set('field', next),
+          })}
           placeholder="payload.status"
-          style={inputStyle}
+          dropZoneHandlers={makeDropZoneHandlers((next) => set('field', next))}
         />
       </div>
-      <div>
-        <label style={labelStyle}>{t('condition.operator')}</label>
-        <select value={config.operator ?? 'eq'} onChange={e => set('operator', e.target.value)} style={inputStyle}>
+      <div className="ndv-field-group">
+        <label className="ndv-field-label">{t('condition.operator')}</label>
+        <select value={config.operator ?? 'eq'} onChange={e => set('operator', e.target.value)} className={glassSelect}>
           {OPERATORS.map(op => (
             <option key={op} value={op}>{t(`condition.operators.${op}`)}</option>
           ))}
         </select>
       </div>
       {!hideValue && (
-        <div>
-          <label style={labelStyle}>{t('condition.value')}</label>
-          <input
+        <div className="ndv-field-group">
+          <label className="ndv-field-label">{t('condition.value')}</label>
+          <ExpressionInput
             value={config.value ?? ''}
             onChange={e => set('value', e.target.value)}
+            onFxClick={() => onOpenExpression?.({
+              key: 'value',
+              label: t('condition.value'),
+              value: config.value ?? '',
+              onApply: (next) => set('value', next),
+            })}
             placeholder="completed"
-            style={inputStyle}
+            dropZoneHandlers={makeDropZoneHandlers((next) => set('value', next))}
           />
         </div>
       )}
@@ -242,19 +377,21 @@ function DelayConfig({ config, onChange }) {
   const { t } = useTranslation('automations')
   const set = (k, v) => onChange({ ...config, [k]: v })
   return (
-    <div style={{ display: 'flex', gap: 8 }}>
-      <div style={{ flex: 1 }}>
-        <label style={labelStyle}>{t('delay.label')}</label>
-        <input
-          type="number" min={1}
-          value={config.delay_value ?? ''}
-          onChange={e => set('delay_value', Number(e.target.value))}
-          style={inputStyle}
-        />
+    <div className="flex gap-2">
+      <div className="flex-1 ndv-field-group">
+        <label className="ndv-field-label">{t('delay.label')}</label>
+        <div className="ndv-field-wrapper">
+          <input
+            type="number" min={1}
+            value={config.delay_value ?? ''}
+            onChange={e => set('delay_value', Number(e.target.value))}
+            className="ndv-field-input"
+          />
+        </div>
       </div>
-      <div style={{ flex: 1 }}>
-        <label style={labelStyle}>&nbsp;</label>
-        <select value={config.delay_unit ?? 'minutes'} onChange={e => set('delay_unit', e.target.value)} style={inputStyle}>
+      <div className="flex-1 ndv-field-group">
+        <label className="ndv-field-label">&nbsp;</label>
+        <select value={config.delay_unit ?? 'minutes'} onChange={e => set('delay_unit', e.target.value)} className="ndv-field-select">
           {['seconds', 'minutes', 'hours', 'days'].map(u => (
             <option key={u} value={u}>{t(`delay.${u}`)}</option>
           ))}
@@ -267,14 +404,16 @@ function DelayConfig({ config, onChange }) {
 function StopConfig({ config, onChange }) {
   const { t } = useTranslation('automations')
   return (
-    <div>
-      <label style={labelStyle}>{t('nodes.stop')}</label>
-      <input
-        value={config.reason ?? ''}
-        onChange={e => onChange({ ...config, reason: e.target.value })}
-        placeholder="Motivo opcional"
-        style={inputStyle}
-      />
+    <div className="ndv-field-group">
+      <label className="ndv-field-label">{t('nodes.stop')}</label>
+      <div className="ndv-field-wrapper">
+        <input
+          value={config.reason ?? ''}
+          onChange={e => onChange({ ...config, reason: e.target.value })}
+          placeholder={t('nodes.stopReasonPlaceholder')}
+          className="ndv-field-input"
+        />
+      </div>
     </div>
   )
 }
@@ -283,20 +422,20 @@ function StopConfig({ config, onChange }) {
  * Renderiza los campos de un nodo acción basándose en su config_schema.
  * Soporta tipos: string, text, int, float, bool, enum, datetime.
  */
-function GenericActionConfig({ schema, config, onChange, variables }) {
+function GenericNodeConfig({ schema, config, onChange, variables, onOpenExpression }) {
   const refs = useRef({})
   const set  = (k, v) => onChange({ ...config, [k]: v })
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="flex flex-col gap-3">
       {Object.entries(schema).map(([key, field]) => {
         const value = config[key] ?? field.default ?? ''
 
         if (field.type === 'bool') {
           return (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <input type="checkbox" checked={!!value} onChange={e => set(key, e.target.checked)} />
-              <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>{field.label}</span>
+            <label key={key} className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="accent-white/60" checked={!!value} onChange={e => set(key, e.target.checked)} />
+              <span className="text-white/70 text-sm">{field.label}</span>
             </label>
           )
         }
@@ -304,8 +443,8 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
         if (field.type === 'enum') {
           return (
             <div key={key}>
-              <label style={labelStyle}>{field.label}{field.required && ' *'}</label>
-              <select value={value} onChange={e => set(key, e.target.value)} style={inputStyle}>
+              <label className={glassLabel}>{field.label}{field.required && ' *'}</label>
+              <select value={value} onChange={e => set(key, e.target.value)} className={glassSelect}>
                 {(field.options ?? []).map(opt => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
@@ -317,45 +456,55 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
         if (field.type === 'datetime') {
           return (
             <div key={key}>
-              <label style={labelStyle}>{field.label}{field.required && ' *'}</label>
-              <input type="datetime-local" value={value} onChange={e => set(key, e.target.value)} style={inputStyle} />
+              <label className={glassLabel}>{field.label}{field.required && ' *'}</label>
+              <input type="datetime-local" value={value} onChange={e => set(key, e.target.value)} className={glassInput} />
             </div>
           )
         }
 
         const isTextarea = field.type === 'text'
-        if (!refs.current[key]) refs.current[key] = { current: null }
+        const dzHandlers = makeDropZoneHandlers((next) => set(key, coerceMaybeNumber(next, field.type)))
+        const handleFx = () => onOpenExpression?.({
+          key,
+          label: field.label,
+          value: String(value ?? ''),
+          onApply: (next) => set(key, coerceMaybeNumber(next, field.type)),
+        })
 
         return (
-          <div key={key}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-              <label style={{ ...labelStyle, marginBottom: 0 }}>
+          <div key={key} className="ndv-field-group">
+            <div className="flex justify-between items-center" style={{ marginBottom: 4 }}>
+              <label className="ndv-field-label" style={{ marginBottom: 0 }}>
                 {field.label}{field.required && ' *'}
               </label>
               {variables.length > 0 && (
                 <VariablePicker
                   variables={variables}
-                  onInsert={(v) => insertAtCursor(refs.current[key], v)}
+                  onInsert={(v) => set(key, (value ? String(value) + ' ' : '') + `{{${v}}}`)}
                 />
               )}
             </div>
             {isTextarea ? (
-              <textarea
-                ref={refs.current[key]}
-                value={value}
-                onChange={e => set(key, e.target.value)}
-                placeholder={field.placeholder ?? ''}
-                rows={3}
-                style={{ ...inputStyle, resize: 'vertical' }}
-              />
+              <div className={`ndv-field-wrapper${false ? ' drag-over' : ''}`}
+                onDragOver={dzHandlers.onDragOver}
+                onDrop={dzHandlers.onDrop}
+              >
+                <textarea
+                  value={value}
+                  onChange={e => set(key, e.target.value)}
+                  placeholder={field.placeholder ?? ''}
+                  className="ndv-field-textarea"
+                />
+                <button className="ndv-fx-btn" style={{ top: 8, transform: 'none' }} onClick={handleFx}>fx</button>
+              </div>
             ) : (
-              <input
-                ref={refs.current[key]}
-                type={field.type === 'int' || field.type === 'float' ? 'number' : 'text'}
-                value={value}
-                onChange={e => set(key, field.type === 'int' ? Number(e.target.value) : e.target.value)}
+              <ExpressionInput
+                value={String(value ?? '')}
+                onChange={e => set(key, coerceMaybeNumber(e.target.value, field.type))}
+                onFxClick={handleFx}
                 placeholder={field.placeholder ?? ''}
-                style={inputStyle}
+                dropZoneHandlers={dzHandlers}
+                fieldId={key}
               />
             )}
           </div>
@@ -366,14 +515,6 @@ function GenericActionConfig({ schema, config, onChange, variables }) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-const panelWrapStyle = {
-  width: 280, flexShrink: 0,
-  borderLeft: '1px solid #f0f0f0',
-  background: '#fff',
-  display: 'flex', flexDirection: 'column',
-  height: '100%', overflowY: 'hidden',
-}
 
 function typeLabel(type, t) {
   const map = {

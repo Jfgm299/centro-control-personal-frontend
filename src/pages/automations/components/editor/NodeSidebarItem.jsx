@@ -7,32 +7,17 @@ export default function NodeSidebarItem({ item, onDragStart, nodeCategory }) {
         e.dataTransfer.setData('application/xyflow-node', JSON.stringify({ ...item, nodeCategory }))
         onDragStart?.(item)
       }}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 9,
-        padding: '7px 10px', borderRadius: 8,
-        border: '1px solid #f0f0f0', background: '#fff',
-        cursor: 'grab', userSelect: 'none',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#e5e7eb'
-        e.currentTarget.style.boxShadow   = '0 2px 8px rgba(0,0,0,0.06)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = '#f0f0f0'
-        e.currentTarget.style.boxShadow   = 'none'
-      }}
+      className="flex items-center gap-2.5 mx-2 mb-1.5 px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-white/[0.08] hover:border-white/[0.15] rounded-xl cursor-grab active:cursor-grabbing transition-all select-none"
     >
-      <span style={{ fontSize: 15, flexShrink: 0 }}>{item.icon ?? '⚙️'}</span>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#111827', lineHeight: 1.3 }}>
+      <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm flex-shrink-0 bg-white/10">
+        {item.icon ?? '⚙️'}
+      </div>
+      <div className="min-w-0">
+        <div className="text-white/85 text-sm font-medium leading-snug">
           {item.label}
         </div>
         {item.description && (
-          <div style={{
-            fontSize: 10.5, color: '#9ca3af', lineHeight: 1.3,
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          }}>
+          <div className="text-white/40 text-xs mt-0.5 line-clamp-1">
             {item.description}
           </div>
         )}

@@ -7,13 +7,13 @@ import AutomationEmptyState    from './components/list/AutomationEmptyState'
 import CreateAutomationModal   from './components/list/CreateAutomationModal'
 import ApiKeysManager          from './components/list/ApiKeysManager'
 
-const TABS = [
-  { key: 'automations', label: '⚡ Automatizaciones' },
-  { key: 'apikeys',     label: '🔑 API Keys' },
-]
-
 export default function AutomationsPageDesktop({ onEdit }) {
   const { t }    = useTranslation('automations')
+
+  const TABS = [
+    { key: 'automations', label: `⚡ ${t('title')}` },
+    { key: 'apikeys',     label: `🔑 ${t('apiKeys.title')}` },
+  ]
 
   const { data: automations = [], isLoading, isError } = useAutomations()
   const { importFlow } = useAutomationMutations()
@@ -39,33 +39,35 @@ export default function AutomationsPageDesktop({ onEdit }) {
   }
 
   return (
-    <div style={{
-      margin: '-32px',
-      height: 'calc(100vh - 52px)',
-      display: 'flex', flexDirection: 'column',
-      background: '#fafafa',
-      fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
-    }}>
-
+    <div
+      className="bg-transparent flex flex-col"
+      style={{
+        margin: 0,
+        height: 'calc(100vh - 64px)',
+        fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+      }}
+    >
       {/* ── Top bar ── */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 24px', height: 56,
-        background: '#fff',
-        borderBottom: '1px solid #f0f0f0', flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>
+      <div
+        className="flex items-center justify-between flex-shrink-0"
+        style={{
+          padding: '0 24px', height: 56,
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <span className="text-white font-bold text-2xl">
             ⚡ {t('title')}
           </span>
-          <div style={{ display: 'flex', gap: 2 }}>
+          <div className="flex gap-1">
             {TABS.map(({ key, label }) => (
-              <button key={key} onClick={() => setTab(key)} style={{
-                padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
-                fontSize: 12.5, fontWeight: 500,
-                background: tab === key ? '#f3f4f6' : 'transparent',
-                color:      tab === key ? '#111827' : '#6b7280',
-              }}>
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer ${tab === key ? 'bg-white/15 border-white/20 text-white' : 'bg-transparent border-transparent text-white/50 hover:text-white/80 hover:bg-white/8'}`}
+              >
                 {label}
               </button>
             ))}
@@ -73,20 +75,18 @@ export default function AutomationsPageDesktop({ onEdit }) {
         </div>
 
         {tab === 'automations' && (
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="flex gap-2">
             <input ref={importRef} type="file" accept=".json" onChange={handleImportFile} style={{ display: 'none' }} />
-            <button onClick={handleImportClick} style={{
-              padding: '7px 14px', borderRadius: 10,
-              border: '1px solid #e5e7eb', background: '#fff',
-              color: '#374151', fontSize: 13, fontWeight: 500, cursor: 'pointer',
-            }}>
+            <button
+              onClick={handleImportClick}
+              className="bg-black/20 hover:bg-black/40 border border-white/10 text-white/70 hover:text-white rounded-xl px-4 py-2.5 text-sm transition-all"
+            >
               ⬆️ {t('list.import')}
             </button>
-            <button onClick={() => setCreateOpen(true)} style={{
-              padding: '7px 16px', borderRadius: 10,
-              border: 'none', background: '#0f172a',
-              color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-            }}>
+            <button
+              onClick={() => setCreateOpen(true)}
+              className="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl px-4 py-2.5 text-sm font-medium transition-all active:scale-95"
+            >
               + {t('list.create')}
             </button>
           </div>
@@ -94,18 +94,18 @@ export default function AutomationsPageDesktop({ onEdit }) {
       </div>
 
       {/* ── Body ── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+      <div className="flex-1 overflow-y-auto" style={{ padding: 24 }}>
 
         {/* ── Tab: Automatizaciones ── */}
         {tab === 'automations' && (<>
           {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 60 }}>
-              <span style={{ fontSize: 13, color: '#9ca3af' }}>Cargando...</span>
+            <div className="flex justify-center pt-16">
+              <span className="text-white/30 text-sm">{t('status.loading')}</span>
             </div>
           )}
           {isError && (
-            <div style={{ textAlign: 'center', paddingTop: 60 }}>
-              <span style={{ fontSize: 13, color: '#ef4444' }}>{t('error.loadFailed')}</span>
+            <div className="text-center pt-16">
+              <span className="text-red-400 text-sm">{t('error.loadFailed')}</span>
             </div>
           )}
           {!isLoading && !isError && automations.length === 0 && (

@@ -32,7 +32,7 @@ export default function RoutinesList() {
         </div>
         <button
           onClick={() => setModal({ open: true, data: null })}
-          className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white text-xs font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all shadow-lg"
+          className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white text-xs font-black uppercase tracking-wider rounded-xl border border-white/20 hover:bg-white/20 transition-all active:scale-95 shadow-lg"
         >
           + {t('routines.new')}
         </button>
@@ -43,7 +43,7 @@ export default function RoutinesList() {
         {TABS.map((key) => (
           <button key={key} onClick={() => setTab(key)}
             className={clsx(
-              "px-5 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all relative",
+              "px-5 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 relative",
               tab === key ? "text-white" : "text-white/40 hover:text-white/70"
             )}>
             {tab === key && (

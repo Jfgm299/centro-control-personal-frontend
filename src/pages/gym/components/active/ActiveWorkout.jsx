@@ -56,7 +56,7 @@ function SetRow({ set, type, onDelete }) {
       </div>
       <button
         onClick={() => onDelete(set.id)}
-        className={`text-white/30 hover:text-red-400 bg-white/5 hover:bg-white/10 rounded-lg p-1.5 transition-all
+        className={`text-white/30 hover:text-red-400 bg-white/5 hover:bg-white/10 rounded-lg p-1.5 transition-all active:scale-90
           ${IS_MOBILE ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
       >✕</button>
     </div>
@@ -116,13 +116,13 @@ function ExerciseBlock({ exercise, workoutId }) {
           ${IS_MOBILE ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
           <button
             onClick={() => setShowAddSet(true)}
-            className="text-xs px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/10"
+            className="text-xs px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all active:scale-95 border border-white/10"
           >
             + {t('set.add')}
           </button>
           <button
             onClick={handleDeleteExercise}
-            className="w-7 h-7 flex items-center justify-center text-white/40 bg-white/5 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30 rounded-xl transition-all"
+            className="w-7 h-7 flex items-center justify-center text-white/40 bg-white/5 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30 rounded-xl transition-all active:scale-90"
           >✕</button>
         </div>
       </div>
@@ -216,13 +216,13 @@ export default function ActiveWorkout({ onEnd }) {
       <div className="flex gap-3 mt-6 pt-5 border-t border-white/10">
         <button
           onClick={() => setShowAddExercise(true)}
-          className="flex-1 py-3 text-sm font-bold text-white bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all shadow-sm"
+          className="flex-1 py-3 text-sm font-bold text-white bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all active:scale-95 shadow-sm"
         >
           + {t('exercise.add')}
         </button>
         <button
           onClick={onEnd}
-          className="flex-1 py-3 text-sm font-bold bg-red-500/30 text-red-100 border border-red-500/50 rounded-xl hover:bg-red-500/50 hover:text-white transition-all shadow-lg backdrop-blur-md"
+          className="flex-1 py-3 text-sm font-bold bg-red-500/30 text-red-100 border border-red-500/50 rounded-xl hover:bg-red-500/50 hover:text-white transition-all active:scale-95 shadow-lg backdrop-blur-md"
         >
           ■ {t('active.finish')}
         </button>

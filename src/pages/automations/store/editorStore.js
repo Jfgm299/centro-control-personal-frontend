@@ -1,5 +1,20 @@
 import { create } from 'zustand'
 
+// ── Utility: upstream node lookup ─────────────────────────────────────────────
+
+/**
+ * Returns the id of the upstream (source) node connected to nodeId.
+ * Finds the first edge where edge.target === nodeId and returns edge.source.
+ */
+export function getPrevNodeId(nodeId, nodes, edges) {
+  if (!nodeId || !edges) return null
+  const incoming = edges.find(e => e.target === nodeId)
+  if (!incoming) return null
+  return incoming.source
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const useAutomationsStore = create((set, get) => ({
 
   // ── Editor: estado del canvas ─────────────────────────────────────────────
@@ -90,6 +105,55 @@ export const useAutomationsStore = create((set, get) => ({
   openVariablePicker:  (target) => set({ variablePickerTarget: target }),
   closeVariablePicker: ()       => set({ variablePickerTarget: null }),
 
+  // ── Floating Panels (n8n-style) ────────────────────────────────────────────
+
+  /** Shared z-index counter — increments when any panel gains focus */
+  panelZIndexCounter: 100,
+
+  /**
+   * Panel states by ID
+   * @type {Record<string, { open: boolean, collapsed: boolean, position: {x,y}, size: {w,h}, zIndex: number }>}
+   */
+  panels: {
+    nodePicker:       { open: false, collapsed: false, position: { x: 16, y: 16 },   size: { w: 240, h: 500 }, zIndex: 100 },
+    ndv:              { open: false, collapsed: false, position: { x: Math.round(window.innerWidth * 0.05), y: Math.round(window.innerHeight * 0.1) }, size: { w: Math.round(window.innerWidth * 0.88), h: Math.round(window.innerHeight * 0.78) }, zIndex: 101 },
+    inputPreview:     { open: false, collapsed: false, position: null,               size: { w: 220, h: 200 }, zIndex: 102 },
+    outputPreview:    { open: false, collapsed: false, position: null,               size: { w: 220, h: 200 }, zIndex: 103 },
+    executionHistory: { open: false, collapsed: false, position: { x: null, y: 16 }, size: { w: 320, h: 400 }, zIndex: 104 },
+  },
+
+  openPanel: (panelId) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], open: true } },
+  })),
+
+  closePanel: (panelId) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], open: false } },
+  })),
+
+  togglePanel: (panelId) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], open: !s.panels[panelId]?.open } },
+  })),
+
+  togglePanelCollapse: (panelId) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], collapsed: !s.panels[panelId]?.collapsed } },
+  })),
+
+  setPanelPosition: (panelId, position) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], position } },
+  })),
+
+  setPanelSize: (panelId, size) => set((s) => ({
+    panels: { ...s.panels, [panelId]: { ...s.panels[panelId], size } },
+  })),
+
+  bringPanelToFront: (panelId) => set((s) => {
+    const next = s.panelZIndexCounter + 1
+    return {
+      panelZIndexCounter: next,
+      panels: { ...s.panels, [panelId]: { ...s.panels[panelId], zIndex: next } },
+    }
+  }),
+
   // ── Helpers compuestos ─────────────────────────────────────────────────────
 
   resetEditor: () => set({
@@ -105,5 +169,14 @@ export const useAutomationsStore = create((set, get) => ({
     testPayloadOpen:      false,
     sidebarSearch:        '',
     variablePickerTarget: null,
+    // Reset panels to default state
+    panelZIndexCounter:   100,
+    panels: {
+      nodePicker:       { open: false, collapsed: false, position: { x: 16, y: 16 },   size: { w: 240, h: 500 }, zIndex: 100 },
+      ndv:              { open: false, collapsed: false, position: { x: Math.round(window.innerWidth * 0.05), y: Math.round(window.innerHeight * 0.1) }, size: { w: Math.round(window.innerWidth * 0.88), h: Math.round(window.innerHeight * 0.78) }, zIndex: 101 },
+      inputPreview:     { open: false, collapsed: false, position: null,               size: { w: 220, h: 200 }, zIndex: 102 },
+      outputPreview:    { open: false, collapsed: false, position: null,               size: { w: 220, h: 200 }, zIndex: 103 },
+      executionHistory: { open: false, collapsed: false, position: { x: null, y: 16 }, size: { w: 320, h: 400 }, zIndex: 104 },
+    },
   }),
 }))

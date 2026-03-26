@@ -17,12 +17,20 @@
     "deleting": "Deleting..."
   },
 
+  "status": {
+    "loading": "Loading..."
+  },
+
   "card": {
     "edit": "Edit",
     "duplicate": "Duplicate",
     "export": "Export JSON",
     "delete": "Delete",
     "confirmDelete": "Confirm delete",
+    "now": "Just now",
+    "agoMinutes": "{{count}}m ago",
+    "agoHours": "{{count}}h ago",
+    "agoDays": "{{count}}d ago",
     "triggerType": {
       "manual": "Manual",
       "schedule_once": "Scheduled once",
@@ -67,7 +75,36 @@
     "triggers": "Triggers",
     "actions": "Actions",
     "flowControl": "Flow control",
-    "noResults": "No results for \"{{query}}\""
+    "noResults": "No results for \"{{query}}\"",
+    "conditionDesc": "Branch flow based on a condition",
+    "delayDesc": "Pause execution for a set time",
+    "stopDesc": "Stop flow execution at this point"
+  },
+
+  "prevNode": {
+    "title": "Input data from previous step",
+    "empty": "Run the flow first to see output data.",
+    "noParent": "This node has no previous step.",
+    "dragHint": "Drag a field to an input"
+  },
+
+  "ndv": {
+    "input": "INPUT",
+    "output": "OUTPUT",
+    "schema": "Schema",
+    "table": "Table",
+    "json": "JSON",
+    "executeStep": "Execute step",
+    "noInput": "This node has no input data",
+    "noOutput": "No output",
+    "noOutputHint": "Execute this step to see output",
+    "parameters": "Parameters",
+    "settings": "Settings",
+    "continueOnError": "Continue on error",
+    "continueOnErrorDesc": "Flow continues even if this step fails",
+    "notes": "Notes",
+    "notesPlaceholder": "Notes about this node...",
+    "dragHint": "Drag a field to a center input"
   },
 
   "nodes": {
@@ -79,6 +116,7 @@
     "webhookOutbound":    "Webhook (outbound)",
     "automationCall":     "Call automation",
     "stop":               "Stop",
+    "continueOnError":    "Continue on error",
 
     "system": {
       "manual":            "Manual",
@@ -92,7 +130,9 @@
       "delete":            "Delete node",
       "confirmDelete":     "Confirm delete",
       "noNodeSelected":    "Select a node to configure it"
-    }
+    },
+    "deleteTitle":           "Delete node",
+    "stopReasonPlaceholder": "Optional reason"
   },
 
   "condition": {
@@ -155,7 +195,8 @@
     "headers":       "Headers",
     "addHeader":     "Add header",
     "body":          "Body template",
-    "bodyHint":      "Use {{variable}} to insert context values"
+    "bodyHint":      "Use {{variable}} to insert context values",
+    "urlPendingSave": "(save to generate URL)"
   },
 
   "variablePicker": {
@@ -191,7 +232,8 @@
       "duration":   "Duration",
       "status":     "Status",
       "failedNode": "Failed node"
-    }
+    },
+    "backToAll": "← Back to all"
   },
 
   "error": {
@@ -199,6 +241,50 @@
     "saveFailed":   "Could not save. Please try again.",
     "runFailed":    "Could not start execution",
     "webhookError": "Webhook endpoint may not be available yet"
+  },
+
+  "registry": {
+    "modules": {
+      "system":           "System",
+      "calendar_tracker": "Calendar",
+      "gym_tracker":      "Gym",
+      "expenses_tracker": "Expenses",
+      "macro_tracker":    "Macros",
+      "flights_tracker":  "Flights",
+      "travels_tracker":  "Travels",
+      "other":            "Others"
+    },
+    "nodes": {
+      "system.manual":            "Manual",
+      "system.schedule_once":     "At exact time",
+      "system.schedule_interval": "Every X time",
+      "system.webhook_inbound":   "Inbound Webhook",
+
+      "calendar_tracker.event_start":              "Event starts",
+      "calendar_tracker.event_end":                "Event ends",
+      "calendar_tracker.reminder_due":             "Reminder due",
+      "calendar_tracker.no_events_in_window":      "No events in window",
+      "calendar_tracker.overdue_reminders_exist":  "Overdue reminders exist",
+      "calendar_tracker.create_event":             "Create event",
+      "calendar_tracker.create_reminder":          "Create reminder",
+      "calendar_tracker.mark_reminder_done":       "Mark reminder as done",
+      "calendar_tracker.cancel_event":             "Cancel event",
+      "calendar_tracker.push_summary_overdue":     "Push overdue summary",
+      "calendar_tracker.get_todays_schedule":      "Get today's schedule",
+      "calendar_tracker.bulk_mark_overdue_done":   "Mark all overdue as done",
+
+      "automations_engine.outbound_webhook":       "Outbound webhook",
+      "automations_engine.delay":                  "Delay",
+      "automations_engine.stop":                   "Stop",
+
+      "expenses_tracker.large_expense_created":        "Large expense created",
+      "expenses_tracker.monthly_budget_exceeded":      "Monthly budget exceeded",
+      "expenses_tracker.subscription_due_soon":        "Subscription due soon",
+      "expenses_tracker.subscription_converted":       "Subscription converted",
+      "expenses_tracker.create_expense":               "Create expense",
+      "expenses_tracker.get_monthly_summary":          "Get monthly summary",
+      "expenses_tracker.get_upcoming_subscriptions":   "Get upcoming subscriptions"
+    }
   },
 
   "apiKeys": {

@@ -42,54 +42,39 @@ export default function VariablePicker({ variables = [], onInsert }) {
   }, {})
 
   const TYPE_COLOR = {
-    string:  '#6366f1',
-    number:  '#f59e0b',
-    boolean: '#22c55e',
-    object:  '#8b5cf6',
+    string:  'bg-indigo-500/30 text-indigo-300 border-indigo-400/30',
+    number:  'bg-amber-500/30 text-amber-300 border-amber-400/30',
+    boolean: 'bg-emerald-500/30 text-emerald-300 border-emerald-400/30',
+    object:  'bg-violet-500/30 text-violet-300 border-violet-400/30',
   }
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', display: 'inline-block' }}>
+    <div ref={containerRef} className="relative inline-block">
       <button
         onClick={() => setOpen(v => !v)}
         title={t('variablePicker.title')}
-        style={{
-          padding: '3px 8px', borderRadius: 6,
-          border: '1px solid #e5e7eb',
-          background: open ? '#f3f4f6' : '#fff',
-          color: '#6366f1', fontSize: 11, fontWeight: 700,
-          cursor: 'pointer', fontFamily: 'monospace',
-        }}
+        className={`bg-white/10 hover:bg-white/20 border border-white/15 text-white/60 hover:text-white text-xs font-mono font-bold rounded-lg px-2 py-1 cursor-pointer transition-all ${
+          open ? 'bg-white/20 text-white' : ''
+        }`}
       >
         {'{{}}'}
       </button>
 
       {open && (
-        <div style={{
-          position: 'absolute', right: 0, top: 30, zIndex: 200,
-          background: '#fff', borderRadius: 12, padding: '8px 0',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.14)',
-          border: '1px solid #f0f0f0',
-          width: 260, maxHeight: 320, overflowY: 'auto',
-        }}>
+        <div className="absolute right-0 top-8 z-[200] bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl py-2 w-[260px] max-h-80 overflow-y-auto">
           {/* Search */}
-          <div style={{ padding: '0 10px 8px' }}>
+          <div className="px-2.5 pb-2">
             <input
               autoFocus
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('variablePicker.search')}
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                padding: '5px 10px', fontSize: 12,
-                border: '1px solid #e5e7eb', borderRadius: 8,
-                outline: 'none', color: '#111827',
-              }}
+              className="w-full box-border px-3 py-1.5 text-xs bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
             />
           </div>
 
           {filtered.length === 0 && (
-            <div style={{ padding: '12px 14px', fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>
+            <div className="text-white/30 text-sm text-center py-4">
               {t('variablePicker.noResults')}
             </div>
           )}
@@ -102,40 +87,26 @@ export default function VariablePicker({ variables = [], onInsert }) {
                              : 'Otros'
             return (
               <div key={groupKey}>
-                <div style={{
-                  padding: '4px 12px 2px',
-                  fontSize: 10, fontWeight: 700, color: '#9ca3af',
-                  textTransform: 'uppercase', letterSpacing: '0.07em',
-                }}>
+                <div className="text-white/40 text-xs font-semibold uppercase tracking-wider px-3 py-1">
                   {groupLabel}
                 </div>
                 {items.map((v) => (
                   <button
                     key={v.path}
                     onClick={() => { onInsert(`{{${v.path}}}`); setOpen(false); setSearch('') }}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      width: '100%', padding: '6px 12px',
-                      border: 'none', background: 'none', cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                    className="flex items-center gap-2 w-full px-3 py-2 border-none bg-transparent cursor-pointer text-left hover:bg-white/10 rounded-lg transition-colors"
                   >
-                    <span style={{
-                      fontSize: 9, fontWeight: 700, padding: '1px 5px',
-                      borderRadius: 4, color: '#fff',
-                      background: TYPE_COLOR[v.type] ?? '#94a3b8',
-                      flexShrink: 0,
-                    }}>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${
+                      TYPE_COLOR[v.type] ?? 'bg-white/10 text-white/40 border-white/10'
+                    }`}>
                       {v.type ?? '?'}
                     </span>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#111827', fontFamily: 'monospace' }}>
+                    <div className="min-w-0">
+                      <div className="bg-white/10 text-white/70 font-mono text-xs px-2 py-0.5 rounded border border-white/10 truncate max-w-[160px] inline-block">
                         {v.path}
                       </div>
                       {v.label && (
-                        <div style={{ fontSize: 11, color: '#9ca3af' }}>{v.label}</div>
+                        <div className="text-white/40 text-[11px] mt-0.5">{v.label}</div>
                       )}
                     </div>
                   </button>

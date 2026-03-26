@@ -264,8 +264,8 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-white/10 flex-shrink-0 bg-black/10 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <div className="flex gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
-              <button onClick={() => nav('prev')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all">‹</button>
-              <button onClick={() => nav('next')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all">›</button>
+              <button onClick={() => nav('prev')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:scale-90">‹</button>
+              <button onClick={() => nav('next')} className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:scale-90">›</button>
             </div>
             <span className="text-lg font-black text-white ml-2 drop-shadow-md capitalize">{title}</span>
           </div>
@@ -277,7 +277,7 @@ export default function CalendarView({ onEventClick, onSlotSelect, onExternalDro
                   key={key} 
                   onClick={() => changeView(key)} 
                   className={clsx(
-                    "px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all",
+                    "px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95",
                     view === key ? "bg-white/15 text-white shadow-lg border border-white/20" : "text-white/40 hover:text-white/70"
                   )}
                 >

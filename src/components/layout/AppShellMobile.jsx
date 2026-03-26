@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useModuleStore } from '../../store/moduleStore'
@@ -20,7 +20,13 @@ export default function AppShellMobile() {
   const { user, isLoading } = useAuth()
   const location = useLocation()
 
+  const mainRef = useRef(null)
+
   useEffect(() => { loadModules() }, [loadModules])
+
+  useEffect(() => {
+    if (mainRef.current) mainRef.current.scrollTop = 0
+  }, [location.pathname])
 
   if (isLoading) {
     return (
@@ -30,16 +36,9 @@ export default function AppShellMobile() {
     )
   }
 
-  const hour = new Date().getHours()
-  const darkBgGradient = hour > 5 && hour < 18
-    ? 'from-sky-500/30 to-blue-600/30' // Day
-    : 'from-slate-900/50 to-indigo-900/50' // Night
-
-  const backgroundClass = `bg-gradient-to-br ${darkBgGradient}`
-
   return (
     <div
-      className={`relative w-full flex flex-col ${backgroundClass}`}
+      className="relative w-full flex flex-col bg-gradient-to-br from-slate-900/50 to-indigo-900/50"
       style={{
         height: '100vh',
         maxHeight: '-webkit-fill-available',
@@ -58,6 +57,7 @@ export default function AppShellMobile() {
 
       {/* Main content — pb para que el contenido no quede tapado por el dock flotante */}
       <main
+        ref={mainRef}
         className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden min-h-0"
         style={{ paddingBottom: `calc(90px + env(safe-area-inset-bottom))` }}
       >
