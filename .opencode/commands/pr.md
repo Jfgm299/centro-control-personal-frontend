@@ -1,69 +1,139 @@
 ---
-description: Crea un Pull Request para la rama actual, espera aprobación y luego hace merge.
----
-# Tarea: Gestionar el Flujo Completo de un Pull Request
-
-Tu misión es automatizar la creación, y posteriormente el merge, de un Pull Request desde la rama de trabajo actual hacia la rama `develop`. El proceso se divide en dos fases principales, cada una requiriendo la **aprobación explícita del usuario**.
-
+allowed-tools: Bash(git log:*), Bash(git diff:*), Bash(git push:*), Bash(git checkout:*), Bash(git branch:*), Bash(git pull:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr view:*), Bash(gh issue:*)
+description: Create a pull request from current branch to develop (repo-scoped)
 ---
 
-### FASE 1: Creación del Pull Request
+## Context
 
-1.  **Verificar Cambios sin Commit:**
-    - Ejecuta `git status` para comprobar si hay archivos modificados o sin seguimiento.
-    - Si encuentras cambios, **detente** y pregunta al usuario:
-      > "He detectado cambios sin commitear. ¿Quieres que los añada en un nuevo commit antes de crear el Pull Request? Responde 'sí' para confirmar o 'no' para continuar sin ellos."
-    - **No continúes** hasta recibir una respuesta explícita. Si la respuesta es 'sí', utiliza el flujo del comando `/commit` para crear un commit con los cambios.
+- Current branch: !`git branch --show-current`
+- Commits ahead of develop: !`git log develop..HEAD --oneline`
+- Diff vs develop: !`git diff develop..HEAD --stat`
+- Uncommitted changes: !`git status --short`
 
-2.  **Asegurar que la Rama está Sincronizada:**
-    - Obtén el nombre de la rama actual (`git rev-parse --abbrev-ref HEAD`).
-    - Haz push de la rama al repositorio remoto para asegurarte de que está actualizada. Usa `git push -u origin HEAD`.
+## Task
 
-3.  **Analizar Cambios y Redactar el PR:**
-    - Revisa los commits hechos en esta rama en comparación con `develop`: `git log develop..HEAD --oneline`.
-    - Revisa el diff completo para entender todos los cambios: `git diff develop..HEAD`.
-    - Basado en el análisis, redacta un **título** y un **cuerpo** para el Pull Request.
-      - **Título:** Debe ser conciso, en imperativo y menor de 70 caracteres.
-      - **Cuerpo:** Usa la siguiente plantilla OBLIGATORIA:
-        ```
-        ## ¿Qué hace este PR?
-        <descripción breve y clara de la finalidad del PR>
+Create a Pull Request from the current branch into `develop`.
 
-        ## Cambios principales
-        - <Punto 1 del cambio>
-        - <Punto 2 del cambio>
+**Rules (non-negotiable):**
 
-        ## Cómo probar
-        <Instrucciones claras. Por ejemplo: `docker-compose exec api pytest app/modules/<nombre_modulo>/tests -v`>
+- PR title and body MUST be in **English** — always, no exceptions
+- Command scope MUST stay inside the current repository
+- Never target `main` directly — PRs always go to `develop`
+- If there are uncommitted changes, STOP and warn the user before proceeding
+- Branch name MUST match: `^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)\/[a-z0-9._-]+$`
 
-        ## Notas
-        <Cualquier información adicional: migraciones, breaking changes, etc.>
-        ```
+**Steps:**
 
-4.  **Crear el Pull Request:**
-    - Ejecuta el comando de `gh` para crear el PR, asegurándote de que la rama base sea `develop`:
-      `gh pr create --base develop --title "<tu-titulo-redactado>" --body "<tu-cuerpo-redactado>"`
+1. Verify branch name matches the required pattern
+2. Run tests before creating the PR: `go test ./...` — if they fail, STOP and warn the user. Skip tests if changes are documentation-only.
+3. Push branch to remote: `git push -u origin HEAD`
+4. Draft the PR title and body using the template below. **Show the full draft to the user and STOP — wait for explicit confirmation before creating the PR.**
+5. Once confirmed, create the PR with `gh pr create --base develop`.
+6. Immediately after PR creation, add exactly one primary `type:*` label using `gh pr edit <number> --add-label "type:<primary>"`.
+7. If the PR is breaking, add `type:breaking-change` as an additional impact label.
+8. Show the PR URL and the labels applied, then STOP — wait for user confirmation before proceeding to merge.
 
-5.  **Notificar al Usuario y Esperar Aprobación (FIN DE LA FASE 1):**
-    - Muestra la URL del Pull Request creado al usuario.
-    - Comunica claramente que estás esperando su revisión y aprobación para la siguiente fase con este mensaje:
-      > "He creado el Pull Request. Puedes revisarlo aquí: [URL_DEL_PR]. Por favor, verifica que todo es correcto. **Cuando estés listo, dame tu confirmación explícita para que proceda con el merge y la limpieza de la rama.**"
+### Safe command construction (zsh-safe)
+
+When creating the PR body, always use a HEREDOC and command substitution exactly like this pattern:
+
+```bash
+gh pr create --base develop --title "<title>" --body "$(cat <<'EOF'
+<markdown body>
+EOF
+)"
+```
+
+Never inline raw markdown directly in a quoted one-liner.
+Never execute chained PR-create + merge in a single command.
+Create PR first, then stop and wait for explicit user confirmation before merge.
+
+### Mandatory interaction contract
+
+- Before creating a PR, always print the exact title and full body draft and ask for explicit user approval.
+- Do not create the PR until the user confirms.
+- After creating the PR, always apply labels in the same operation flow and report which labels were added.
 
 ---
 
-### FASE 2: Merge y Limpieza (Solo tras confirmación explícita)
+**PR title format:** `<type>(<scope>): <short imperative description>` — max 70 chars
 
-**NO PROCEDAS a esta fase sin la confirmación del usuario de la Fase 1.**
+Examples:
 
-1.  **Hacer Merge del PR:**
-    - Utiliza `gh pr merge <URL_o_número_del_PR> --merge` para hacer merge a `develop`.
+- `fix(automations): audit and fix 9 bugs in engine and calendar contract`
+- `feat(gym_tracker): add automation contract with 5 triggers and 4 actions`
 
-2.  **Limpieza de Ramas:**
-    - Cambia a la rama `develop`: `git checkout develop`.
-    - **IMPORTANTE:** Actualiza tu copia local de `develop` para evitar conflictos futuros: `git pull`.
-    - Borra la rama de trabajo localmente: `git branch -d <nombre_de_la_rama>`.
-    - Borra la rama de trabajo del repositorio remoto: `git push origin --delete <nombre_de_la_rama>`.
+---
 
-3.  **Confirmar Finalización:**
-    - Informa al usuario que el proceso ha finalizado:
-      > "Hecho. El PR ha sido mergeado en `develop` y la rama de trabajo ha sido eliminada. Tu rama local `develop` está actualizada."
+**PR body template** (follows `.github/PULL_REQUEST_TEMPLATE.md`):
+
+```markdown
+## 🔗 Linked Issue
+
+<!-- Solo developer — create a tracking issue if one doesn't exist, or note N/A -->
+
+Closes #
+
+---
+
+## 🏷️ PR Type
+
+- [ ] `type:bug` — Bug fix
+- [ ] `type:feature` — New feature
+- [ ] `type:docs` — Documentation only
+- [ ] `type:refactor` — Code refactoring (no behavior change)
+- [ ] `type:chore` — Maintenance, dependencies, tooling
+- [ ] `type:breaking-change` — Breaking change
+
+---
+
+## 📝 Summary
+
+-
+
+## 📂 Changes
+
+| File           | Change       |
+| -------------- | ------------ |
+| `path/to/file` | What changed |
+
+## 🧪 Test Plan
+
+- [ ] Tests pass locally: `go test ./...`
+- [ ] Manually tested the affected functionality
+
+---
+
+## ✅ Contributor Checklist
+
+- [ ] Linked issue above (`Closes #N`)
+- [ ] Added exactly one primary `type:*` label to this PR (`type:feature|bug|docs|refactor|chore|style|perf|test|build|ci|revert`)
+- [ ] Added `type:breaking-change` only if this PR introduces a breaking change
+- [ ] Tests pass locally
+- [ ] Docs updated if behavior changed (`/update-docs`)
+- [ ] Commits follow conventional commits format
+- [ ] No `Co-Authored-By` trailers in commits
+
+---
+
+## 💬 Notes for Reviewers
+```
+
+Add the corresponding primary `type:*` label to the PR after creation using `gh pr edit <number> --add-label "type:feature"`.
+If applicable, add `type:breaking-change` as an additional impact label.
+
+---
+
+## After the PR is merged
+
+Only proceed **after the user explicitly confirms** the PR is approved and CI passed:
+
+1. Merge to develop: `gh pr merge <number> --merge`
+2. Switch to develop: `git checkout develop`
+3. Delete local branch: `git branch -d <branch>`
+4. Delete remote branch: `git push origin --delete <branch>`
+5. Pull latest: `git pull`
+
+```
+
+```
