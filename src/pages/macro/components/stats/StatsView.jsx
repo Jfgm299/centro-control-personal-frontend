@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
+import { UtensilsCrossed } from 'lucide-react'
 import { useMacroStats } from '../../hooks/useMacroStats'
 import { useMacroGoals } from '../../hooks/useMacroGoals'
 import NutrientGauge              from './NutrientGauge'
@@ -149,7 +150,7 @@ export default function StatsView() {
                 <div className="w-9 h-9 rounded-lg bg-white/5 overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {product.image_url
                     ? <img src={product.image_url} alt={product.product_name} className="w-full h-full object-cover" />
-                    : <span className="text-lg">🍽️</span>
+                    : <UtensilsCrossed size={18} className="text-white/40" />
                   }
                 </div>
                 <div className="flex-1 min-w-0">

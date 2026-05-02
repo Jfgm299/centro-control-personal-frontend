@@ -4,11 +4,11 @@ import { useMacroGoals, useUpsertGoals } from '../hooks/useMacroGoals'
 import { NUTRIENT_COLORS }      from '../constants'
 
 const FIELDS = [
-  { key: 'energy_kcal',     label: 'kcal',   unit: 'kcal', color: NUTRIENT_COLORS.energy_kcal,     min: 500,  max: 5000, step: 50  },
-  { key: 'proteins_g',      label: 'Prot',   unit: 'g',    color: NUTRIENT_COLORS.proteins_g,      min: 10,   max: 300,   step: 5   },
-  { key: 'carbohydrates_g', label: 'Carbs',  unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 500,  step: 5   },
-  { key: 'fat_g',           label: 'Grasas', unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 500,   step: 5   },
-  { key: 'fiber_g',         label: 'Fibra',  unit: 'g',    color: NUTRIENT_COLORS.fiber_g,         min: 0,    max: 80,   step: 1   },
+  { key: 'energy_kcal',     unit: 'kcal', color: NUTRIENT_COLORS.energy_kcal,     min: 500,  max: 5000, step: 50 },
+  { key: 'proteins_g',      unit: 'g',    color: NUTRIENT_COLORS.proteins_g,      min: 10,   max: 300,  step: 5  },
+  { key: 'carbohydrates_g', unit: 'g',    color: NUTRIENT_COLORS.carbohydrates_g, min: 10,   max: 500,  step: 5  },
+  { key: 'fat_g',           unit: 'g',    color: NUTRIENT_COLORS.fat_g,           min: 5,    max: 500,  step: 5  },
+  { key: 'fiber_g',         unit: 'g',    color: NUTRIENT_COLORS.fiber_g,         min: 0,    max: 80,   step: 1  },
 ]
 
 export default function GoalsModal({ onClose }) {
@@ -59,11 +59,11 @@ export default function GoalsModal({ onClose }) {
 
         {/* Fields */}
         <div className="space-y-4">
-          {FIELDS.map(({ key, label, unit, color, min, max, step }) => (
+          {FIELDS.map(({ key, unit, color, min, max, step }) => (
             <div key={key}>
               <div className="flex justify-between mb-1.5">
                 <label className="text-sm font-medium" style={{ color }}>
-                  {label}
+                  {t(`nutrients.${key}`)}
                 </label>
                 <span className="text-gray-700 text-sm font-semibold">
                   {form[key]}<span className="text-gray-400 text-xs ml-1">{unit}</span>

@@ -25,27 +25,79 @@
   },
 
   "diary": {
-    "today": "Hoy"
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "kcal": "Kcal",
+    "proteins": "Proteínas",
+    "carbs": "Carbs",
+    "fats": "Grasas",
+    "items_one": "1 alimento",
+    "items_other": "{{count}} alimentos",
+    "dailyLimitValue": "Límite: {{value}} {{unit}}"
   },
 
   "add": {
     "title":           "Añadir producto",
     "addProduct":      "Añadir alimento",
+    "scanBarcode":     "Escanear código de barras",
     "uploadPrompt":    "Sube o arrastra una foto del código de barras",
     "uploadHint":      "JPG, PNG · Se escanea automáticamente",
     "decoding":        "Leyendo código de barras…",
     "searchFallback":  "Código no encontrado. Busca por nombre:",
     "searchPlaceholder": "Ej: arroz integral, leche semidesnatada…",
+    "searchPlaceholderInput": "Buscar producto…",
     "search":          "Buscar",
+    "searchByName":    "Buscar por nombre",
+    "manual":          "manual",
+    "manualProduct":   "producto manual",
+    "noResults":       "Sin resultados",
+    "createManually":  "crear manualmente",
+    "back":            "Volver",
+    "createNew":       "Crear nuevo",
+    "newProduct":      "Nuevo producto",
+    "productNameRequired": "Nombre del producto *",
+    "brandOptional":   "Marca (opcional)",
+    "nutritionPer100g": "Valores nutricionales por 100g",
+    "createProduct":   "Crear producto",
+    "createAndAdd":    "Crear y añadir",
+    "missingValues":   "Algunos valores faltan — tocá para editar",
+    "saveValues":      "Guardar valores",
     "backToUpload":    "Subir otra foto",
     "per100g":         "por 100g",
     "amount":          "Cantidad",
     "addToDiary":      "Añadir al diario",
+    "fields": {
+      "energy_kcal_100g": "Kcal",
+      "proteins_100g": "Proteínas",
+      "carbohydrates_100g": "Carbs",
+      "fat_100g": "Grasas",
+      "fiber_100g": "Fibra",
+      "salt_100g": "Sal",
+      "energy_kcal_100g_full": "Calorías (kcal)",
+      "proteins_100g_full": "Proteínas (g)",
+      "carbohydrates_100g_full": "Carbohidratos (g)",
+      "fat_100g_full": "Grasas (g)",
+      "fiber_100g_full": "Fibra (g)",
+      "salt_100g_full": "Sal (g)",
+      "serving_quantity_g_full": "Ración típica (g)"
+    },
     "error": {
       "noBarcode":      "No se detectó ningún código de barras en la imagen",
       "imageLoad":      "No se pudo cargar la imagen",
       "unknown":        "Error inesperado. Inténtalo de nuevo.",
       "productNotFound": "Producto no encontrado. Busca por nombre."
+    }
+  },
+
+  "scanner": {
+    "pointToBarcode": "Apuntá al código de barras",
+    "detected": "¡Código detectado!",
+    "errors": {
+      "nativeLoad": "No se pudo cargar el escáner nativo.",
+      "cameraDeniedSettings": "Permiso de cámara denegado. Activala en Ajustes.",
+      "cameraDenied": "Permiso de cámara denegado.",
+      "cameraAccess": "No se pudo acceder a la cámara",
+      "genericPrefix": "Error"
     }
   },
 
@@ -68,6 +120,7 @@
     "loading": "Cargando…",
     "save":    "Guardar",
     "cancel":  "Cancelar",
+    "or":      "o",
     "delete":  "Eliminar",
     "confirm": "¿Confirmar?",
     "saving":  "Guardando…"

@@ -21,6 +21,7 @@ function Stat({ value, unit, label, className = '' }) {
 export default function MealSection({ mealKey, icon, entries = [], date }) {
   const { t }       = useTranslation('macro')
   const [isAdding, setIsAdding] = useState(false)
+  const Icon = icon
 
   const totalKcal = entries.reduce((s, e) => s + (e.energy_kcal ?? 0), 0)
   const totalProteins = entries.reduce((s, e) => s + (e.proteins_g ?? 0), 0)
@@ -40,12 +41,12 @@ export default function MealSection({ mealKey, icon, entries = [], date }) {
       <div className="p-4 md:p-6">
         <div className="flex items-center gap-4">
           <motion.span
-            className="text-3xl md:text-4xl"
+            className="text-sky-300"
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 15 }}
           >
-            {icon}
+            <Icon size={32} strokeWidth={2.2} />
           </motion.span>
           <div className="flex-1">
             <h3 className="text-lg md:text-xl font-semibold text-white">
@@ -53,7 +54,7 @@ export default function MealSection({ mealKey, icon, entries = [], date }) {
             </h3>
             {hasEntries && (
               <p className="text-sm text-white/60">
-                {entries.length} {t('add.items')}
+                {t('diary.items', { count: entries.length })}
               </p>
             )}
           </div>
