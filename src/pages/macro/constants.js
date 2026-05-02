@@ -1,10 +1,12 @@
+import { Apple, Cookie, Moon, Sandwich, Sunrise, UtensilsCrossed } from 'lucide-react'
+
 export const MEAL_TYPES = [
-  { key: 'breakfast',       icon: '🌅', order: 0 },
-  { key: 'morning_snack',   icon: '🍎', order: 1 },
-  { key: 'lunch',           icon: '🍽️',  order: 2 },
-  { key: 'afternoon_snack', icon: '🫐', order: 3 },
-  { key: 'dinner',          icon: '🌙', order: 4 },
-  { key: 'other',           icon: '🍫', order: 5 },
+  { key: 'breakfast',       icon: Sunrise,          order: 0 },
+  { key: 'morning_snack',   icon: Apple,            order: 1 },
+  { key: 'lunch',           icon: UtensilsCrossed,  order: 2 },
+  { key: 'afternoon_snack', icon: Sandwich,         order: 3 },
+  { key: 'dinner',          icon: Moon,             order: 4 },
+  { key: 'other',           icon: Cookie,           order: 5 },
 ]
 
 export const NUTRIENT_COLORS = {

@@ -1,5 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Capacitor } from '@capacitor/core'
+import { Camera, LoaderCircle, Pencil, Search, TriangleAlert, UtensilsCrossed } from 'lucide-react'
 import api from '../../services/api'
 import { useBarcodeFromImage } from '../../hooks/useBarcodeFromImage'
 import { useAddDiaryEntry } from '../../hooks/useDiaryMutations'
@@ -21,12 +23,12 @@ const ERROR_MESSAGES = {
 }
 
 const NUTRIENT_FIELDS = [
-  { key: 'energy_kcal_100g',   label: 'kcal',  color: '#f59e0b', unit: 'kcal' },
-  { key: 'proteins_100g',      label: 'Prot',  color: '#3b82f6', unit: 'g'    },
-  { key: 'carbohydrates_100g', label: 'Carbs', color: '#10b981', unit: 'g'    },
-  { key: 'fat_100g',           label: 'Grasa', color: '#f43f5e', unit: 'g'    },
-  { key: 'fiber_100g',         label: 'Fibra', color: '#8b5cf6', unit: 'g'    },
-  { key: 'salt_100g',          label: 'Sal',   color: '#6b7280', unit: 'g'    },
+  { key: 'energy_kcal_100g',   labelKey: 'add.fields.energy_kcal_100g',   color: '#f59e0b', unit: 'kcal' },
+  { key: 'proteins_100g',      labelKey: 'add.fields.proteins_100g',      color: '#3b82f6', unit: 'g'    },
+  { key: 'carbohydrates_100g', labelKey: 'add.fields.carbohydrates_100g', color: '#10b981', unit: 'g'    },
+  { key: 'fat_100g',           labelKey: 'add.fields.fat_100g',           color: '#f43f5e', unit: 'g'    },
+  { key: 'fiber_100g',         labelKey: 'add.fields.fiber_100g',         color: '#8b5cf6', unit: 'g'    },
+  { key: 'salt_100g',          labelKey: 'add.fields.salt_100g',          color: '#6b7280', unit: 'g'    },
 ]
 
 async function hasCamera() {
@@ -43,6 +45,12 @@ const emptyCreate = () => ({
   sugars_100g: '', fat_100g: '', saturated_fat_100g: '',
   fiber_100g: '', salt_100g: '', serving_quantity_g: '',
 })
+
+function isDesktopWeb() {
+  if (typeof window === 'undefined') return false
+  if (Capacitor.isNativePlatform()) return false
+  return window.matchMedia('(min-width: 768px)').matches
+}
 
 export default function AddProductFlow({ mealType, date, onClose }) {
   const { t } = useTranslation('macro')
@@ -61,6 +69,7 @@ export default function AddProductFlow({ mealType, date, onClose }) {
   const [searching, setSearching] = useState(false)
   const [dragOver, setDragOver]   = useState(false)
   const [showCamera, setShowCamera] = useState(false)
+  const [desktopWeb, setDesktopWeb] = useState(isDesktopWeb)
 
   // Edit mode in confirm step
   const [editing, setEditing]     = useState(false)
@@ -89,6 +98,18 @@ export default function AddProductFlow({ mealType, date, onClose }) {
     }, 300)
     return () => clearTimeout(debounceRef.current)
   }, [searchQ, step])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || Capacitor.isNativePlatform()) return undefined
+
+    const media = window.matchMedia('(min-width: 768px)')
+    const syncDesktopWeb = () => setDesktopWeb(media.matches)
+
+    syncDesktopWeb()
+    media.addEventListener('change', syncDesktopWeb)
+
+    return () => media.removeEventListener('change', syncDesktopWeb)
+  }, [])
 
   // ── Camera ──────────────────────────────────────────────────────────────────
   const handleScanPress = async () => {
@@ -213,30 +234,34 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {/* ── STEP: UPLOAD ── */}
         {(step === STEP.UPLOAD || step === STEP.LOADING) && (
           <div className="space-y-3">
-            <button onClick={handleScanPress} disabled={step === STEP.LOADING}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95">
-              {step === STEP.LOADING
-                ? <><span className="animate-spin text-lg">⟳</span>{t('add.decoding')}</>
-                : <><span className="text-xl">📷</span>Escanear código de barras</>}
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-white/10" /><span className="text-white/40 text-xs">o</span><div className="flex-1 h-px bg-white/10" />
-            </div>
+            {!desktopWeb && (
+              <>
+                <button onClick={handleScanPress} disabled={step === STEP.LOADING}
+                  className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-slate-800 text-white font-semibold text-sm hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95">
+                  {step === STEP.LOADING
+                    ? <><LoaderCircle size={18} className="animate-spin" />{t('add.decoding')}</>
+                    : <><Camera size={18} />{t('add.scanBarcode')}</>}
+                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-white/10" /><span className="text-white/40 text-xs">{t('common.or')}</span><div className="flex-1 h-px bg-white/10" />
+                </div>
+              </>
+            )}
             <div
               className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all active:scale-[0.98] ${dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-white/20 hover:border-white/40'} ${step === STEP.LOADING ? 'opacity-60 pointer-events-none' : ''}`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)} onDrop={onDrop}
               onClick={() => fileRef.current?.click()}>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
-              <p className="text-white/60 text-xs">Sube una foto del código de barras</p>
+              <p className="text-white/60 text-xs">{t('add.uploadPrompt')}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => { setStep(STEP.SEARCH); setError(null) }}
                 className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all active:scale-95">
-                🔍 Buscar por nombre
+                <span className="inline-flex items-center gap-1.5"><Search size={14} />{t('add.searchByName')}</span>
               </button>
               <button onClick={() => { setStep(STEP.CREATE); setError(null); setCreateForm(emptyCreate()) }}
                 className="flex-1 text-center text-white/60 hover:text-white text-xs py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all active:scale-95">
-                ✏️ Crear producto
+                <span className="inline-flex items-center gap-1.5"><Pencil size={14} />{t('add.createProduct')}</span>
               </button>
             </div>
           </div>
@@ -246,10 +271,10 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {step === STEP.SEARCH && (
           <div className="space-y-3">
             <div className="relative">
-              <input type="text" value={searchQ} onChange={(e) => setSearchQ(e.target.value)} placeholder="Buscar producto..."
+              <input type="text" value={searchQ} onChange={(e) => setSearchQ(e.target.value)} placeholder={t('add.searchPlaceholderInput')}
                 autoFocus
                 className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 pr-8 transition-colors" />
-              {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-sm animate-spin">⟳</span>}
+              {searching && <LoaderCircle size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 animate-spin" />}
             </div>
 
             {searchResults.length > 0 && (
@@ -259,12 +284,12 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                     className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 text-left transition-all active:opacity-80">
                     <div className="w-9 h-9 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
                       {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-cover" />
-                        : <span className="w-full h-full flex items-center justify-center text-white/40">🍽</span>}
+                        : <span className="w-full h-full flex items-center justify-center text-white/40"><UtensilsCrossed size={16} /></span>}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-medium truncate">{p.product_name}</p>
                       {p.brand && <p className="text-white/50 text-xs truncate">{p.brand}</p>}
-                      {p.source === 'manual' && <span className="text-xs text-indigo-400">• manual</span>}
+                      {p.source === 'manual' && <span className="text-xs text-indigo-400">• {t('add.manual')}</span>}
                     </div>
                     {p.energy_kcal_100g != null && (
                       <span className="text-amber-400 text-xs font-semibold flex-shrink-0">{Math.round(p.energy_kcal_100g)} kcal</span>
@@ -275,14 +300,14 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             )}
 
             {!searching && searchQ.trim().length >= 2 && searchResults.length === 0 && (
-              <p className="text-center text-white/50 text-xs py-2">Sin resultados — <button className="text-blue-400 underline" onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}>crear manualmente</button></p>
+              <p className="text-center text-white/50 text-xs py-2">{t('add.noResults')} — <button className="text-blue-400 underline" onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}>{t('add.createManually')}</button></p>
             )}
 
             <div className="flex gap-3">
               <button onClick={() => { setStep(STEP.UPLOAD); setError(null); setSearchQ(''); setSearchResults([]) }}
-                className="text-white/50 hover:text-white text-xs">← Volver</button>
+                className="text-white/50 hover:text-white text-xs">← {t('add.back')}</button>
               <button onClick={() => { setStep(STEP.CREATE); setCreateForm({ ...emptyCreate(), product_name: searchQ }) }}
-                className="text-blue-400 hover:text-blue-500 text-xs ml-auto">✏️ Crear nuevo</button>
+                className="text-blue-400 hover:text-blue-500 text-xs ml-auto"><span className="inline-flex items-center gap-1"><Pencil size={12} />{t('add.createNew')}</span></button>
             </div>
           </div>
         )}
@@ -290,30 +315,30 @@ export default function AddProductFlow({ mealType, date, onClose }) {
         {/* ── STEP: CREATE ── */}
         {step === STEP.CREATE && (
           <div className="space-y-3">
-            <p className="text-white/60 text-xs font-medium">Nuevo producto</p>
+            <p className="text-white/60 text-xs font-medium">{t('add.newProduct')}</p>
 
             {/* Name + brand */}
-            <input type="text" placeholder="Nombre del producto *" value={createForm.product_name}
+            <input type="text" placeholder={t('add.productNameRequired')} value={createForm.product_name}
               onChange={(e) => setCreateForm(f => ({ ...f, product_name: e.target.value }))}
               className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
-            <input type="text" placeholder="Marca (opcional)" value={createForm.brand}
+            <input type="text" placeholder={t('add.brandOptional')} value={createForm.brand}
               onChange={(e) => setCreateForm(f => ({ ...f, brand: e.target.value }))}
               className="w-full bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
 
             {/* Nutrients grid */}
-            <p className="text-white/40 text-xs">Valores nutricionales por 100g</p>
+            <p className="text-white/40 text-xs">{t('add.nutritionPer100g')}</p>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { key: 'energy_kcal_100g',   label: 'Calorías (kcal)' },
-                { key: 'proteins_100g',      label: 'Proteínas (g)'   },
-                { key: 'carbohydrates_100g', label: 'Carbohidratos (g)' },
-                { key: 'fat_100g',           label: 'Grasas (g)'      },
-                { key: 'fiber_100g',         label: 'Fibra (g)'       },
-                { key: 'salt_100g',          label: 'Sal (g)'         },
-                { key: 'serving_quantity_g', label: 'Ración típica (g)' },
-              ].map(({ key, label }) => (
+                { key: 'energy_kcal_100g',   labelKey: 'add.fields.energy_kcal_100g_full' },
+                { key: 'proteins_100g',      labelKey: 'add.fields.proteins_100g_full' },
+                { key: 'carbohydrates_100g', labelKey: 'add.fields.carbohydrates_100g_full' },
+                { key: 'fat_100g',           labelKey: 'add.fields.fat_100g_full' },
+                { key: 'fiber_100g',         labelKey: 'add.fields.fiber_100g_full' },
+                { key: 'salt_100g',          labelKey: 'add.fields.salt_100g_full' },
+                { key: 'serving_quantity_g', labelKey: 'add.fields.serving_quantity_g_full' },
+              ].map(({ key, labelKey }) => (
                 <div key={key}>
-                  <p className="text-white/40 text-xs mb-1">{label}</p>
+                  <p className="text-white/40 text-xs mb-1">{t(labelKey)}</p>
                   <input type="number" min="0" step="0.1" placeholder="—"
                     value={createForm[key]}
                     onChange={(e) => setCreateForm(f => ({ ...f, [key]: e.target.value }))}
@@ -325,11 +350,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setError(null) }}
                 className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-all active:scale-95">
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button onClick={handleCreate} disabled={creating || !createForm.product_name.trim()}
                 className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-95">
-                {creating ? '…' : 'Crear y añadir'}
+                {creating ? '…' : t('add.createAndAdd')}
               </button>
             </div>
           </div>
@@ -352,15 +377,15 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                   )}
                 </div>
                 {product.brand && <p className="text-white/60 text-xs mt-0.5">{product.brand}</p>}
-                {product.source === 'manual' && <p className="text-indigo-400 text-xs">producto manual</p>}
+                {product.source === 'manual' && <p className="text-indigo-400 text-xs">{t('add.manualProduct')}</p>}
 
                 {/* Nutrient display / edit */}
                 {editing ? (
                   <div className="grid grid-cols-3 gap-1.5 mt-2">
-                    {NUTRIENT_FIELDS.map(({ key, label, unit }) => (
-                      <div key={key}>
-                        <p className="text-white/50 text-xs">{label}</p>
-                        <div className="flex items-center gap-0.5">
+                     {NUTRIENT_FIELDS.map(({ key, labelKey, unit }) => (
+                       <div key={key}>
+                         <p className="text-white/50 text-xs">{t(labelKey)}</p>
+                         <div className="flex items-center gap-0.5">
                           <input type="number" min="0" step="0.1" value={editVals[key]}
                             onChange={(e) => setEditVals(v => ({ ...v, [key]: e.target.value }))}
                             className="w-full bg-black/20 border border-white/20 rounded px-1.5 py-0.5 text-white text-xs outline-none focus:border-blue-500" />
@@ -371,15 +396,15 @@ export default function AddProductFlow({ mealType, date, onClose }) {
                   </div>
                 ) : (
                   <div className="flex gap-3 mt-2 flex-wrap">
-                    {NUTRIENT_FIELDS.slice(0, 4).map(({ key, label, color }) => (
-                      <div key={key} className="text-center">
-                        <p className="text-xs font-semibold" style={{ color }}>{fmt(product[key], key === 'energy_kcal_100g' ? 0 : 1)}</p>
-                        <p className="text-white/50 text-xs">{label}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-white/30 text-xs mt-1">por 100g</p>
+                     {NUTRIENT_FIELDS.slice(0, 4).map(({ key, labelKey, color }) => (
+                       <div key={key} className="text-center">
+                         <p className="text-xs font-semibold" style={{ color }}>{fmt(product[key], key === 'energy_kcal_100g' ? 0 : 1)}</p>
+                         <p className="text-white/50 text-xs">{t(labelKey)}</p>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+                <p className="text-white/30 text-xs mt-1">{t('add.per100g')}</p>
               </div>
             </div>
 
@@ -387,23 +412,23 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             {!editing && hasNulls && (
               <button onClick={startEdit}
                 className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium transition-colors hover:bg-amber-500/30">
-                ⚠️ Algunos valores faltan — toca para editar
+                <TriangleAlert size={14} /> {t('add.missingValues')}
               </button>
             )}
             {editing && (
               <div className="flex gap-2">
                 <button onClick={() => setEditing(false)}
-                  className="flex-1 py-1.5 rounded-lg border border-white/20 text-white/60 text-xs hover:bg-white/10 transition-colors">Cancelar</button>
+                  className="flex-1 py-1.5 rounded-lg border border-white/20 text-white/60 text-xs hover:bg-white/10 transition-colors">{t('common.cancel')}</button>
                 <button onClick={saveEdit} disabled={saving}
                   className="flex-1 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors">
-                  {saving ? '…' : 'Guardar valores'}
+                  {saving ? '…' : t('add.saveValues')}
                 </button>
               </div>
             )}
 
             {/* Amount input */}
             <div className="flex items-center gap-3">
-              <label className="text-white/60 text-sm flex-shrink-0">Cantidad</label>
+              <label className="text-white/60 text-sm flex-shrink-0">{t('add.amount')}</label>
               <input type="number" min="1" max="5000" step="1" value={amountG}
                 onChange={(e) => setAmountG(e.target.value)}
                 className="w-24 bg-black/20 border border-white/20 rounded-lg px-3 py-1.5 text-white text-sm text-center outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
@@ -419,11 +444,11 @@ export default function AddProductFlow({ mealType, date, onClose }) {
             <div className="flex gap-2 pt-1">
               <button onClick={() => { setStep(STEP.UPLOAD); setProduct(null); setError(null) }}
                 className="flex-1 py-2 rounded-lg border border-white/20 text-white/60 text-sm hover:bg-white/10 transition-all active:scale-95">
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button onClick={handleConfirm} disabled={addEntry.isPending || !amountG || parseFloat(amountG) <= 0}
                 className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-95">
-                {addEntry.isPending ? 'Guardando…' : 'Añadir al diario'}
+                {addEntry.isPending ? t('common.saving') : t('add.addToDiary')}
               </button>
             </div>
           </div>

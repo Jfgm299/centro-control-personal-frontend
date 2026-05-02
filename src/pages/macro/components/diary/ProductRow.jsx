@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
+import { Check, UtensilsCrossed, X } from 'lucide-react'
 import { useDeleteDiaryEntry } from '../../hooks/useDiaryMutations'
 import { NUTRISCORE_COLORS } from '../../constants'
 
@@ -56,7 +57,7 @@ export default function ProductRow({ entry, date }) {
             onError={(e) => { e.target.style.display = 'none' }}
           />
         ) : (
-          <span className="text-xl">🍽️</span>
+          <UtensilsCrossed size={18} className="text-white/40" />
         )}
       </div>
 
@@ -103,7 +104,7 @@ export default function ProductRow({ entry, date }) {
             `}
             title={isDeleting ? t('common.confirm') : t('common.delete')}
           >
-            {isDeleting ? '✓' : '×'}
+            {isDeleting ? <Check size={16} strokeWidth={2.5} /> : <X size={16} strokeWidth={2.5} />}
           </motion.button>
         </AnimatePresence>
       </div>
