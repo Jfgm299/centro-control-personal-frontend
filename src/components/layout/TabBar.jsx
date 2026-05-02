@@ -59,11 +59,16 @@ export default function TabBar() {
 
   const handleClose = (e, tabId) => {
     e.stopPropagation()
-    closeTab(tabId)
     const { openTabs: currentTabs, activeTabId: currentActive } = useModuleStore.getState()
-    if (currentActive === tabId) {
-      const remaining = currentTabs.filter(t => t.id !== tabId)
-      if (remaining.length > 0) navigate(remaining[0].path)
+    const isClosingActiveTab = currentActive === tabId
+    const closingTabIndex = currentTabs.findIndex(tab => tab.id === tabId)
+    const remainingTabs = currentTabs.filter(tab => tab.id !== tabId)
+    const fallbackTab = remainingTabs[closingTabIndex - 1] || remainingTabs[0]
+
+    closeTab(tabId)
+
+    if (isClosingActiveTab && fallbackTab?.path) {
+      navigate(fallbackTab.path)
     }
   }
 

@@ -13,7 +13,7 @@ import clsx from 'clsx'
 /* ─── SectionTitle ─────────────────────────────────────────────────────────── */
 function SectionTitle({ children }) {
   return (
-    <div className="text-[10px] font-black text-white/40 tracking-[0.1em] uppercase px-3 pt-6 pb-2">
+    <div className="text-[10px] font-black text-white/60 tracking-[0.1em] uppercase px-3 pt-6 pb-2">
       {children}
     </div>
   )
@@ -132,7 +132,7 @@ export default function ReminderPanel({ onReminderTap }) {
     : null
 
   return (
-    <div className="flex flex-col h-full bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden w-full">
+    <div className="flex flex-col h-full bg-black/30 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden w-full">
 
       {/* Header */}
       <div className="flex items-center justify-between p-4 flex-shrink-0">

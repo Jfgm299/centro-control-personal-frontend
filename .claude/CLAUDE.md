@@ -10,11 +10,6 @@ React 18 · Vite · Tailwind CSS 4 · Zustand · React Query · Axios · React R
 - **`VITE_API_URL`** — única env var para la URL del backend; no hardcodear `localhost:8000`
 - **Capacitor**: no usar APIs de browser que no existan en nativo (localStorage sí, pero cuidado con otros)
 
-## Branch & Commit Conventions
-- Branches: `feat/<name>`, `fix/<name>`, `chore/<name>`
-- Commits: conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`)
-- Nunca commitear directamente a `main`
-
 ## Architecture Docs
 @docs/architecture.md        — module system, routing, API client, responsive pattern
 @docs/patterns.md            — módulo, componente, store, service conventions
@@ -31,9 +26,6 @@ React 18 · Vite · Tailwind CSS 4 · Zustand · React Query · Axios · React R
 @docs/modules/calendar.md
 @docs/modules/automations.md
 @docs/modules/home.md
-
-## Active Changes
-@docs/n8n-glass-redesign.md — n8n UI clone implementation guide (56 tasks, 8 phases)
 
 ## Quick Reference
 ```bash

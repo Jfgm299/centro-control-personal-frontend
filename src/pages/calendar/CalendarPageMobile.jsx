@@ -120,8 +120,8 @@ export default function CalendarPageMobile() {
       <div className="flex-1 min-h-0 relative overflow-hidden">
 
         {/* Calendario */}
-        <div className={`h-full px-2 ${tab === 'calendar' ? 'block' : 'hidden'}`}>
-          <div className="h-full bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-xl overflow-hidden relative">
+        <div className={`h-full px-2 ${tab === 'calendar' ? 'block' : 'hidden'} relative`}>
+          <div className="h-full bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-xl overflow-hidden">
             <CalendarView
               onEventClick={handleEventClick}
               onSlotSelect={handleSlotSelect}
@@ -129,6 +129,15 @@ export default function CalendarPageMobile() {
               style={pendingReminder ? { cursor: 'crosshair' } : undefined}
             />
           </div>
+          <button
+            onClick={() => setPanelOpen(o => !o)}
+            className={`absolute top-[97px] left-[26px] z-20 w-8 h-8 flex items-center justify-center rounded-lg border transition-all active:scale-90 shadow-lg
+              ${panelOpen
+                ? 'bg-white text-slate-900 border-white'
+                : 'bg-black/30 text-white/70 border-white/15 backdrop-blur-md'}`}
+          >
+            <MenuIcon open={panelOpen} />
+          </button>
         </div>
 
         {/* Rutinas */}
@@ -172,18 +181,6 @@ export default function CalendarPageMobile() {
         </motion.div>
       </div>
 
-      {/* Botón flotante para abrir panel lateral */}
-      {tab === 'calendar' && (
-        <button
-          onClick={() => setPanelOpen(o => !o)}
-          className={`absolute top-[68px] right-4 z-20 w-10 h-10 flex items-center justify-center rounded-xl border transition-all active:scale-90 shadow-lg
-            ${panelOpen 
-              ? 'bg-white text-slate-900 border-white rotate-0' 
-              : 'bg-white/10 text-white border-white/20 backdrop-blur-md'}`}
-        >
-          <MenuIcon open={panelOpen} />
-        </button>
-      )}
 
       <EventModal isOpen={eventModalOpen} onClose={closeEventModal} initialData={eventModalData} />
     </div>
