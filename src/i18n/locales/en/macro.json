@@ -25,27 +25,79 @@
   },
 
   "diary": {
-    "today": "Today"
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "kcal": "Kcal",
+    "proteins": "Protein",
+    "carbs": "Carbs",
+    "fats": "Fat",
+    "items_one": "1 item",
+    "items_other": "{{count}} items",
+    "dailyLimitValue": "Limit: {{value}} {{unit}}"
   },
 
   "add": {
     "title":           "Add product",
     "addProduct":      "Add food",
+    "scanBarcode":     "Scan barcode",
     "uploadPrompt":    "Upload or drag a photo of the barcode",
     "uploadHint":      "JPG, PNG · Scanned automatically",
     "decoding":        "Reading barcode…",
     "searchFallback":  "Code not found. Search by name:",
     "searchPlaceholder": "e.g. brown rice, semi-skimmed milk…",
+    "searchPlaceholderInput": "Search product…",
     "search":          "Search",
+    "searchByName":    "Search by name",
+    "manual":          "manual",
+    "manualProduct":   "manual product",
+    "noResults":       "No results",
+    "createManually":  "create manually",
+    "back":            "Back",
+    "createNew":       "Create new",
+    "newProduct":      "New product",
+    "productNameRequired": "Product name *",
+    "brandOptional":   "Brand (optional)",
+    "nutritionPer100g": "Nutritional values per 100g",
+    "createProduct":   "Create product",
+    "createAndAdd":    "Create and add",
+    "missingValues":   "Some values are missing — tap to edit",
+    "saveValues":      "Save values",
     "backToUpload":    "Upload another photo",
     "per100g":         "per 100g",
     "amount":          "Amount",
     "addToDiary":      "Add to diary",
+    "fields": {
+      "energy_kcal_100g": "Kcal",
+      "proteins_100g": "Protein",
+      "carbohydrates_100g": "Carbs",
+      "fat_100g": "Fat",
+      "fiber_100g": "Fiber",
+      "salt_100g": "Salt",
+      "energy_kcal_100g_full": "Calories (kcal)",
+      "proteins_100g_full": "Protein (g)",
+      "carbohydrates_100g_full": "Carbohydrates (g)",
+      "fat_100g_full": "Fat (g)",
+      "fiber_100g_full": "Fiber (g)",
+      "salt_100g_full": "Salt (g)",
+      "serving_quantity_g_full": "Typical serving (g)"
+    },
     "error": {
       "noBarcode":      "No barcode detected in the image",
       "imageLoad":      "Could not load the image",
       "unknown":        "Unexpected error. Please try again.",
       "productNotFound": "Product not found. Try searching by name."
+    }
+  },
+
+  "scanner": {
+    "pointToBarcode": "Point at the barcode",
+    "detected": "Barcode detected!",
+    "errors": {
+      "nativeLoad": "Could not load the native scanner.",
+      "cameraDeniedSettings": "Camera permission denied. Enable it in Settings.",
+      "cameraDenied": "Camera permission denied.",
+      "cameraAccess": "Could not access the camera",
+      "genericPrefix": "Error"
     }
   },
 
@@ -68,6 +120,7 @@
     "loading": "Loading…",
     "save":    "Save",
     "cancel":  "Cancel",
+    "or":      "or",
     "delete":  "Delete",
     "confirm": "Confirm?",
     "saving":  "Saving…"

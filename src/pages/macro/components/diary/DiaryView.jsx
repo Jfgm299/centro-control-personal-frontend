@@ -1,19 +1,20 @@
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
+import { AlertTriangle } from 'lucide-react'
 import { useDailySummary }  from '../../hooks/useDailySummary'
 
 import { useMacroGoals }    from '../../hooks/useMacroGoals'
 import MealSection           from './MealSection'
 import { MEAL_TYPES }        from '../../constants'
 
-function formatDate(dateStr) {
+function formatDate(dateStr, t) {
   const date = new Date(dateStr + 'T00:00:00')
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  if (date.toDateString() === today.toDateString()) return 'Today'
-  if (date.toDateString() === yesterday.toDateString()) return 'Yesterday'
+  if (date.toDateString() === today.toDateString()) return t('diary.today')
+  if (date.toDateString() === yesterday.toDateString()) return t('diary.yesterday')
 
   return date.toLocaleDateString(undefined, {
     weekday: 'long', day: 'numeric', month: 'short',
@@ -30,16 +31,17 @@ function addDays(dateStr, n) {
   return toLocalISO(d)
 }
 
-function DailyProgress({ totals, goals }) {
+function DailyProgress({ totals, goals, t }) {
   if (!goals) return null
 
   const items = [
-    { key: 'proteins_g',      label: 'Proteins', color: '#38bdf8', goal: goals.proteins_g,      current: totals.proteins_g },
-    { key: 'carbohydrates_g', label: 'Carbs',    color: '#2dd4bf', goal: goals.carbohydrates_g, current: totals.carbohydrates_g },
-    { key: 'fat_g',           label: 'Fats',     color: '#fb7185', goal: goals.fat_g,           current: totals.fat_g },
+    { key: 'proteins_g',      color: '#38bdf8', goal: goals.proteins_g,      current: totals.proteins_g, unit: 'g' },
+    { key: 'carbohydrates_g', color: '#2dd4bf', goal: goals.carbohydrates_g, current: totals.carbohydrates_g, unit: 'g' },
+    { key: 'fat_g',           color: '#fb7185', goal: goals.fat_g,           current: totals.fat_g, unit: 'g' },
   ]
 
   const calPct = goals.energy_kcal > 0 ? (totals.energy_kcal / goals.energy_kcal) * 100 : 0
+  const calPctLabel = `${Math.round(calPct)}%`
   const calColor = '#facc15'
 
   return (
@@ -78,17 +80,29 @@ function DailyProgress({ totals, goals }) {
             >
               {Math.round(totals.energy_kcal)}
             </motion.p>
-            <p className="text-xs text-white/50">KCAL</p>
-          </div>
-        </div>
+                <p className="text-xs text-white/50">KCAL</p>
+                <p className="mt-1 text-sm font-medium" style={{ color: calColor, opacity: 0.7 }}>
+                  {calPctLabel}
+                </p>
+              </div>
+            </div>
 
         {/* Macros */}
         <div className="flex-1 grid grid-cols-3 gap-2 ml-4">
-          {items.map(({ key, label, color, goal, current }) => {
+          {items.map(({ key, color, goal, current, unit }) => {
             const pct = goal > 0 ? Math.min((current / goal) * 100, 100) : 0
+            const rawPct = goal > 0 ? (current / goal) * 100 : 0
+            const alertColor = rawPct > 100 ? '#ef4444' : rawPct > 75 ? '#facc15' : null
+
             return (
               <div key={key} className="text-center">
-                <p className="font-bold text-xl" style={{ color }}>{Math.round(current)}<span className="text-sm text-white/50">g</span></p>
+                <p className="font-bold text-xl md:text-2xl leading-none" style={{ color }}>
+                  {Math.round(current)}
+                  <span className="text-sm text-white/50">{unit}</span>
+                  <span className="ml-1 text-base md:text-lg font-semibold" style={{ color, opacity: 0.72 }}>
+                    /{Math.round(goal)}
+                  </span>
+                </p>
                 <div className="h-1.5 rounded-full bg-white/10 overflow-hidden my-1">
                   <motion.div
                     className="h-full rounded-full"
@@ -98,7 +112,10 @@ function DailyProgress({ totals, goals }) {
                     transition={{ duration: 1, ease: 'easeOut' }}
                   />
                 </div>
-                <p className="text-xs text-white/60">{label}</p>
+                <div className="flex items-center justify-center gap-1">
+                  <p className="text-xs text-white/60">{t(`nutrients.${key}`)}</p>
+                  {alertColor && <AlertTriangle size={12} strokeWidth={2.25} style={{ color: alertColor }} />}
+                </div>
               </div>
             )
           })}
@@ -138,7 +155,7 @@ export default function DiaryView({ date, onDateChange }) {
         </button>
 
         <div className="flex-1 text-center">
-          <p className="text-white text-sm font-semibold capitalize">{formatDate(date)}</p>
+          <p className="text-white text-sm font-semibold capitalize">{formatDate(date, t)}</p>
         </div>
 
         <button
@@ -174,7 +191,7 @@ export default function DiaryView({ date, onDateChange }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
           >
-            <DailyProgress totals={summary.totals} goals={goals} />
+            <DailyProgress totals={summary.totals} goals={goals} t={t} />
           </motion.div>
         )}
       </AnimatePresence>
